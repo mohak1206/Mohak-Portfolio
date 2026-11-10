@@ -10,3 +10,4 @@ export const DURATION = {
   slowReveal: 0.9,
   hover: 0.25,
 } as const;
+
