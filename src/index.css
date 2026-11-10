@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-ivory: #F7F3EC;
+  --color-cream: #EFE8DD;
+  --color-charcoal: #191919;
+  --color-muted-grey: #77716B;
+  --color-burnt-orange: #C94F17;
+  --color-light-orange: #E47B43;
+  --color-warm-border: #DDD4C8;
+  --color-pure-white: #FFFFFF;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #F7F3EC;
+  color: #191919;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F7F3EC;
+}
+::-webkit-scrollbar-thumb {
+  background: #DDD4C8;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C94F17;
+}
+
+/* Selection */
+::selection {
+  background-color: #C94F17;
+  color: #FFFFFF;
+}
+
+/* Arch mask utility */
+.arch-mask {
+  border-top-left-radius: 180px;
+  border-top-right-radius: 180px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.arch-outline {
+  border-top-left-radius: 190px;
+  border-top-right-radius: 190px;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+/* Subtle idle float animation for the hero terminal and skills cards */
+@keyframes softFloatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes softFloatOpposite {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-float-slow {
+    animation: softFloatSlow 6s ease-in-out infinite;
+  }
+  .animate-float-opposite {
+    animation: softFloatOpposite 7s ease-in-out infinite;
+  }
+}

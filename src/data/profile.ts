@@ -1,0 +1,56 @@
+import { ProfileData } from '../types';
+
+export const profileData: ProfileData = {
+  name: "Mohak Agrawal",
+  monogram: "MA",
+  roleTitle: "AI/ML & Full-Stack Developer",
+  tagline: "AI/ML Developer · Full Stack Engineer · Problem Solver",
+  heroHeadline: {
+    line1: "Ideas deserve",
+    line2Regular: "to be ",
+    line2Italic: "built.",
+  },
+  heroSubheadline: "AI/ML Developer · Full Stack Engineer · Problem Solver",
+  heroBio: "I turn real-world problems into intelligent, scalable and user-focused solutions using AI, full-stack development and modern technologies.",
+  location: "Maharashtra, India",
+  currentStatus: "Software Intern at RigAI Tech",
+  email: "agrawalmohak06@gmail.com",
+  github: "https://github.com/mohak1206",
+  linkedin: "https://www.linkedin.com/in/mohak-agrawal7025",
+  resumeUrl: "/Mohak_Agrawal_Resume.pdf",
+  stats: {
+    projectsCount: "4",
+    projectsLabel: "Completed Projects",
+    internshipsCount: "2",
+    internshipsLabel: "Internships",
+    eventsCount: "10+",
+    eventsLabel: "NSS Events Led",
+    cgpaScore: "8.6",
+    cgpaLabel: "CGPA",
+  },
+  aboutStory: {
+    leadParagraph: "I'm an AIML undergraduate who enjoys building meaningful products, from AI-powered applications to full-stack platforms. I'm curious, collaborative and always exploring new technologies to turn ideas into real, impactful solutions.",
+    paragraphs: [
+      "I chose AI and Machine Learning because I have always been curious about how technology works and how machines can learn, think and solve real-world problems. That curiosity grew as I explored AI applications, which pushed me to study it seriously.",
+      "I started coding with Python, learning the basics through small programs and gradually moving towards practical projects. My first real project was a simple application that showed me how code can turn an idea into something useful.",
+      "Today I'm a B.Tech student in AI & Machine Learning who enjoys building complete products: full-stack web apps, cross-platform apps, and computer-vision models. I'm open to internships, full-time roles and freelance work.",
+    ],
+  },
+  education: {
+    degree: "B.Tech, Artificial Intelligence & Machine Learning",
+    institution: "St. John College of Engineering and Management",
+    expectedGraduation: "2028",
+    cgpa: "8.6 / 10 CGPA (through Semester 5)",
+    openTo: ["Internships", "Full-time", "Freelance"],
+    coursework: [
+      "DBMS",
+      "Computer Networks",
+      "Operating Systems",
+      "Computer Architecture / 8086",
+      "Data Structures and Algorithms",
+      "Machine Learning",
+      "Information Network Security",
+      "Data Analytics and Visualization",
+    ],
+  },
+};
