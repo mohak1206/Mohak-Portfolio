@@ -3,6 +3,7 @@ import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useScrollSpy } from '../../hooks/useScrollSpy';
 import { MobileMenu } from './MobileMenu';
+import Logo from '../ui/Logo';
 
 const navItems = [
   { label: 'Home', href: '#home', id: 'home' },
@@ -61,15 +62,14 @@ export const Navbar: React.FC = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Left: MA Monogram */}
+        {/* Left: Logo */}
         <a
-          href="/#home"
+          href="/"
           onClick={(e) => handleNavClick(e, '#home', 'home')}
-          className="group flex items-baseline text-2xl font-serif font-bold text-charcoal tracking-tight transition-transform hover:opacity-90"
-          aria-label="Mohak Agrawal Home"
+          className="transition-opacity duration-200 hover:opacity-70"
+          aria-label="Home"
         >
-          <span>MA</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange inline-block ml-0.5" />
+          <Logo className="h-8 w-auto text-[#191919]" />
         </a>
 
         {/* Center: Desktop Navigation */}
@@ -143,3 +143,4 @@ export const Navbar: React.FC = () => {
     </header>
   );
 };
+

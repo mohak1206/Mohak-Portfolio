@@ -161,7 +161,39 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
         </svg>
       )}
 
-      {!['signature-detection', 'fire-smoke-detection', 'inventory-management', 'alumni-connect', 'civic-i'].includes(slug) && (
+      {slug === 'healmaps' && (
+        <svg viewBox="0 0 400 240" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="240" fill="#EFE8DD" />
+          <line x1="0" y1="120" x2="400" y2="120" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="4 4" />
+          <line x1="200" y1="0" x2="200" y2="240" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="4 4" />
+
+          <circle cx="200" cy="110" r="65" fill="#C94F17" opacity="0.12" />
+
+          <rect x="70" y="45" width="260" height="135" rx="6" fill="#FFFFFF" stroke="#DDD4C8" strokeWidth="1.5" />
+          
+          <path
+            d="M85,115 L140,115 L150,90 L160,140 L170,105 L180,125 L190,115 L315,115"
+            fill="none"
+            stroke="#C94F17"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          <rect x="90" y="60" width="80" height="22" rx="4" fill="#F7F3EC" stroke="#DDD4C8" strokeWidth="1" />
+          <text x="100" y="75" fill="#191919" fontSize="9" fontFamily="'JetBrains Mono', monospace" fontWeight="bold">ICU: LIVE</text>
+          
+          <rect x="180" y="60" width="90" height="22" rx="4" fill="#F7F3EC" stroke="#DDD4C8" strokeWidth="1" />
+          <text x="190" y="75" fill="#C94F17" fontSize="9" fontFamily="'JetBrains Mono', monospace" fontWeight="bold">BEDS: 82%</text>
+
+          <circle cx="280" cy="148" r="14" fill="#EFE8DD" stroke="#DDD4C8" strokeWidth="1.5" />
+          <path d="M280,140 V156 M272,148 H288" stroke="#C94F17" strokeWidth="2.2" strokeLinecap="round" />
+
+          <text x="24" y="222" fill="#77716B" fontSize="9" fontFamily="'JetBrains Mono', monospace">HEALTHCARE · RESOURCE DASHBOARD · GEOSPATIAL</text>
+        </svg>
+      )}
+
+      {!['signature-detection', 'fire-smoke-detection', 'inventory-management', 'alumni-connect', 'civic-i', 'healmaps'].includes(slug) && (
         <svg viewBox="0 0 400 240" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <rect width="400" height="240" fill="#EFE8DD" />
           <circle cx="200" cy="120" r="60" fill="#C94F17" opacity="0.15" />
@@ -172,3 +204,4 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
     </div>
   );
 };
+

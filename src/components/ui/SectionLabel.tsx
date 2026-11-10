@@ -28,3 +28,4 @@ export const SectionLabel: React.FC<SectionLabelProps> = ({
     </div>
   );
 };
+

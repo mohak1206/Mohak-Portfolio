@@ -58,3 +58,4 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
     </div>
   );
 };
+

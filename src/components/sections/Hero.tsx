@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Cpu, Layers, Eye, Zap } from 'lucide-react';
 import { profileData } from '../../data/profile';
+import { projectsData } from '../../data/projects';
 import { Button } from '../ui/Button';
 import { SectionLabel } from '../ui/SectionLabel';
 import { ContourLines } from '../art/ContourLines';
@@ -10,6 +11,7 @@ import { MountainFallback } from '../art/MountainFallback';
 
 export const Hero: React.FC = () => {
   const { stats } = profileData;
+  const completedProjectsCount = projectsData.filter((p) => p.status === 'Completed').length.toString();
 
   const scrollToProjects = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -108,7 +110,7 @@ export const Hero: React.FC = () => {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-0 divide-y sm:divide-y-0 sm:divide-x divide-warm-border pt-4 border-t border-warm-border">
                 <div className="sm:pr-6 pb-2 sm:pb-0">
                   <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
-                    {stats.projectsCount}
+                    {completedProjectsCount}
                   </div>
                   <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
                     {stats.projectsLabel}
@@ -244,3 +246,4 @@ export const Hero: React.FC = () => {
     </section>
   );
 };
+

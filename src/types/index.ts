@@ -31,7 +31,7 @@ export interface Project {
 
 export interface LabIdea {
   title: string;
-  badge: 'Concept' | 'Early prototype';
+  badge: 'Concept' | 'Early prototype' | 'Completed';
   description: string;
   stack?: string[];
   githubUrl?: string;

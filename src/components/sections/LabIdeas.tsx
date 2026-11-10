@@ -71,3 +71,4 @@ export const LabIdeas: React.FC = () => {
     </section>
   );
 };
+

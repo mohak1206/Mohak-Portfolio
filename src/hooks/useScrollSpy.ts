@@ -27,3 +27,4 @@ export function useScrollSpy(sectionIds: string[], offset = 160): string {
 
   return activeSection;
 }
+

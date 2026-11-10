@@ -122,3 +122,4 @@ export const MountainFallback: React.FC<MountainFallbackProps> = ({ type, classN
     </div>
   );
 };
+

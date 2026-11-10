@@ -172,6 +172,24 @@ export const ProjectDetail: React.FC = () => {
             </div>
           </div>
 
+          {/* Slim bordered note replacing any screenshot coming-soon placeholders */}
+          {project.githubUrl && (
+            <div className="p-4 bg-cream border border-warm-border rounded-[6px] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm font-mono">
+              <div className="flex items-center gap-2.5 text-charcoal/90">
+                <Github className="w-4 h-4 text-burnt-orange shrink-0" />
+                <span>For more details, code and documentation, visit the GitHub repository</span>
+              </div>
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-burnt-orange font-semibold hover:text-light-orange inline-flex items-center gap-1.5 shrink-0"
+              >
+                <span>View on GitHub &rarr;</span>
+              </a>
+            </div>
+          )}
+
           {project.githubUrl && (
             <div className="pt-6 border-t border-warm-border flex justify-between items-center">
               <Link

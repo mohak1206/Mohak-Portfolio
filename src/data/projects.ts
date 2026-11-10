@@ -121,6 +121,30 @@ export const projectsData: Project[] = [
     order: 4,
   },
   {
+    slug: "healmaps",
+    title: "Healmaps / Arogya-Map",
+    oneLiner: "Hospital resource dashboard concept showing real-time bed and ICU availability, specialists, and classification.",
+    category: "Healthcare Platform Concept",
+    status: "Concept",
+    badge: "Concept",
+    tags: ["Healthcare UI", "Resource Mapping", "Geospatial"],
+    githubUrl: "https://github.com/mohak1206/healmaps.git",
+    problem: "Hospital resource fragmentation and lack of live bed, ICU, and specialist availability visibility during critical emergency care needs.",
+    solution: "A centralized dashboard concept displaying real-time bed and ICU availability, doctors, distance, estimated costs, and government vs. private classification.",
+    features: [
+      "Hospital resource dashboard for beds and ICU occupancy",
+      "Medical specialist directory and availability tracking",
+      "Geospatial distance and route calculation",
+      "Estimated treatment cost indicators",
+      "Government and private healthcare facility filtering",
+    ],
+    stack: ["React", "Flask", "Healthcare UI", "Resource Mapping"],
+    contribution: "Designed and implemented the core platform concept and healthcare resource tracking workflow.",
+    challengesAndLearnings: "Designing intuitive visual hierarchy for rapid data consumption in emergency situations and coordinating multi-variable hospital metrics.",
+    isFeatured: true,
+    order: 5,
+  },
+  {
     slug: "civic-i",
     title: "Civic-I: AI-Assisted Civic Issue Reporting",
     oneLiner: "Prototype platform for reporting and monitoring local civic problems in Palghar.",
@@ -151,22 +175,14 @@ export const projectsData: Project[] = [
     contribution: "Built with a collaborative team of 9 student developers. Role: System architecture & API integration [TODO(Mohak): add your specific role].",
     challengesAndLearnings: "Bringing issue reporting, location mapping, and tracking together into one practical platform. I am learning how to connect disparate services and design a system that makes reporting and monitoring local civic problems more accessible.",
     isFeatured: false,
-    order: 5,
+    order: 6,
   },
 ];
 
 export const labIdeasData: LabIdea[] = [
   {
-    title: "Healmaps / Arogya-Map",
-    badge: "Concept",
-    description: "Hospital resource dashboard concept showing real-time bed and ICU availability, medical specialists, distance, estimated treatment costs, and government vs. private classification.",
-    githubUrl: "https://github.com/mohak1206/healmaps.git",
-    secondaryGithubUrl: "https://github.com/mohak1206/Arogya-Maps.git",
-    stack: ["Healthcare UI", "Resource Mapping", "Geospatial"],
-  },
-  {
     title: "Student Helper / Micro-Help Network",
-    badge: "Concept",
+    badge: "Completed",
     description: "Student-to-student micro-help platform where learners post short requests (study notes, laptop troubleshooting, tutoring), nearby peers accept, and peer ratings build community trust.",
     stack: ["Flask", "MySQL", "Community Platform"],
   },
@@ -202,4 +218,3 @@ export const labIdeasData: LabIdea[] = [
     stack: ["Agentic AI", "Multi-Agent Systems", "Task Orchestration"],
   },
 ];
-

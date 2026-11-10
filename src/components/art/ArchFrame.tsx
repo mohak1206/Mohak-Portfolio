@@ -26,3 +26,4 @@ export const ArchFrame: React.FC<ArchFrameProps> = ({
     </div>
   );
 };
+

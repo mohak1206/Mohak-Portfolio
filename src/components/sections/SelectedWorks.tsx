@@ -191,11 +191,23 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
             </div>
           </div>
 
-          <div className="p-6 border border-dashed border-warm-border rounded-[6px] text-center bg-cream/30">
-            <p className="text-xs sm:text-sm text-muted-grey font-mono">
-              Screenshots coming soon · High-resolution outputs will be populated here
-            </p>
-          </div>
+          {/* Replaced coming-soon placeholder with GitHub link note */}
+          {project.githubUrl && (
+            <div className="p-4 bg-cream border border-warm-border rounded-[6px] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm font-mono">
+              <div className="flex items-center gap-2.5 text-charcoal/90">
+                <Github className="w-4 h-4 text-burnt-orange shrink-0" />
+                <span>For more details, code and documentation, visit the GitHub repository</span>
+              </div>
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-burnt-orange font-semibold hover:text-light-orange inline-flex items-center gap-1.5 shrink-0"
+              >
+                <span>View on GitHub &rarr;</span>
+              </a>
+            </div>
+          )}
 
           {project.githubUrl && (
             <div className="pt-2 flex justify-end">
@@ -219,7 +231,8 @@ interface SelectedWorksProps {
 export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  const featuredProjects = projectsData.filter((p) => p.isFeatured).slice(0, 4);
+  // 5 featured projects
+  const featuredProjects = projectsData.filter((p) => p.isFeatured);
   const displayProjects = showAll ? projectsData : featuredProjects;
 
   return (
@@ -244,7 +257,8 @@ export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false })
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* 3-column grid on desktop, 2 columns on tablet, 1 column on mobile */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayProjects.map((project) => (
             <article
               key={project.slug}
@@ -279,6 +293,24 @@ export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false })
               </div>
             </article>
           ))}
+
+          {/* 6th tile at the end: a cream (#EFE8DD) card linking to /projects */}
+          {!showAll && (
+            <Link
+              to="/projects"
+              className="group flex flex-col items-center justify-center p-8 bg-[#EFE8DD] rounded-[6px] border border-warm-border hover:border-burnt-orange/50 transition-all duration-300 shadow-sm hover:shadow-float text-center min-h-[300px]"
+            >
+              <div className="w-12 h-12 rounded-full bg-white border border-warm-border flex items-center justify-center text-burnt-orange mb-4 group-hover:bg-burnt-orange group-hover:text-white group-hover:border-burnt-orange transition-all duration-200">
+                <ArrowRight className="w-5 h-5 stroke-[2.2] group-hover:translate-x-1 transition-transform" />
+              </div>
+              <span className="font-serif text-2xl font-semibold text-charcoal group-hover:text-burnt-orange transition-colors">
+                View all projects
+              </span>
+              <span className="text-xs font-mono text-muted-grey mt-2">
+                Explore all prototypes & lab ideas &rarr;
+              </span>
+            </Link>
+          )}
         </div>
 
         {showAll && (

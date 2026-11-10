@@ -1,20 +1,21 @@
 import React from 'react';
+import Logo from '../ui/Logo';
 
 export const Footer: React.FC = () => {
   return (
     <footer className="border-t border-warm-border bg-ivory py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-          {/* Brand Monogram */}
-          <div className="flex items-center gap-2">
+          {/* Brand Logo */}
+          <div className="flex items-center gap-3">
             <a
-              href="/#home"
-              className="font-serif text-2xl font-bold text-charcoal tracking-tight"
+              href="/"
+              className="transition-opacity duration-200 hover:opacity-70"
+              aria-label="Home"
             >
-              <span>MA</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange inline-block ml-0.5" />
+              <Logo className="h-7 w-auto text-[#191919]" />
             </a>
-            <span className="text-xs font-mono text-muted-grey ml-2">
+            <span className="text-xs font-mono text-muted-grey ml-1">
               © 2026 Mohak Agrawal
             </span>
           </div>
@@ -47,3 +48,4 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
+

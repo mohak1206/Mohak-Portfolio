@@ -80,3 +80,4 @@ export const Expertise: React.FC = () => {
     </section>
   );
 };
+
