@@ -6,9 +6,10 @@ import { cn } from '../../lib/utils';
 
 interface ContourLinesProps {
   className?: string;
+  style?: React.CSSProperties | any;
 }
 
-export const ContourLines: React.FC<ContourLinesProps> = ({ className }) => {
+export const ContourLines: React.FC<ContourLinesProps> = ({ className, style }) => {
   const prefersReducedMotion = useReducedMotion();
 
   const pathTransition = (delay = 0) => ({
@@ -18,8 +19,9 @@ export const ContourLines: React.FC<ContourLinesProps> = ({ className }) => {
   });
 
   return (
-    <div
+    <motion.div
       aria-hidden="true"
+      style={style}
       className={cn('pointer-events-none select-none absolute inset-0 overflow-hidden', className)}
     >
       <motion.svg
@@ -115,7 +117,7 @@ export const ContourLines: React.FC<ContourLinesProps> = ({ className }) => {
           />
         </g>
       </motion.svg>
-    </div>
+    </motion.div>
   );
 };
 

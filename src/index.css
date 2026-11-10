@@ -17,6 +17,12 @@ html {
   scroll-behavior: smooth;
   background-color: #F7F3EC;
   color: #191919;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* Reduced motion preference */
@@ -156,5 +162,35 @@ html {
 @media (prefers-reduced-motion: no-preference) {
   .marker-pulse-ring {
     animation: markerPulseRing 2.5s ease-in-out infinite;
+  }
+}
+
+/* Tech Marquee: 40s seamless loop using transform only, pauses on hover */
+@keyframes techMarqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.tech-marquee-content {
+  display: flex;
+  width: max-content;
+  animation: techMarqueeScroll 40s linear infinite;
+}
+
+.tech-marquee-content:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-marquee-content {
+    animation: none !important;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    transform: none !important;
   }
 }

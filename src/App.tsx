@@ -4,6 +4,7 @@ import { AnimatePresence, motion, MotionConfig, type Variants } from 'framer-mot
 import { Home } from './pages/Home';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { ProjectDetail } from './pages/ProjectDetail';
+import { IntroScreen } from './components/ui/IntroScreen';
 import { EASING } from './lib/animation';
 import { useReducedMotion } from './hooks/useReducedMotion';
 
@@ -63,6 +64,7 @@ const AnimatedRoutes: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <MotionConfig reducedMotion="user">
+      <IntroScreen />
       <BrowserRouter>
         <ScrollToTop />
         <AnimatedRoutes />

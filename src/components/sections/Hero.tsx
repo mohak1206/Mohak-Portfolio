@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { motion, type Variants } from 'framer-motion';
+import React, { useEffect, useState, useRef } from 'react';
+import { motion, useScroll, useTransform, type Variants } from 'framer-motion';
 import { ArrowRight, Cpu, Layers, Eye, Zap } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { projectsData } from '../../data/projects';
@@ -128,6 +128,14 @@ export const Hero: React.FC = () => {
   const { stats } = profileData;
   const prefersReducedMotion = useReducedMotion();
   const completedProjectsCount = projectsData.filter((p) => p.status === 'Completed').length.toString();
+  const heroRef = useRef<HTMLElement>(null);
+
+  // Background detail: topographic contour lines shift by at most 16px vertically as the page scrolls
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const contourY = useTransform(scrollYProgress, [0, 1], [0, 16]);
 
   const scrollToProjects = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -162,11 +170,12 @@ export const Hero: React.FC = () => {
 
   return (
     <section
+      ref={heroRef}
       id="home"
       aria-label="Hero"
       className="relative pt-28 pb-16 lg:pt-36 lg:pb-24 overflow-hidden border-b border-warm-border bg-ivory"
     >
-      <ContourLines />
+      <ContourLines style={{ y: prefersReducedMotion ? 0 : contourY }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center min-h-[calc(100vh-140px)]">

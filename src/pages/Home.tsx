@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navbar } from '../components/layout/Navbar';
 import { Hero } from '../components/sections/Hero';
+import { TechMarquee } from '../components/ui/TechMarquee';
 import { About } from '../components/sections/About';
 import { Journey } from '../components/sections/Journey';
 import { SelectedWorks } from '../components/sections/SelectedWorks';
@@ -25,6 +26,7 @@ export const Home: React.FC = () => {
 
       <main id="main-content" className="flex-grow">
         <Hero />
+        <TechMarquee />
         <About />
         <Journey />
         <SelectedWorks showAll={false} />
