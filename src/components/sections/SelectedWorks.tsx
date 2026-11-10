@@ -275,6 +275,13 @@ export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false })
 
               <div className="p-5 flex flex-col flex-grow justify-between space-y-4">
                 <div className="space-y-1.5">
+                  {project.status !== 'Completed' && (
+                    <div className="pb-1">
+                      <Tag variant="badge" status="In progress">
+                        In progress ({project.badge})
+                      </Tag>
+                    </div>
+                  )}
                   <h3 className="font-serif text-xl sm:text-[22px] font-semibold text-charcoal group-hover:text-burnt-orange transition-colors duration-200">
                     {project.title.replace(' using YOLOv8', '').replace(': Cross-Platform College App', '')}
                   </h3>
