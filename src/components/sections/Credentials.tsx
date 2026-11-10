@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, type Variants } from 'framer-motion';
+import { m, type Variants } from 'framer-motion';
 import { Award, Users, CheckCircle } from 'lucide-react';
 import { credentialsData } from '../../data/credentials';
 import { SectionLabel } from '../ui/SectionLabel';
@@ -48,7 +48,7 @@ export const Credentials: React.FC = () => {
         </Reveal>
 
         {/* Cards stagger in; on hover the icon rotates slightly (6 degrees) and the border turns orange */}
-        <motion.div
+        <m.div
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -56,7 +56,7 @@ export const Credentials: React.FC = () => {
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           {credentialsData.map((cred) => (
-            <motion.div key={cred.id} variants={cardVariants} className="h-full">
+            <m.div key={cred.id} variants={cardVariants} className="h-full">
               <Card
                 className="group p-6 space-y-4 flex flex-col justify-between h-full border border-warm-border hover:border-burnt-orange transition-colors duration-200"
               >
@@ -98,9 +98,9 @@ export const Credentials: React.FC = () => {
                   <span className="text-[11px] text-muted-grey/80">Documented</span>
                 </div>
               </Card>
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

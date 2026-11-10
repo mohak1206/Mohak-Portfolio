@@ -10,7 +10,7 @@ import { Tag } from '../ui/Tag';
 import { Button } from '../ui/Button';
 import { Reveal } from '../ui/Reveal';
 import { SplitLines } from '../ui/SplitLines';
-import { motion, type Variants } from 'framer-motion';
+import { m, type Variants } from 'framer-motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
 
@@ -287,7 +287,7 @@ export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false })
 
         {/* 3-column grid on desktop, 2 columns on tablet, 1 column on mobile */}
         {/* Cards stagger in (0.1s) from 32px below */}
-        <motion.div
+        <m.div
           variants={cardsContainerVariants}
           initial="hidden"
           whileInView="show"
@@ -295,7 +295,7 @@ export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false })
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {displayProjects.map((project) => (
-            <motion.div key={project.slug} variants={cardItemVariants} className="h-full">
+            <m.div key={project.slug} variants={cardItemVariants} className="h-full">
               <article
                 onClick={() => setSelectedProject(project)}
                 className="group cursor-pointer bg-white rounded-[6px] border border-warm-border overflow-hidden hover:border-[#E47B43] hover:-translate-y-1.5 hover:shadow-float transition-all duration-300 shadow-sm flex flex-col h-full"
@@ -337,12 +337,12 @@ export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false })
                   </div>
                 </div>
               </article>
-            </motion.div>
+            </m.div>
           ))}
 
           {/* 6th tile at the end: a cream card linking to /projects. Arrow moves 6px right on hover, bg deepens slightly */}
           {!showAll && (
-            <motion.div variants={cardItemVariants} className="h-full">
+            <m.div variants={cardItemVariants} className="h-full">
               <Link
                 to="/projects"
                 className="group flex flex-col items-center justify-center p-8 bg-[#EFE8DD] hover:bg-[#E5DDD0] rounded-[6px] border border-warm-border hover:border-[#E47B43] hover:-translate-y-1.5 hover:shadow-float transition-all duration-300 shadow-sm text-center min-h-[300px] h-full"
@@ -357,9 +357,9 @@ export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false })
                   Explore all prototypes & lab ideas &rarr;
                 </span>
               </Link>
-            </motion.div>
+            </m.div>
           )}
-        </motion.div>
+        </m.div>
 
         {showAll && (
           <div className="pt-8 space-y-6">

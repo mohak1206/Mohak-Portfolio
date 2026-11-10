@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT, DURATION } from '../../lib/animation';
 
@@ -9,7 +9,6 @@ interface RevealProps {
   duration?: number;
   yOffset?: number;
   className?: string;
-  as?: keyof typeof motion;
 }
 
 export const Reveal: React.FC<RevealProps> = ({
@@ -26,7 +25,7 @@ export const Reveal: React.FC<RevealProps> = ({
   }
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: yOffset }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={DEFAULT_VIEWPORT}
@@ -38,7 +37,7 @@ export const Reveal: React.FC<RevealProps> = ({
       className={className}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };
 

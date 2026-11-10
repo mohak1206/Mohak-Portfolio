@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { motion, useScroll } from 'framer-motion';
+import { m, useScroll } from 'framer-motion';
 import { useScrollSpy } from '../../hooks/useScrollSpy';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { MobileMenu } from './MobileMenu';
@@ -61,13 +61,13 @@ export const Navbar: React.FC = () => {
   return (
     <>
       {/* 2px burnt-orange scroll-progress bar fixed at the very top */}
-      <motion.div
+      <m.div
         className="fixed top-0 left-0 right-0 h-[2px] bg-burnt-orange z-[60] origin-left pointer-events-none"
         style={{ scaleX: prefersReducedMotion ? 0 : scrollYProgress }}
         aria-hidden="true"
       />
 
-      <motion.header
+      <m.header
         initial={prefersReducedMotion ? false : { opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: EASING }}
@@ -103,7 +103,7 @@ export const Navbar: React.FC = () => {
                 >
                   {item.label}
                   {isActive && (
-                    <motion.span
+                    <m.span
                       layoutId="activeNavUnderline"
                       className="absolute bottom-0 left-0 right-0 h-[2px] bg-burnt-orange"
                       transition={
@@ -162,7 +162,7 @@ export const Navbar: React.FC = () => {
           onItemClick={handleNavClick}
           onClose={() => setMobileMenuOpen(false)}
         />
-      </motion.header>
+      </m.header>
     </>
   );
 };

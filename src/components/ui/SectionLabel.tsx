@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { cn } from '../../lib/utils';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
@@ -27,7 +27,7 @@ export const SectionLabel: React.FC<SectionLabelProps> = ({
         className
       )}
     >
-      <motion.span
+      <m.span
         className="w-5 h-[1.5px] bg-burnt-orange inline-block origin-left"
         initial={prefersReducedMotion ? false : { scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
@@ -35,16 +35,16 @@ export const SectionLabel: React.FC<SectionLabelProps> = ({
         transition={{ duration: 0.5, ease: EASING }}
         aria-hidden="true"
       />
-      <motion.span
+      <m.span
         initial={prefersReducedMotion ? false : { opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={DEFAULT_VIEWPORT}
         transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.25, ease: EASING }}
       >
         {label}
-      </motion.span>
+      </m.span>
       {twoSided && (
-        <motion.span
+        <m.span
           className="w-5 h-[1.5px] bg-burnt-orange inline-block origin-right"
           initial={prefersReducedMotion ? false : { scaleX: 0 }}
           whileInView={{ scaleX: 1 }}

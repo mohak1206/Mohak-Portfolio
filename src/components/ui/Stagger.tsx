@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, type Variants } from 'framer-motion';
+import { m, type Variants } from 'framer-motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT, DURATION } from '../../lib/animation';
 
@@ -49,7 +49,7 @@ export const Stagger: React.FC<StaggerProps> = ({
   }
 
   return (
-    <motion.div
+    <m.div
       variants={staggerContainerVariants(staggerDelay, delay)}
       initial="hidden"
       whileInView="show"
@@ -57,7 +57,7 @@ export const Stagger: React.FC<StaggerProps> = ({
       className={className}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };
 
@@ -77,11 +77,10 @@ export const StaggerItem: React.FC<StaggerItemProps> = ({
   }
 
   return (
-    <motion.div variants={staggerItemVariants} className={className}>
+    <m.div variants={staggerItemVariants} className={className}>
       {children}
-    </motion.div>
+    </m.div>
   );
 };
 
 export default Stagger;
-

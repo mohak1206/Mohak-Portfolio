@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, useScroll, useTransform, type Variants } from 'framer-motion';
+import { m, useScroll, useTransform, type Variants } from 'framer-motion';
 import { ArrowRight, Cpu, Layers, Eye, Zap } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { projectsData } from '../../data/projects';
 import { Button } from '../ui/Button';
-import { SectionLabel } from '../ui/SectionLabel';
 import { ContourLines } from '../art/ContourLines';
 import { ArchFrame } from '../art/ArchFrame';
 import { MountainFallback } from '../art/MountainFallback';
@@ -22,7 +21,7 @@ const CODE_LINES = [
   '    improve()',
 ];
 
-const TerminalTypewriter: React.FC<{ startDelay?: number }> = ({ startDelay = 600 }) => {
+const TerminalTypewriter: React.FC<{ startDelay?: number }> = ({ startDelay = 400 }) => {
   const prefersReducedMotion = useReducedMotion();
   const [lineIdx, setLineIdx] = useState<number>(() =>
     prefersReducedMotion ? CODE_LINES.length : 0
@@ -60,7 +59,7 @@ const TerminalTypewriter: React.FC<{ startDelay?: number }> = ({ startDelay = 60
           return 0;
         }
       });
-    }, 35); // 35ms per character typing
+    }, 30); // 30ms per character typing
 
     return () => clearInterval(interval);
   }, [hasStarted, lineIdx, prefersReducedMotion]);
@@ -150,8 +149,8 @@ export const Hero: React.FC = () => {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.08,
-        delayChildren: prefersReducedMotion ? 0 : 0.65,
+        staggerChildren: 0.06,
+        delayChildren: prefersReducedMotion ? 0 : 0.45,
       },
     },
   };
@@ -162,7 +161,7 @@ export const Hero: React.FC = () => {
       opacity: 1,
       x: 0,
       transition: {
-        duration: 0.45,
+        duration: 0.35,
         ease: EASING,
       },
     },
@@ -181,27 +180,27 @@ export const Hero: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center min-h-[calc(100vh-140px)]">
           {/* Left Column */}
           <div className="lg:col-span-7 flex flex-col justify-center space-y-6 lg:pr-4">
-            {/* Label line grows from 0 to full width, then label text fades in */}
+            {/* Label line grows from 0 to full width, then label text fades in (<300ms start) */}
             <div className="inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.2em] text-charcoal/80 font-medium">
-              <motion.span
+              <m.span
                 className="w-5 h-[1.5px] bg-burnt-orange inline-block origin-left"
                 initial={prefersReducedMotion ? false : { scaleX: 0 }}
                 animate={{ scaleX: 1 }}
-                transition={{ duration: 0.5, ease: EASING }}
+                transition={{ duration: 0.35, ease: EASING }}
                 aria-hidden="true"
               />
-              <motion.span
+              <m.span
                 initial={prefersReducedMotion ? false : { opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.35, ease: EASING }}
+                transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : 0.1, ease: EASING }}
               >
                 MOHAK AGRAWAL
-              </motion.span>
-              <motion.span
+              </m.span>
+              <m.span
                 className="w-5 h-[1.5px] bg-burnt-orange inline-block origin-right"
                 initial={prefersReducedMotion ? false : { scaleX: 0 }}
                 animate={{ scaleX: 1 }}
-                transition={{ duration: 0.5, ease: EASING }}
+                transition={{ duration: 0.35, ease: EASING }}
                 aria-hidden="true"
               />
             </div>
@@ -215,13 +214,13 @@ export const Hero: React.FC = () => {
                     to be{' '}
                     <span className="relative inline-block">
                       <span className="font-serif italic text-burnt-orange font-normal">built.</span>
-                      <motion.span
+                      <m.span
                         className="absolute -bottom-1 left-0 right-0 h-[2px] bg-burnt-orange origin-left pointer-events-none"
                         initial={prefersReducedMotion ? false : { scaleX: 0 }}
                         animate={{ scaleX: 1 }}
                         transition={{
-                          duration: 0.6,
-                          delay: prefersReducedMotion ? 0 : 0.85,
+                          duration: 0.5,
+                          delay: prefersReducedMotion ? 0 : 0.45,
                           ease: EASING,
                         }}
                         aria-hidden="true"
@@ -229,16 +228,16 @@ export const Hero: React.FC = () => {
                     </span>
                   </span>,
                 ]}
-                delay={0.15}
-                staggerDelay={0.14}
+                delay={0.1}
+                staggerDelay={0.1}
               />
             </h1>
 
             {/* Subline with 0.08s stagger */}
-            <motion.div
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+            <m.div
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.85, ease: EASING }}
+              transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.35, ease: EASING }}
               className="flex flex-wrap items-center gap-2 text-sm sm:text-base font-medium text-charcoal/90"
             >
               <span>AI/ML Developer</span>
@@ -246,23 +245,23 @@ export const Hero: React.FC = () => {
               <span>Full Stack Engineer</span>
               <span className="text-burnt-orange font-bold">·</span>
               <span>Problem Solver</span>
-            </motion.div>
+            </m.div>
 
             {/* Paragraph with 0.08s stagger */}
-            <motion.p
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+            <m.p
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.93, ease: EASING }}
+              transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.42, ease: EASING }}
               className="text-muted-grey text-base sm:text-lg max-w-xl font-normal leading-relaxed"
             >
               {profileData.heroBio}
-            </motion.p>
+            </m.p>
 
             {/* CTAs with 0.08s stagger */}
-            <motion.div
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+            <m.div
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 1.01, ease: EASING }}
+              transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.5, ease: EASING }}
               className="flex flex-wrap items-center gap-4 pt-2"
             >
               <Button asAnchor href="#projects" onClick={scrollToProjects} variant="primary" size="lg">
@@ -283,22 +282,22 @@ export const Hero: React.FC = () => {
                 </svg>
                 <span>GitHub</span>
               </Button>
-            </motion.div>
+            </m.div>
 
             {/* True Stats Row with CountUp and growing dividers */}
-            <motion.div
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+            <m.div
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 1.09, ease: EASING }}
+              transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.58, ease: EASING }}
               className="pt-6 sm:pt-8"
             >
               <div className="relative pt-4">
                 {/* Horizontal top border growing from 0 */}
-                <motion.div
+                <m.div
                   className="absolute top-0 left-0 right-0 h-[1px] bg-warm-border origin-left"
                   initial={prefersReducedMotion ? false : { scaleX: 0 }}
                   animate={{ scaleX: 1 }}
-                  transition={{ duration: 0.7, delay: prefersReducedMotion ? 0 : 1.1, ease: EASING }}
+                  transition={{ duration: 0.5, delay: prefersReducedMotion ? 0 : 0.6, ease: EASING }}
                   aria-hidden="true"
                 />
 
@@ -312,11 +311,11 @@ export const Hero: React.FC = () => {
                       {stats.projectsLabel}
                     </div>
                     {/* Divider 1 growing in height */}
-                    <motion.div
+                    <m.div
                       className="hidden sm:block absolute top-1 bottom-1 right-0 w-[1px] bg-warm-border origin-top"
                       initial={prefersReducedMotion ? false : { scaleY: 0 }}
                       animate={{ scaleY: 1 }}
-                      transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 1.2, ease: EASING }}
+                      transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.68, ease: EASING }}
                       aria-hidden="true"
                     />
                   </div>
@@ -330,11 +329,11 @@ export const Hero: React.FC = () => {
                       {stats.internshipsLabel}
                     </div>
                     {/* Divider 2 growing in height */}
-                    <motion.div
+                    <m.div
                       className="hidden sm:block absolute top-1 bottom-1 right-0 w-[1px] bg-warm-border origin-top"
                       initial={prefersReducedMotion ? false : { scaleY: 0 }}
                       animate={{ scaleY: 1 }}
-                      transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 1.25, ease: EASING }}
+                      transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.72, ease: EASING }}
                       aria-hidden="true"
                     />
                   </div>
@@ -348,11 +347,11 @@ export const Hero: React.FC = () => {
                       {stats.eventsLabel}
                     </div>
                     {/* Divider 3 growing in height */}
-                    <motion.div
+                    <m.div
                       className="hidden sm:block absolute top-1 bottom-1 right-0 w-[1px] bg-warm-border origin-top"
                       initial={prefersReducedMotion ? false : { scaleY: 0 }}
                       animate={{ scaleY: 1 }}
-                      transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 1.3, ease: EASING }}
+                      transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.76, ease: EASING }}
                       aria-hidden="true"
                     />
                   </div>
@@ -368,28 +367,28 @@ export const Hero: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
 
           {/* Right Column: Signature Visual Composition */}
           <div className="lg:col-span-5 relative flex items-center justify-center pt-8 lg:pt-0">
             <div className="relative w-full max-w-[380px] sm:max-w-[420px] aspect-[4/5] mx-auto">
               {/* Plus (+) Crosshair marker fades in */}
-              <motion.div
+              <m.div
                 initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: prefersReducedMotion ? 0 : 0.6, ease: EASING }}
+                transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.4, ease: EASING }}
                 className="absolute -top-3 right-4 sm:-right-2 z-20 text-charcoal/60 font-mono text-2xl select-none"
                 aria-hidden="true"
               >
                 +
-              </motion.div>
+              </m.div>
 
               {/* Sun circle: rises from slightly below and scales from 0.85 to 1 with a gentle fade */}
-              <motion.div
-                initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 24 }}
+              <m.div
+                initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 16 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.85, delay: prefersReducedMotion ? 0 : 0.3, ease: EASING }}
+                transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.2, ease: EASING }}
                 className="absolute top-[28%] -left-8 sm:-left-14 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-burnt-orange shadow-lg z-0"
                 style={{
                   background: 'radial-gradient(circle at 35% 35%, #E47B43, #C94F17)',
@@ -398,10 +397,10 @@ export const Hero: React.FC = () => {
               />
 
               {/* Arch image: reveals with a clip-path rising from the bottom (inset(100% 0 0 0) -> inset(0)) */}
-              <motion.div
+              <m.div
                 initial={prefersReducedMotion ? false : { clipPath: 'inset(100% 0% 0% 0%)' }}
                 animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
-                transition={{ duration: 0.9, delay: prefersReducedMotion ? 0 : 0.2, ease: EASING }}
+                transition={{ duration: 0.7, delay: prefersReducedMotion ? 0 : 0.15, ease: EASING }}
                 className="w-full h-full"
               >
                 <ArchFrame>
@@ -410,13 +409,13 @@ export const Hero: React.FC = () => {
                     alt="Mountain peak at sunrise framed by an architectural arch"
                   />
                 </ArchFrame>
-              </motion.div>
+              </m.div>
 
               {/* Floating Dark Terminal Card: slides in, types code line-by-line, subtle idle float */}
-              <motion.div
-                initial={prefersReducedMotion ? false : { opacity: 0, x: -24, y: 24 }}
+              <m.div
+                initial={prefersReducedMotion ? false : { opacity: 0, x: -20, y: 20 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{ duration: 0.75, delay: prefersReducedMotion ? 0 : 0.45, ease: EASING }}
+                transition={{ duration: 0.55, delay: prefersReducedMotion ? 0 : 0.3, ease: EASING }}
                 className="absolute -bottom-5 sm:-bottom-7 -left-4 sm:-left-8 z-30"
               >
                 <div className="hero-idle-float-terminal bg-[#1E1E1E] text-white/90 rounded-[8px] p-4 sm:p-5 shadow-2xl border border-white/10 w-[240px] sm:w-[270px] backdrop-blur-md">
@@ -426,43 +425,43 @@ export const Hero: React.FC = () => {
                     <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] inline-block" />
                   </div>
 
-                  <TerminalTypewriter startDelay={650} />
+                  <TerminalTypewriter startDelay={450} />
                 </div>
-              </motion.div>
+              </m.div>
 
               {/* Floating White Tags Card: slides in from right, rows stagger in, subtle idle float */}
-              <motion.div
-                initial={prefersReducedMotion ? false : { opacity: 0, x: 24, y: -10 }}
+              <m.div
+                initial={prefersReducedMotion ? false : { opacity: 0, x: 20, y: -10 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{ duration: 0.75, delay: prefersReducedMotion ? 0 : 0.55, ease: EASING }}
+                transition={{ duration: 0.55, delay: prefersReducedMotion ? 0 : 0.4, ease: EASING }}
                 className="absolute top-12 sm:top-16 -right-4 sm:-right-10 z-30"
               >
                 <div className="hero-idle-float-tags bg-white/95 backdrop-blur-md rounded-[8px] py-3 px-4 shadow-float border border-warm-border min-w-[170px] sm:min-w-[190px]">
-                  <motion.div
+                  <m.div
                     variants={tagContainerVariants}
                     initial="hidden"
                     animate="show"
                     className="divide-y divide-warm-border/70 text-xs sm:text-sm font-medium text-charcoal"
                   >
-                    <motion.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
+                    <m.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
                       <Cpu className="w-4 h-4 text-burnt-orange stroke-[2]" />
                       <span>AI / ML</span>
-                    </motion.div>
-                    <motion.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
+                    </m.div>
+                    <m.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
                       <Layers className="w-4 h-4 text-burnt-orange stroke-[2]" />
                       <span>Full Stack</span>
-                    </motion.div>
-                    <motion.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
+                    </m.div>
+                    <m.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
                       <Eye className="w-4 h-4 text-burnt-orange stroke-[2]" />
                       <span>Computer Vision</span>
-                    </motion.div>
-                    <motion.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
+                    </m.div>
+                    <m.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
                       <Zap className="w-4 h-4 text-burnt-orange stroke-[2]" />
                       <span>Product Development</span>
-                    </motion.div>
-                  </motion.div>
+                    </m.div>
+                  </m.div>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
           </div>
         </div>

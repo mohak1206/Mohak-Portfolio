@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, type Variants } from 'framer-motion';
+import { m, type Variants } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { handsOnSkills, exploringSkills } from '../../data/skills';
 import { SectionLabel } from '../ui/SectionLabel';
@@ -77,7 +77,7 @@ export const Expertise: React.FC = () => {
           </Reveal>
 
           {/* Category blocks stagger up */}
-          <motion.div
+          <m.div
             variants={blocksContainerVariants}
             initial="hidden"
             whileInView="show"
@@ -85,7 +85,7 @@ export const Expertise: React.FC = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"
           >
             {handsOnSkills.map((group, idx) => (
-              <motion.div key={idx} variants={blockItemVariants} className="h-full">
+              <m.div key={idx} variants={blockItemVariants} className="h-full">
                 <Card className="p-5 space-y-3 flex flex-col justify-between h-full">
                   <div>
                     <h3 className="font-mono text-xs uppercase tracking-wider text-burnt-orange font-semibold pb-2">
@@ -93,7 +93,7 @@ export const Expertise: React.FC = () => {
                     </h3>
 
                     {/* Thin separator lines grow from left to right */}
-                    <motion.div
+                    <m.div
                       className="h-[1px] bg-warm-border origin-left w-full mb-3"
                       initial={prefersReducedMotion ? false : { scaleX: 0 }}
                       whileInView={{ scaleX: 1 }}
@@ -102,7 +102,7 @@ export const Expertise: React.FC = () => {
                     />
 
                     {/* Skill chips fade in with small stagger; on hover gets orange border and small orange dot scales in */}
-                    <motion.div
+                    <m.div
                       variants={chipsContainerVariants}
                       initial="hidden"
                       whileInView="show"
@@ -110,7 +110,7 @@ export const Expertise: React.FC = () => {
                       className="flex flex-wrap gap-1.5"
                     >
                       {group.skills.map((skill) => (
-                        <motion.span
+                        <m.span
                           key={skill}
                           variants={chipItemVariants}
                           className="group/chip relative inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium bg-ivory text-charcoal/90 rounded-[3px] border border-warm-border hover:border-burnt-orange hover:bg-cream transition-all duration-200 cursor-default"
@@ -120,14 +120,14 @@ export const Expertise: React.FC = () => {
                             aria-hidden="true"
                           />
                           <span>{skill}</span>
-                        </motion.span>
+                        </m.span>
                       ))}
-                    </motion.div>
+                    </m.div>
                   </div>
                 </Card>
-              </motion.div>
+              </m.div>
             ))}
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Exploring Group */}

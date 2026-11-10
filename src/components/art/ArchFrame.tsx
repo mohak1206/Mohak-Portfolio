@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING } from '../../lib/animation';
 import { cn } from '../../lib/utils';
@@ -26,7 +26,7 @@ export const ArchFrame: React.FC<ArchFrameProps> = ({
           preserveAspectRatio="none"
           aria-hidden="true"
         >
-          <motion.path
+          <m.path
             d="M 1 50 A 49 49 0 0 1 99 50 L 99 121 A 3 3 0 0 1 96 124 L 4 124 A 3 3 0 0 1 1 121 Z"
             fill="none"
             stroke="#C94F17"

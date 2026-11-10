@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT, DURATION } from '../../lib/animation';
 
@@ -38,7 +38,7 @@ export const SplitLines: React.FC<SplitLinesProps> = ({
     <span className={className}>
       {lines.map((line, idx) => (
         <span key={idx} className="block overflow-hidden">
-          <motion.span
+          <m.span
             className={`block ${lineClassName}`}
             initial={{ y: '108%', opacity: 0 }}
             whileInView={{ y: '0%', opacity: 1 }}
@@ -50,7 +50,7 @@ export const SplitLines: React.FC<SplitLinesProps> = ({
             }}
           >
             {line}
-          </motion.span>
+          </m.span>
         </span>
       ))}
     </span>
@@ -58,4 +58,3 @@ export const SplitLines: React.FC<SplitLinesProps> = ({
 };
 
 export default SplitLines;
-

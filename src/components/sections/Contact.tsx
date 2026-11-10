@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Mail, ArrowUpRight, MapPin, Github, Linkedin } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { SectionLabel } from '../ui/SectionLabel';
@@ -24,7 +24,7 @@ export const Contact: React.FC = () => {
                 lines={[
                   'Let’s build something',
                   <span key="contact-italic-word" className="inline-block">
-                    <motion.span
+                    <m.span
                       initial={prefersReducedMotion ? false : { opacity: 0 }}
                       whileInView={{ opacity: 1 }}
                       viewport={DEFAULT_VIEWPORT}
@@ -32,7 +32,7 @@ export const Contact: React.FC = () => {
                       className="italic text-burnt-orange font-normal"
                     >
                       useful together.
-                    </motion.span>
+                    </m.span>
                   </span>,
                 ]}
               />

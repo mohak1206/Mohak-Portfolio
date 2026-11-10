@@ -9,15 +9,33 @@ interface MountainFallbackProps {
 
 export const MountainFallback: React.FC<MountainFallbackProps> = ({ type, className, alt }) => {
   const [imgError, setImgError] = useState(false);
-  const src = type === 'hero-sunrise' ? '/images/hero-mountain.jpg' : '/images/about-mountain-bw.jpg';
+  const src = type === 'hero-sunrise' ? '/images/hero-mountain.webp' : '/images/about-mountain-bw.webp';
 
   if (!imgError) {
+    if (type === 'hero-sunrise') {
+      return (
+        <img
+          src={src}
+          alt={alt}
+          width={600}
+          height={750}
+          fetchPriority="high"
+          decoding="async"
+          className={cn('w-full h-full object-cover', className)}
+          onError={() => setImgError(true)}
+        />
+      );
+    }
+
     return (
       <img
         src={src}
         alt={alt}
-        className={cn('w-full h-full object-cover', className)}
+        width={800}
+        height={500}
         loading="lazy"
+        decoding="async"
+        className={cn('w-full h-full object-cover', className)}
         onError={() => setImgError(true)}
       />
     );
@@ -122,4 +140,3 @@ export const MountainFallback: React.FC<MountainFallbackProps> = ({ type, classN
     </div>
   );
 };
-

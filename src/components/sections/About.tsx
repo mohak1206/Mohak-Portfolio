@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, type Variants } from 'framer-motion';
+import { m, type Variants } from 'framer-motion';
 import { Code, Layers, Users, Sparkles, ArrowRight, MapPin, GraduationCap, Calendar, Award } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { SectionLabel } from '../ui/SectionLabel';
@@ -64,7 +64,7 @@ export const About: React.FC = () => {
           <div className="lg:col-span-4 relative flex items-center justify-center">
             <div className="relative w-full max-w-[360px] aspect-[16/11]">
               {/* Orange sun circle scales in from 0.8 with a 0.2s delay */}
-              <motion.div
+              <m.div
                 className="absolute -top-6 right-6 w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-burnt-orange z-0 shadow-md"
                 initial={prefersReducedMotion ? false : { scale: 0.8, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
@@ -74,7 +74,7 @@ export const About: React.FC = () => {
               />
 
               {/* Image reveals with clip-path wipe from left to right */}
-              <motion.div
+              <m.div
                 className="relative w-full h-full rounded-[10px] overflow-hidden border border-warm-border shadow-float z-10 bg-cream"
                 initial={prefersReducedMotion ? false : { clipPath: 'inset(0% 100% 0% 0%)' }}
                 whileInView={{ clipPath: 'inset(0% 0% 0% 0%)' }}
@@ -85,7 +85,7 @@ export const About: React.FC = () => {
                   type="about-bw"
                   alt="Dramatic black and white mountain peak"
                 />
-              </motion.div>
+              </m.div>
             </div>
           </div>
 
@@ -98,7 +98,7 @@ export const About: React.FC = () => {
                 lines={[
                   'A Developer who',
                   <span key="about-italic-part" className="inline-block">
-                    <motion.span
+                    <m.span
                       initial={prefersReducedMotion ? false : { opacity: 0 }}
                       whileInView={{ opacity: 1 }}
                       viewport={DEFAULT_VIEWPORT}
@@ -106,14 +106,14 @@ export const About: React.FC = () => {
                       className="italic text-burnt-orange font-normal"
                     >
                       Builds, Learns and Leads.
-                    </motion.span>
+                    </m.span>
                   </span>,
                 ]}
               />
             </h2>
 
             {/* Paragraph fades up */}
-            <motion.p
+            <m.p
               initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={DEFAULT_VIEWPORT}
@@ -121,17 +121,17 @@ export const About: React.FC = () => {
               className="text-muted-grey text-base leading-relaxed"
             >
               {aboutIntro}
-            </motion.p>
+            </m.p>
 
             {/* 4 Pill Tags stagger in (0.06s), on hover lift 2px and icon turns burnt orange */}
-            <motion.div
+            <m.div
               variants={pillContainerVariants}
               initial="hidden"
               whileInView="show"
               viewport={DEFAULT_VIEWPORT}
               className="flex flex-wrap gap-2.5 pt-2"
             >
-              <motion.div
+              <m.div
                 variants={pillItemVariants}
                 whileHover={prefersReducedMotion ? undefined : { y: -2 }}
                 transition={{ duration: 0.2 }}
@@ -141,9 +141,9 @@ export const About: React.FC = () => {
                   <Code className="w-3.5 h-3.5 text-muted-grey group-hover:text-burnt-orange stroke-[2] transition-colors duration-200" />
                   <span>AI/ML</span>
                 </Tag>
-              </motion.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 variants={pillItemVariants}
                 whileHover={prefersReducedMotion ? undefined : { y: -2 }}
                 transition={{ duration: 0.2 }}
@@ -153,9 +153,9 @@ export const About: React.FC = () => {
                   <Layers className="w-3.5 h-3.5 text-muted-grey group-hover:text-burnt-orange stroke-[2] transition-colors duration-200" />
                   <span>Web Development</span>
                 </Tag>
-              </motion.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 variants={pillItemVariants}
                 whileHover={prefersReducedMotion ? undefined : { y: -2 }}
                 transition={{ duration: 0.2 }}
@@ -165,9 +165,9 @@ export const About: React.FC = () => {
                   <Users className="w-3.5 h-3.5 text-muted-grey group-hover:text-burnt-orange stroke-[2] transition-colors duration-200" />
                   <span>Leadership</span>
                 </Tag>
-              </motion.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 variants={pillItemVariants}
                 whileHover={prefersReducedMotion ? undefined : { y: -2 }}
                 transition={{ duration: 0.2 }}
@@ -177,8 +177,8 @@ export const About: React.FC = () => {
                   <Sparkles className="w-3.5 h-3.5 text-muted-grey group-hover:text-burnt-orange stroke-[2] transition-colors duration-200" />
                   <span>Social Impact</span>
                 </Tag>
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           </div>
 
           {/* Right Column: Thin vertical divider + Currently Exploring */}
@@ -191,26 +191,26 @@ export const About: React.FC = () => {
               </div>
 
               {/* Three list items slide in from the left, staggered. On hover each arrow moves 4px right */}
-              <motion.ul
+              <m.ul
                 variants={listContainerVariants}
                 initial="hidden"
                 whileInView="show"
                 viewport={DEFAULT_VIEWPORT}
                 className="space-y-3 font-medium text-sm text-charcoal/90"
               >
-                <motion.li variants={listItemVariants} className="flex items-start gap-2 group cursor-default">
+                <m.li variants={listItemVariants} className="flex items-start gap-2 group cursor-default">
                   <ArrowRight className="w-4 h-4 text-burnt-orange shrink-0 mt-0.5 group-hover:translate-x-1 transition-transform duration-200" />
                   <span>Agentic AI & LLM Applications</span>
-                </motion.li>
-                <motion.li variants={listItemVariants} className="flex items-start gap-2 group cursor-default">
+                </m.li>
+                <m.li variants={listItemVariants} className="flex items-start gap-2 group cursor-default">
                   <ArrowRight className="w-4 h-4 text-burnt-orange shrink-0 mt-0.5 group-hover:translate-x-1 transition-transform duration-200" />
                   <span>Scalable Full-Stack Systems</span>
-                </motion.li>
-                <motion.li variants={listItemVariants} className="flex items-start gap-2 group cursor-default">
+                </m.li>
+                <m.li variants={listItemVariants} className="flex items-start gap-2 group cursor-default">
                   <ArrowRight className="w-4 h-4 text-burnt-orange shrink-0 mt-0.5 group-hover:translate-x-1 transition-transform duration-200" />
                   <span>AI for Real-World Impact</span>
-                </motion.li>
-              </motion.ul>
+                </m.li>
+              </m.ul>
             </div>
           </div>
         </div>

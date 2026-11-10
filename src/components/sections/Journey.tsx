@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { journeyData } from '../../data/journey';
 import { SectionLabel } from '../ui/SectionLabel';
@@ -26,7 +26,7 @@ export const Journey: React.FC = () => {
               lines={[
                 <span key="journey-heading">
                   {journeyData.heading.titleRegular}{' '}
-                  <motion.span
+                  <m.span
                     initial={prefersReducedMotion ? false : { opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={DEFAULT_VIEWPORT}
@@ -34,13 +34,13 @@ export const Journey: React.FC = () => {
                     className="font-serif italic text-burnt-orange font-normal"
                   >
                     {journeyData.heading.titleItalic}
-                  </motion.span>
+                  </m.span>
                 </span>,
               ]}
             />
           </h2>
 
-          <motion.p
+          <m.p
             initial={prefersReducedMotion ? false : { opacity: 0, y: 15 }}
             whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
             viewport={DEFAULT_VIEWPORT}
@@ -48,14 +48,14 @@ export const Journey: React.FC = () => {
             className="text-muted-grey text-base sm:text-lg max-w-[60ch] leading-relaxed"
           >
             {journeyData.intro}
-          </motion.p>
+          </m.p>
         </div>
 
         {/* 3 Journey Cards Composition with Connecting Line */}
         <div className="relative">
           {/* Connecting Line - Desktop (Horizontal) */}
           <div className="hidden md:block absolute top-12 left-[12%] right-[12%] h-[2px] z-0 pointer-events-none">
-            <motion.div
+            <m.div
               initial={prefersReducedMotion ? false : { scaleX: 0 }}
               whileInView={prefersReducedMotion ? undefined : { scaleX: 1 }}
               viewport={{ once: true, margin: '-80px' }}
@@ -66,7 +66,7 @@ export const Journey: React.FC = () => {
 
           {/* Connecting Line - Mobile (Vertical) */}
           <div className="md:hidden absolute top-8 bottom-8 left-8 w-[2px] z-0 pointer-events-none">
-            <motion.div
+            <m.div
               initial={prefersReducedMotion ? false : { scaleY: 0 }}
               whileInView={prefersReducedMotion ? undefined : { scaleY: 1 }}
               viewport={{ once: true, margin: '-80px' }}
@@ -78,7 +78,7 @@ export const Journey: React.FC = () => {
           {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
             {journeyData.steps.map((step, idx) => (
-              <motion.div
+              <m.div
                 key={step.number}
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
                 whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
@@ -93,7 +93,7 @@ export const Journey: React.FC = () => {
                 <div>
                   {/* Step Number & Circle Marker */}
                   <div className="flex items-center justify-between mb-4">
-                    <motion.div
+                    <m.div
                       initial={prefersReducedMotion ? false : { scale: 0.8, opacity: 0 }}
                       whileInView={prefersReducedMotion ? undefined : { scale: 1, opacity: 1 }}
                       viewport={{ once: true, margin: '-80px' }}
@@ -101,7 +101,7 @@ export const Journey: React.FC = () => {
                       className="font-serif text-4xl sm:text-[56px] leading-none font-semibold text-burnt-orange transition-transform duration-300 group-hover:-translate-y-1"
                     >
                       {step.number}
-                    </motion.div>
+                    </m.div>
 
                     <div
                       className="w-3.5 h-3.5 rounded-full bg-ivory border-2 border-burnt-orange shadow-sm"
@@ -130,14 +130,14 @@ export const Journey: React.FC = () => {
                   <span className="font-semibold text-charcoal">{step.tag}</span>
                   <ArrowRight className="w-4 h-4 text-burnt-orange transition-transform duration-300 group-hover:translate-x-1" />
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </div>
 
         {/* Closing Paragraph and Large Editorial Quote */}
         <div className="pt-6 space-y-8 text-center">
-          <motion.p
+          <m.p
             initial={prefersReducedMotion ? false : { opacity: 0, y: 15 }}
             whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
@@ -145,9 +145,9 @@ export const Journey: React.FC = () => {
             className="text-muted-grey text-base sm:text-lg max-w-[65ch] mx-auto leading-relaxed"
           >
             {journeyData.closing}
-          </motion.p>
+          </m.p>
 
-          <motion.blockquote
+          <m.blockquote
             initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
@@ -169,7 +169,7 @@ export const Journey: React.FC = () => {
               {journeyData.quote.highlight}
             </span>
             <span>{journeyData.quote.suffix}</span>
-          </motion.blockquote>
+          </m.blockquote>
         </div>
       </div>
     </section>

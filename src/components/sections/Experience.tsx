@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useScroll } from 'framer-motion';
+import { m, useScroll } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { experienceData } from '../../data/experience';
 import { SectionLabel } from '../ui/SectionLabel';
@@ -44,7 +44,7 @@ export const Experience: React.FC = () => {
           {/* Background track line */}
           <div className="absolute top-2 bottom-2 left-0 w-[2px] bg-warm-border/50" aria-hidden="true">
             {/* The vertical line draws downward as user scrolls with scaleY, origin top */}
-            <motion.div
+            <m.div
               className="w-full h-full bg-burnt-orange origin-top"
               style={{ scaleY: prefersReducedMotion ? 1 : scrollYProgress }}
             />
@@ -53,7 +53,7 @@ export const Experience: React.FC = () => {
           {experienceData.map((item, idx) => (
             <div key={item.id} className="relative group">
               {/* Timeline Circular Marker: pops in (scale 0 -> 1 with small overshoot) when in view */}
-              <motion.div
+              <m.div
                 className={`absolute -left-[30.5px] sm:-left-[46.5px] top-1.5 w-3.5 h-3.5 rounded-full border-2 transition-transform duration-200 group-hover:scale-125 z-10 ${
                   item.isCurrent
                     ? 'bg-burnt-orange border-burnt-orange marker-pulse-ring'
@@ -71,7 +71,7 @@ export const Experience: React.FC = () => {
               />
 
               {/* Entries slide in alternately a few pixels from the side */}
-              <motion.div
+              <m.div
                 initial={prefersReducedMotion ? false : { opacity: 0, x: idx % 2 === 0 ? -16 : 16 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={DEFAULT_VIEWPORT}
@@ -112,7 +112,7 @@ export const Experience: React.FC = () => {
                     </div>
                   )}
                 </Card>
-              </motion.div>
+              </m.div>
             </div>
           ))}
         </div>

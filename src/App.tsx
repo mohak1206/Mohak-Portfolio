@@ -1,12 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion, MotionConfig, type Variants } from 'framer-motion';
+import { AnimatePresence, m, LazyMotion, domAnimation, MotionConfig, type Variants } from 'framer-motion';
 import { Home } from './pages/Home';
-import { ProjectsPage } from './pages/ProjectsPage';
-import { ProjectDetail } from './pages/ProjectDetail';
-import { IntroScreen } from './components/ui/IntroScreen';
 import { EASING } from './lib/animation';
 import { useReducedMotion } from './hooks/useReducedMotion';
+
+// Route-level code splitting
+const ProjectsPage = React.lazy(() =>
+  import('./pages/ProjectsPage').then((module) => ({ default: module.ProjectsPage }))
+);
+const ProjectDetail = React.lazy(() =>
+  import('./pages/ProjectDetail').then((module) => ({ default: module.ProjectDetail }))
+);
 
 const ScrollToTop: React.FC = () => {
   const { pathname, hash } = useLocation();
@@ -43,20 +48,28 @@ const AnimatedRoutes: React.FC = () => {
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div
+      <m.div
         key={location.pathname}
         variants={pageVariants}
         initial="initial"
         animate="animate"
         exit="exit"
       >
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Home />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/projects/:slug" element={<ProjectDetail />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </motion.div>
+        <Suspense
+          fallback={
+            <div className="min-h-screen bg-ivory flex items-center justify-center">
+              <span className="w-6 h-6 border-2 border-burnt-orange border-t-transparent rounded-full animate-spin" />
+            </div>
+          }
+        >
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<Home />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/projects/:slug" element={<ProjectDetail />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </m.div>
     </AnimatePresence>
   );
 };
@@ -64,11 +77,12 @@ const AnimatedRoutes: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <MotionConfig reducedMotion="user">
-      <IntroScreen />
-      <BrowserRouter>
-        <ScrollToTop />
-        <AnimatedRoutes />
-      </BrowserRouter>
+      <LazyMotion features={domAnimation} strict>
+        <BrowserRouter>
+          <ScrollToTop />
+          <AnimatedRoutes />
+        </BrowserRouter>
+      </LazyMotion>
     </MotionConfig>
   );
 };
