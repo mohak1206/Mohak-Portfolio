@@ -51,3 +51,4 @@ export const IntroScreen: React.FC = () => {
 };
 
 export default IntroScreen;
+

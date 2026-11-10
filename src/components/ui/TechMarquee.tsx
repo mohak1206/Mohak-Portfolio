@@ -45,3 +45,4 @@ export const TechMarquee: React.FC = () => {
 };
 
 export default TechMarquee;
+
