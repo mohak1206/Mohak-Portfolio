@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion, type Variants } from 'framer-motion';
 import { ArrowRight, Cpu, Layers, Eye, Zap } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { projectsData } from '../../data/projects';
@@ -8,9 +8,125 @@ import { SectionLabel } from '../ui/SectionLabel';
 import { ContourLines } from '../art/ContourLines';
 import { ArchFrame } from '../art/ArchFrame';
 import { MountainFallback } from '../art/MountainFallback';
+import { SplitLines } from '../ui/SplitLines';
+import { CountUp } from '../ui/CountUp';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { EASING } from '../../lib/animation';
+
+const CODE_LINES = [
+  '# building...',
+  'from ideas import impact',
+  'while True:',
+  '    build()',
+  '    learn()',
+  '    improve()',
+];
+
+const TerminalTypewriter: React.FC<{ startDelay?: number }> = ({ startDelay = 600 }) => {
+  const prefersReducedMotion = useReducedMotion();
+  const [lineIdx, setLineIdx] = useState<number>(() =>
+    prefersReducedMotion ? CODE_LINES.length : 0
+  );
+  const [charIdx, setCharIdx] = useState<number>(() =>
+    prefersReducedMotion ? CODE_LINES[CODE_LINES.length - 1].length : 0
+  );
+  const [hasStarted, setHasStarted] = useState<boolean>(Boolean(prefersReducedMotion));
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      setHasStarted(true);
+      setLineIdx(CODE_LINES.length);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setHasStarted(true);
+    }, startDelay);
+
+    return () => clearTimeout(timer);
+  }, [prefersReducedMotion, startDelay]);
+
+  useEffect(() => {
+    if (prefersReducedMotion || !hasStarted) return;
+    if (lineIdx >= CODE_LINES.length) return;
+
+    const interval = setInterval(() => {
+      setCharIdx((prevChar) => {
+        const currentLine = CODE_LINES[lineIdx];
+        if (prevChar < currentLine.length) {
+          return prevChar + 1;
+        } else {
+          setLineIdx((prevLine) => prevLine + 1);
+          return 0;
+        }
+      });
+    }, 35); // 35ms per character typing
+
+    return () => clearInterval(interval);
+  }, [hasStarted, lineIdx, prefersReducedMotion]);
+
+  const renderLineContent = (text: string, idx: number, showCursor: boolean) => {
+    let content: React.ReactNode;
+    if (idx === 0) {
+      content = <span className="text-[#6A9955] italic">{text}</span>;
+    } else if (idx === 1) {
+      content = (
+        <span>
+          <span className="text-burnt-orange font-semibold">{text.slice(0, 5)}</span>
+          <span>{text.slice(5, 11)}</span>
+          <span className="text-burnt-orange font-semibold">{text.slice(11, 18)}</span>
+          <span>{text.slice(18)}</span>
+        </span>
+      );
+    } else if (idx === 2) {
+      content = (
+        <span className="pt-1.5 block">
+          <span className="text-burnt-orange font-semibold">{text.slice(0, 6)}</span>
+          <span>{text.slice(6)}</span>
+        </span>
+      );
+    } else {
+      content = <span className="text-[#9CDCFE]">{text}</span>;
+    }
+
+    return (
+      <div key={idx} className={idx >= 3 ? 'pl-4' : ''}>
+        {content}
+        {showCursor && <span className="terminal-blinking-cursor" aria-hidden="true" />}
+      </div>
+    );
+  };
+
+  return (
+    <div className="font-mono text-xs sm:text-[13px] leading-relaxed text-[#D4D4D4] space-y-0.5">
+      {CODE_LINES.map((line, idx) => {
+        if (prefersReducedMotion) {
+          const isLast = idx === CODE_LINES.length - 1;
+          return renderLineContent(line, idx, isLast);
+        }
+
+        if (idx < lineIdx) {
+          return renderLineContent(line, idx, false);
+        }
+
+        if (idx === lineIdx) {
+          const visiblePart = line.slice(0, charIdx);
+          return renderLineContent(visiblePart, idx, true);
+        }
+
+        if (lineIdx >= CODE_LINES.length && idx === CODE_LINES.length - 1) {
+          return renderLineContent(line, idx, true);
+        }
+
+        return null;
+      })}
+    </div>
+  );
+};
 
 export const Hero: React.FC = () => {
   const { stats } = profileData;
+  const prefersReducedMotion = useReducedMotion();
   const completedProjectsCount = projectsData.filter((p) => p.status === 'Completed').length.toString();
 
   const scrollToProjects = (e: React.MouseEvent) => {
@@ -19,6 +135,29 @@ export const Hero: React.FC = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const tagContainerVariants: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: prefersReducedMotion ? 0 : 0.65,
+      },
+    },
+  };
+
+  const tagRowVariants: Variants = {
+    hidden: { opacity: 0, x: 12 },
+    show: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.45,
+        ease: EASING,
+      },
+    },
   };
 
   return (
@@ -33,28 +172,64 @@ export const Hero: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center min-h-[calc(100vh-140px)]">
           {/* Left Column */}
           <div className="lg:col-span-7 flex flex-col justify-center space-y-6 lg:pr-4">
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <SectionLabel label="MOHAK AGRAWAL" twoSided />
-            </motion.div>
+            {/* Label line grows from 0 to full width, then label text fades in */}
+            <div className="inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.2em] text-charcoal/80 font-medium">
+              <motion.span
+                className="w-5 h-[1.5px] bg-burnt-orange inline-block origin-left"
+                initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.5, ease: EASING }}
+                aria-hidden="true"
+              />
+              <motion.span
+                initial={prefersReducedMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.35, ease: EASING }}
+              >
+                MOHAK AGRAWAL
+              </motion.span>
+              <motion.span
+                className="w-5 h-[1.5px] bg-burnt-orange inline-block origin-right"
+                initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.5, ease: EASING }}
+                aria-hidden="true"
+              />
+            </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="font-serif text-4xl sm:text-6xl lg:text-[70px] xl:text-[76px] font-normal leading-[1.08] tracking-[-0.02em] text-charcoal"
-            >
-              Ideas deserve <br />
-              <span className="font-serif italic text-burnt-orange font-normal">to be built.</span>
-            </motion.h1>
+            {/* Headline using SplitLines + thin orange underline drawing under "built." */}
+            <h1 className="font-serif text-4xl sm:text-6xl lg:text-[70px] xl:text-[76px] font-normal leading-[1.08] tracking-[-0.02em] text-charcoal">
+              <SplitLines
+                lines={[
+                  'Ideas deserve',
+                  <span key="hero-line-2" className="inline-block">
+                    to be{' '}
+                    <span className="relative inline-block">
+                      <span className="font-serif italic text-burnt-orange font-normal">built.</span>
+                      <motion.span
+                        className="absolute -bottom-1 left-0 right-0 h-[2px] bg-burnt-orange origin-left pointer-events-none"
+                        initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{
+                          duration: 0.6,
+                          delay: prefersReducedMotion ? 0 : 0.85,
+                          ease: EASING,
+                        }}
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </span>,
+                ]}
+                delay={0.15}
+                staggerDelay={0.14}
+              />
+            </h1>
 
+            {/* Subline with 0.08s stagger */}
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.85, ease: EASING }}
               className="flex flex-wrap items-center gap-2 text-sm sm:text-base font-medium text-charcoal/90"
             >
               <span>AI/ML Developer</span>
@@ -64,20 +239,21 @@ export const Hero: React.FC = () => {
               <span>Problem Solver</span>
             </motion.div>
 
+            {/* Paragraph with 0.08s stagger */}
             <motion.p
-              initial={{ opacity: 0, y: 15 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.25 }}
+              transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.93, ease: EASING }}
               className="text-muted-grey text-base sm:text-lg max-w-xl font-normal leading-relaxed"
             >
               {profileData.heroBio}
             </motion.p>
 
-            {/* CTAs */}
+            {/* CTAs with 0.08s stagger */}
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+              transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 1.01, ease: EASING }}
               className="flex flex-wrap items-center gap-4 pt-2"
             >
               <Button asAnchor href="#projects" onClick={scrollToProjects} variant="primary" size="lg">
@@ -100,47 +276,86 @@ export const Hero: React.FC = () => {
               </Button>
             </motion.div>
 
-            {/* True Stats Row with thin vertical dividers */}
+            {/* True Stats Row with CountUp and growing dividers */}
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.35 }}
+              transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 1.09, ease: EASING }}
               className="pt-6 sm:pt-8"
             >
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-0 divide-y sm:divide-y-0 sm:divide-x divide-warm-border pt-4 border-t border-warm-border">
-                <div className="sm:pr-6 pb-2 sm:pb-0">
-                  <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
-                    {completedProjectsCount}
-                  </div>
-                  <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
-                    {stats.projectsLabel}
-                  </div>
-                </div>
+              <div className="relative pt-4">
+                {/* Horizontal top border growing from 0 */}
+                <motion.div
+                  className="absolute top-0 left-0 right-0 h-[1px] bg-warm-border origin-left"
+                  initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.7, delay: prefersReducedMotion ? 0 : 1.1, ease: EASING }}
+                  aria-hidden="true"
+                />
 
-                <div className="sm:px-6 pt-2 sm:pt-0 pb-2 sm:pb-0">
-                  <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
-                    {stats.internshipsCount}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-0 relative">
+                  {/* Stat 1 */}
+                  <div className="sm:pr-6 pb-2 sm:pb-0 relative">
+                    <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
+                      <CountUp value={completedProjectsCount} />
+                    </div>
+                    <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
+                      {stats.projectsLabel}
+                    </div>
+                    {/* Divider 1 growing in height */}
+                    <motion.div
+                      className="hidden sm:block absolute top-1 bottom-1 right-0 w-[1px] bg-warm-border origin-top"
+                      initial={prefersReducedMotion ? false : { scaleY: 0 }}
+                      animate={{ scaleY: 1 }}
+                      transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 1.2, ease: EASING }}
+                      aria-hidden="true"
+                    />
                   </div>
-                  <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
-                    {stats.internshipsLabel}
-                  </div>
-                </div>
 
-                <div className="sm:px-6 pt-2 sm:pt-0 pb-2 sm:pb-0">
-                  <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
-                    {stats.eventsCount}
+                  {/* Stat 2 */}
+                  <div className="sm:px-6 pt-2 sm:pt-0 pb-2 sm:pb-0 relative">
+                    <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
+                      <CountUp value={stats.internshipsCount} />
+                    </div>
+                    <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
+                      {stats.internshipsLabel}
+                    </div>
+                    {/* Divider 2 growing in height */}
+                    <motion.div
+                      className="hidden sm:block absolute top-1 bottom-1 right-0 w-[1px] bg-warm-border origin-top"
+                      initial={prefersReducedMotion ? false : { scaleY: 0 }}
+                      animate={{ scaleY: 1 }}
+                      transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 1.25, ease: EASING }}
+                      aria-hidden="true"
+                    />
                   </div>
-                  <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
-                    {stats.eventsLabel}
-                  </div>
-                </div>
 
-                <div className="sm:pl-6 pt-2 sm:pt-0">
-                  <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
-                    {stats.cgpaScore}
+                  {/* Stat 3 */}
+                  <div className="sm:px-6 pt-2 sm:pt-0 pb-2 sm:pb-0 relative">
+                    <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
+                      <CountUp value={stats.eventsCount} />
+                    </div>
+                    <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
+                      {stats.eventsLabel}
+                    </div>
+                    {/* Divider 3 growing in height */}
+                    <motion.div
+                      className="hidden sm:block absolute top-1 bottom-1 right-0 w-[1px] bg-warm-border origin-top"
+                      initial={prefersReducedMotion ? false : { scaleY: 0 }}
+                      animate={{ scaleY: 1 }}
+                      transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 1.3, ease: EASING }}
+                      aria-hidden="true"
+                    />
                   </div>
-                  <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
-                    {stats.cgpaLabel}
+
+                  {/* Stat 4 */}
+                  <div className="sm:pl-6 pt-2 sm:pt-0">
+                    <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
+                      <CountUp value={stats.cgpaScore} decimals={1} />
+                    </div>
+                    <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
+                      {stats.cgpaLabel}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -150,19 +365,22 @@ export const Hero: React.FC = () => {
           {/* Right Column: Signature Visual Composition */}
           <div className="lg:col-span-5 relative flex items-center justify-center pt-8 lg:pt-0">
             <div className="relative w-full max-w-[380px] sm:max-w-[420px] aspect-[4/5] mx-auto">
-              {/* Plus (+) Crosshair marker */}
-              <div
+              {/* Plus (+) Crosshair marker fades in */}
+              <motion.div
+                initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: prefersReducedMotion ? 0 : 0.6, ease: EASING }}
                 className="absolute -top-3 right-4 sm:-right-2 z-20 text-charcoal/60 font-mono text-2xl select-none"
                 aria-hidden="true"
               >
                 +
-              </div>
+              </motion.div>
 
-              {/* Large Soft Burnt-Orange Sun Circle */}
+              {/* Sun circle: rises from slightly below and scales from 0.85 to 1 with a gentle fade */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
+                initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 24 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.85, delay: prefersReducedMotion ? 0 : 0.3, ease: EASING }}
                 className="absolute top-[28%] -left-8 sm:-left-14 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-burnt-orange shadow-lg z-0"
                 style={{
                   background: 'radial-gradient(circle at 35% 35%, #E47B43, #C94F17)',
@@ -170,11 +388,11 @@ export const Hero: React.FC = () => {
                 aria-hidden="true"
               />
 
-              {/* Arch Image with Frame */}
+              {/* Arch image: reveals with a clip-path rising from the bottom (inset(100% 0 0 0) -> inset(0)) */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+                initial={prefersReducedMotion ? false : { clipPath: 'inset(100% 0% 0% 0%)' }}
+                animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
+                transition={{ duration: 0.9, delay: prefersReducedMotion ? 0 : 0.2, ease: EASING }}
                 className="w-full h-full"
               >
                 <ArchFrame>
@@ -185,58 +403,55 @@ export const Hero: React.FC = () => {
                 </ArchFrame>
               </motion.div>
 
-              {/* Floating Dark Terminal Card */}
+              {/* Floating Dark Terminal Card: slides in, types code line-by-line, subtle idle float */}
               <motion.div
-                initial={{ opacity: 0, x: -20, y: 20 }}
+                initial={prefersReducedMotion ? false : { opacity: 0, x: -24, y: 24 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.4 }}
-                className="animate-float-slow absolute -bottom-5 sm:-bottom-7 -left-4 sm:-left-8 z-30 bg-[#1E1E1E] text-white/90 rounded-[8px] p-4 sm:p-5 shadow-2xl border border-white/10 w-[240px] sm:w-[270px] backdrop-blur-md"
+                transition={{ duration: 0.75, delay: prefersReducedMotion ? 0 : 0.45, ease: EASING }}
+                className="absolute -bottom-5 sm:-bottom-7 -left-4 sm:-left-8 z-30"
               >
-                <div className="flex items-center space-x-1.5 mb-3" aria-hidden="true">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] inline-block" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] inline-block" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] inline-block" />
-                </div>
+                <div className="hero-idle-float-terminal bg-[#1E1E1E] text-white/90 rounded-[8px] p-4 sm:p-5 shadow-2xl border border-white/10 w-[240px] sm:w-[270px] backdrop-blur-md">
+                  <div className="flex items-center space-x-1.5 mb-3" aria-hidden="true">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] inline-block" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] inline-block" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] inline-block" />
+                  </div>
 
-                <div className="font-mono text-xs sm:text-[13px] leading-relaxed text-[#D4D4D4] space-y-0.5">
-                  <p className="text-[#6A9955] italic"># building...</p>
-                  <p>
-                    <span className="text-burnt-orange font-semibold">from</span> ideas{' '}
-                    <span className="text-burnt-orange font-semibold">import</span> impact
-                  </p>
-                  <p className="pt-1.5">
-                    <span className="text-burnt-orange font-semibold">while</span> True:
-                  </p>
-                  <p className="pl-4 text-[#9CDCFE]">build()</p>
-                  <p className="pl-4 text-[#9CDCFE]">learn()</p>
-                  <p className="pl-4 text-[#9CDCFE]">improve()</p>
+                  <TerminalTypewriter startDelay={650} />
                 </div>
               </motion.div>
 
-              {/* Floating White Skills Card */}
+              {/* Floating White Tags Card: slides in from right, rows stagger in, subtle idle float */}
               <motion.div
-                initial={{ opacity: 0, x: 20, y: -10 }}
+                initial={prefersReducedMotion ? false : { opacity: 0, x: 24, y: -10 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.5 }}
-                className="animate-float-opposite absolute top-12 sm:top-16 -right-4 sm:-right-10 z-30 bg-white/95 backdrop-blur-md rounded-[8px] py-3 px-4 shadow-float border border-warm-border min-w-[170px] sm:min-w-[190px]"
+                transition={{ duration: 0.75, delay: prefersReducedMotion ? 0 : 0.55, ease: EASING }}
+                className="absolute top-12 sm:top-16 -right-4 sm:-right-10 z-30"
               >
-                <div className="divide-y divide-warm-border/70 text-xs sm:text-sm font-medium text-charcoal">
-                  <div className="flex items-center gap-2.5 py-2">
-                    <Cpu className="w-4 h-4 text-burnt-orange stroke-[2]" />
-                    <span>AI / ML</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 py-2">
-                    <Layers className="w-4 h-4 text-burnt-orange stroke-[2]" />
-                    <span>Full Stack</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 py-2">
-                    <Eye className="w-4 h-4 text-burnt-orange stroke-[2]" />
-                    <span>Computer Vision</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 py-2">
-                    <Zap className="w-4 h-4 text-burnt-orange stroke-[2]" />
-                    <span>Product Development</span>
-                  </div>
+                <div className="hero-idle-float-tags bg-white/95 backdrop-blur-md rounded-[8px] py-3 px-4 shadow-float border border-warm-border min-w-[170px] sm:min-w-[190px]">
+                  <motion.div
+                    variants={tagContainerVariants}
+                    initial="hidden"
+                    animate="show"
+                    className="divide-y divide-warm-border/70 text-xs sm:text-sm font-medium text-charcoal"
+                  >
+                    <motion.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
+                      <Cpu className="w-4 h-4 text-burnt-orange stroke-[2]" />
+                      <span>AI / ML</span>
+                    </motion.div>
+                    <motion.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
+                      <Layers className="w-4 h-4 text-burnt-orange stroke-[2]" />
+                      <span>Full Stack</span>
+                    </motion.div>
+                    <motion.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
+                      <Eye className="w-4 h-4 text-burnt-orange stroke-[2]" />
+                      <span>Computer Vision</span>
+                    </motion.div>
+                    <motion.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
+                      <Zap className="w-4 h-4 text-burnt-orange stroke-[2]" />
+                      <span>Product Development</span>
+                    </motion.div>
+                  </motion.div>
                 </div>
               </motion.div>
             </div>
@@ -247,3 +462,4 @@ export const Hero: React.FC = () => {
   );
 };
 
+export default Hero;

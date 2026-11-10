@@ -1,19 +1,22 @@
+import { useReducedMotion as useFramerReducedMotion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
 export function useReducedMotion(): boolean {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
+  const framerPref = useFramerReducedMotion();
+  const [systemPref, setSystemPref] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   });
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
-
+    const handleChange = () => setSystemPref(mediaQuery.matches);
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  return prefersReducedMotion;
+  return Boolean(framerPref ?? systemPref);
 }
 
+export default useReducedMotion;

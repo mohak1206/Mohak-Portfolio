@@ -8,6 +8,7 @@ import { ProjectCover } from '../ui/ProjectCover';
 import { Card } from '../ui/Card';
 import { Tag } from '../ui/Tag';
 import { Button } from '../ui/Button';
+import { Reveal } from '../ui/Reveal';
 
 interface ProjectModalProps {
   project: Project | null;
@@ -238,85 +239,90 @@ export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false })
   return (
     <section id="projects" aria-label="Projects" className="py-20 lg:py-28 bg-ivory border-b border-warm-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div className="space-y-2">
-            <SectionLabel label="PROJECTS" />
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal text-charcoal">
-              Selected Works
-            </h2>
-          </div>
+        <Reveal>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div className="space-y-2">
+              <SectionLabel label="PROJECTS" />
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal text-charcoal">
+                Selected Works
+              </h2>
+            </div>
 
-          {!showAll && (
-            <Link
-              to="/projects"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-burnt-orange hover:text-light-orange transition-colors"
-            >
-              <span>View all projects</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          )}
-        </div>
+            {!showAll && (
+              <Link
+                to="/projects"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-burnt-orange hover:text-light-orange transition-colors"
+              >
+                <span>View all projects</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            )}
+          </div>
+        </Reveal>
 
         {/* 3-column grid on desktop, 2 columns on tablet, 1 column on mobile */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayProjects.map((project) => (
-            <article
-              key={project.slug}
-              onClick={() => setSelectedProject(project)}
-              className="group cursor-pointer bg-white rounded-[6px] border border-warm-border overflow-hidden hover:border-burnt-orange/50 transition-all duration-300 shadow-sm hover:shadow-float flex flex-col h-full"
-            >
-              <div className="relative w-full aspect-[16/10] bg-cream overflow-hidden border-b border-warm-border">
-                <ProjectCover slug={project.slug} title={project.title} />
+          {displayProjects.map((project, idx) => (
+            <Reveal key={project.slug} delay={idx * 0.08} className="h-full">
+              <article
+                onClick={() => setSelectedProject(project)}
+                className="group cursor-pointer bg-white rounded-[6px] border border-warm-border overflow-hidden hover:border-burnt-orange/50 transition-all duration-300 shadow-sm hover:shadow-float flex flex-col h-full"
+              >
+                <div className="relative w-full aspect-[16/10] bg-cream overflow-hidden border-b border-warm-border">
+                  <ProjectCover slug={project.slug} title={project.title} />
 
-                <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-[4px] bg-white/95 text-charcoal flex items-center justify-center shadow-md border border-warm-border group-hover:bg-burnt-orange group-hover:text-white group-hover:border-burnt-orange transition-all duration-200">
-                  <ArrowUpRight className="w-4 h-4 stroke-[2.2]" />
+                  <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-[4px] bg-white/95 text-charcoal flex items-center justify-center shadow-md border border-warm-border group-hover:bg-burnt-orange group-hover:text-white group-hover:border-burnt-orange transition-all duration-200">
+                    <ArrowUpRight className="w-4 h-4 stroke-[2.2]" />
+                  </div>
                 </div>
-              </div>
 
-              <div className="p-5 flex flex-col flex-grow justify-between space-y-4">
-                <div className="space-y-1.5">
-                  {project.status !== 'Completed' && (
-                    <div className="pb-1">
-                      <Tag variant="badge" status="In progress">
-                        In progress ({project.badge})
+                <div className="p-5 flex flex-col flex-grow justify-between space-y-4">
+                  <div className="space-y-1.5">
+                    {project.status !== 'Completed' && (
+                      <div className="pb-1">
+                        <Tag variant="badge" status="In progress">
+                          In progress ({project.badge})
+                        </Tag>
+                      </div>
+                    )}
+                    <h3 className="font-serif text-xl sm:text-[22px] font-semibold text-charcoal group-hover:text-burnt-orange transition-colors duration-200">
+                      {project.title.replace(' using YOLOv8', '').replace(': Cross-Platform College App', '')}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-muted-grey line-clamp-2 leading-relaxed">
+                      {project.oneLiner}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {project.tags.map((tag) => (
+                      <Tag key={tag} variant="mono">
+                        {tag}
                       </Tag>
-                    </div>
-                  )}
-                  <h3 className="font-serif text-xl sm:text-[22px] font-semibold text-charcoal group-hover:text-burnt-orange transition-colors duration-200">
-                    {project.title.replace(' using YOLOv8', '').replace(': Cross-Platform College App', '')}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-muted-grey line-clamp-2 leading-relaxed">
-                    {project.oneLiner}
-                  </p>
+                    ))}
+                  </div>
                 </div>
-
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {project.tags.map((tag) => (
-                    <Tag key={tag} variant="mono">
-                      {tag}
-                    </Tag>
-                  ))}
-                </div>
-              </div>
-            </article>
+              </article>
+            </Reveal>
           ))}
 
           {/* 6th tile at the end: a cream (#EFE8DD) card linking to /projects */}
           {!showAll && (
-            <Link
-              to="/projects"
-              className="group flex flex-col items-center justify-center p-8 bg-[#EFE8DD] rounded-[6px] border border-warm-border hover:border-burnt-orange/50 transition-all duration-300 shadow-sm hover:shadow-float text-center min-h-[300px]"
-            >
-              <div className="w-12 h-12 rounded-full bg-white border border-warm-border flex items-center justify-center text-burnt-orange mb-4 group-hover:bg-burnt-orange group-hover:text-white group-hover:border-burnt-orange transition-all duration-200">
-                <ArrowRight className="w-5 h-5 stroke-[2.2] group-hover:translate-x-1 transition-transform" />
-              </div>
-              <span className="font-serif text-2xl font-semibold text-charcoal group-hover:text-burnt-orange transition-colors">
-                View all projects
-              </span>
-              <span className="text-xs font-mono text-muted-grey mt-2">
-                Explore all prototypes & lab ideas &rarr;
-              </span>
-            </Link>
+            <Reveal delay={displayProjects.length * 0.08} className="h-full">
+              <Link
+                to="/projects"
+                className="group flex flex-col items-center justify-center p-8 bg-[#EFE8DD] rounded-[6px] border border-warm-border hover:border-burnt-orange/50 transition-all duration-300 shadow-sm hover:shadow-float text-center min-h-[300px] h-full"
+              >
+                <div className="w-12 h-12 rounded-full bg-white border border-warm-border flex items-center justify-center text-burnt-orange mb-4 group-hover:bg-burnt-orange group-hover:text-white group-hover:border-burnt-orange transition-all duration-200">
+                  <ArrowRight className="w-5 h-5 stroke-[2.2] group-hover:translate-x-1 transition-transform" />
+                </div>
+                <span className="font-serif text-2xl font-semibold text-charcoal group-hover:text-burnt-orange transition-colors">
+                  View all projects
+                </span>
+                <span className="text-xs font-mono text-muted-grey mt-2">
+                  Explore all prototypes & lab ideas &rarr;
+                </span>
+              </Link>
+            </Reveal>
           )}
         </div>
 

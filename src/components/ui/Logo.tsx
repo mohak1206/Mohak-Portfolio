@@ -1,6 +1,12 @@
+import { motion } from 'framer-motion';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { EASING } from '../../lib/animation';
+
 type LogoProps = { className?: string };
 
 export default function Logo({ className = "h-8 w-auto" }: LogoProps) {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <svg
       viewBox="6 6 100 52"
@@ -16,11 +22,43 @@ export default function Logo({ className = "h-8 w-auto" }: LogoProps) {
         strokeLinecap="square"
         strokeLinejoin="miter"
       >
-        <path d="M12 52 V14 L32 38 L52 14 V52" />
-        <path d="M66 52 V32 A18 18 0 0 1 102 32 V52" />
-        <path d="M66 40 H102" strokeWidth="2.4" />
+        {/* Stroke 1: Left 'M' */}
+        <motion.path
+          d="M12 52 V14 L32 38 L52 14 V52"
+          initial={prefersReducedMotion ? false : { pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{
+            duration: 0.7,
+            delay: 0,
+            ease: EASING,
+          }}
+        />
+
+        {/* Stroke 2: Right 'A' arch */}
+        <motion.path
+          d="M66 52 V32 A18 18 0 0 1 102 32 V52"
+          initial={prefersReducedMotion ? false : { pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{
+            duration: 0.7,
+            delay: 0.15,
+            ease: EASING,
+          }}
+        />
+
+        {/* Stroke 3: Right 'A' crossbar */}
+        <motion.path
+          d="M66 40 H102"
+          strokeWidth="2.4"
+          initial={prefersReducedMotion ? false : { pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{
+            duration: 0.5,
+            delay: 0.3,
+            ease: EASING,
+          }}
+        />
       </g>
     </svg>
   );
 }
-

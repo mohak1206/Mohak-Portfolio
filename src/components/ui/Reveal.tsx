@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { EASING, DEFAULT_VIEWPORT, DURATION } from '../../lib/animation';
 
 interface RevealProps {
   children: React.ReactNode;
@@ -8,14 +9,15 @@ interface RevealProps {
   duration?: number;
   yOffset?: number;
   className?: string;
+  as?: keyof typeof motion;
 }
 
 export const Reveal: React.FC<RevealProps> = ({
   children,
   delay = 0,
-  duration = 0.5,
-  yOffset = 20,
-  className,
+  duration = DURATION.reveal,
+  yOffset = 24,
+  className = '',
 }) => {
   const prefersReducedMotion = useReducedMotion();
 
@@ -27,8 +29,12 @@ export const Reveal: React.FC<RevealProps> = ({
     <motion.div
       initial={{ opacity: 0, y: yOffset }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration, delay, ease: [0.25, 0.1, 0.25, 1.0] }}
+      viewport={DEFAULT_VIEWPORT}
+      transition={{
+        duration,
+        delay,
+        ease: EASING,
+      }}
       className={className}
     >
       {children}
@@ -36,3 +42,4 @@ export const Reveal: React.FC<RevealProps> = ({
   );
 };
 
+export default Reveal;
