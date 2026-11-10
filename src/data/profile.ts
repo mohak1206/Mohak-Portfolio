@@ -28,14 +28,7 @@ export const profileData: ProfileData = {
     cgpaScore: "8.6",
     cgpaLabel: "CGPA",
   },
-  aboutStory: {
-    leadParagraph: "I'm an AIML undergraduate who enjoys building meaningful products, from AI-powered applications to full-stack platforms. I'm curious, collaborative and always exploring new technologies to turn ideas into real, impactful solutions.",
-    paragraphs: [
-      "I chose AI and Machine Learning because I have always been curious about how technology works and how machines can learn, think and solve real-world problems. That curiosity grew as I explored AI applications, which pushed me to study it seriously.",
-      "I started coding with Python, learning the basics through small programs and gradually moving towards practical projects. My first real project was a simple application that showed me how code can turn an idea into something useful.",
-      "Today I'm a B.Tech student in AI & Machine Learning who enjoys building complete products: full-stack web apps, cross-platform apps, and computer-vision models. I'm open to internships, full-time roles and freelance work.",
-    ],
-  },
+  aboutIntro: "I'm an AIML undergraduate who enjoys building meaningful products, from AI-powered applications to full-stack platforms. I'm curious, collaborative and always exploring new technologies to turn ideas into real, impactful solutions.",
   education: {
     degree: "B.Tech, Artificial Intelligence & Machine Learning",
     institution: "St. John College of Engineering and Management",

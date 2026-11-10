@@ -97,10 +97,7 @@ export interface ProfileData {
     cgpaScore: string;
     cgpaLabel: string;
   };
-  aboutStory: {
-    leadParagraph: string;
-    paragraphs: string[];
-  };
+  aboutIntro: string;
   education: {
     degree: string;
     institution: string;

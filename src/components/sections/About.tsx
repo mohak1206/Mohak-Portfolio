@@ -7,11 +7,11 @@ import { Card } from '../ui/Card';
 import { MountainFallback } from '../art/MountainFallback';
 
 export const About: React.FC = () => {
-  const { aboutStory, education } = profileData;
+  const { aboutIntro, education } = profileData;
 
   return (
     <section id="about" aria-label="About Me" className="py-20 lg:py-28 bg-ivory border-b border-warm-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-14">
         {/* ROW 1: Signature Reference Layout (3 Columns on Desktop) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
           {/* Left Column: Landscape B&W mountain with burnt-orange sun circle behind peak */}
@@ -41,7 +41,7 @@ export const About: React.FC = () => {
             </h2>
 
             <p className="text-muted-grey text-base leading-relaxed">
-              {aboutStory.leadParagraph}
+              {aboutIntro}
             </p>
 
             {/* 4 Pill Tags with small orange icons */}
@@ -91,81 +91,72 @@ export const About: React.FC = () => {
           </div>
         </div>
 
-        {/* ROW 2: Extended Story, Academic Details & Coursework (Part B2) */}
-        <div className="pt-12 border-t border-warm-border">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            {/* Left 7 Columns: "My story" Narrative */}
-            <div className="lg:col-span-7 space-y-4">
-              <h3 className="font-serif text-2xl text-charcoal font-medium">My Story</h3>
-              <div className="space-y-4 text-muted-grey text-base leading-relaxed">
-                {aboutStory.paragraphs.map((p, idx) => (
-                  <p key={idx}>{p}</p>
-                ))}
-              </div>
-            </div>
+        {/* Academic Details, Coursework & Information Column */}
+        <div className="pt-10 border-t border-warm-border">
+          <Card elevated className="p-6 sm:p-8">
+            <h3 className="font-mono text-xs uppercase tracking-wider text-charcoal/80 font-semibold border-b border-warm-border pb-3 mb-6">
+              Academic & Profile Summary
+            </h3>
 
-            {/* Right 5 Columns: Secondary Info & Coursework */}
-            <div className="lg:col-span-5">
-              <Card elevated className="p-6 space-y-6">
-                <h4 className="font-mono text-xs uppercase tracking-wider text-charcoal/80 font-semibold border-b border-warm-border pb-3">
-                  Academic & Profile Summary
-                </h4>
-
-                <div className="space-y-3.5 text-sm">
-                  <div className="flex items-start gap-2.5">
-                    <MapPin className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
-                    <div>
-                      <span className="text-muted-grey">Location: </span>
-                      <span className="font-medium text-charcoal">{profileData.location}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-2.5">
-                    <GraduationCap className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
-                    <div>
-                      <span className="text-muted-grey">Degree: </span>
-                      <span className="font-medium text-charcoal">{education.degree}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-2.5">
-                    <span className="w-4 h-4 flex items-center justify-center font-mono text-xs text-burnt-orange font-bold mt-0.5 shrink-0">🏛</span>
-                    <div>
-                      <span className="text-muted-grey">Institution: </span>
-                      <span className="font-medium text-charcoal">{education.institution}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-2.5">
-                    <Calendar className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
-                    <div>
-                      <span className="text-muted-grey">Expected Graduation: </span>
-                      <span className="font-medium text-charcoal">{education.expectedGraduation}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-2.5">
-                    <Award className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
-                    <div>
-                      <span className="text-muted-grey">Academic Performance: </span>
-                      <span className="font-semibold text-burnt-orange">{education.cgpa}</span>
-                    </div>
-                  </div>
-
-                  <div className="pt-2">
-                    <div className="text-xs text-muted-grey mb-2">Open to:</div>
-                    <div className="flex flex-wrap gap-2">
-                      {education.openTo.map((item) => (
-                        <Tag key={item} variant="mono">
-                          {item}
-                        </Tag>
-                      ))}
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
+              {/* Core Information */}
+              <div className="lg:col-span-7 space-y-3.5 text-sm">
+                <div className="flex items-start gap-2.5">
+                  <MapPin className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
+                  <div>
+                    <span className="text-muted-grey">Location: </span>
+                    <span className="font-medium text-charcoal">{profileData.location}</span>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-warm-border">
-                  <div className="text-xs font-mono uppercase tracking-wider text-muted-grey mb-2.5">
+                <div className="flex items-start gap-2.5">
+                  <GraduationCap className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
+                  <div>
+                    <span className="text-muted-grey">Degree: </span>
+                    <span className="font-medium text-charcoal">{education.degree}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <span className="w-4 h-4 flex items-center justify-center font-mono text-xs text-burnt-orange font-bold mt-0.5 shrink-0">🏛</span>
+                  <div>
+                    <span className="text-muted-grey">Institution: </span>
+                    <span className="font-medium text-charcoal">{education.institution}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <Calendar className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
+                  <div>
+                    <span className="text-muted-grey">Expected Graduation: </span>
+                    <span className="font-medium text-charcoal">{education.expectedGraduation}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <Award className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
+                  <div>
+                    <span className="text-muted-grey">Academic Performance: </span>
+                    <span className="font-semibold text-burnt-orange">{education.cgpa}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Open to Badges & Coursework */}
+              <div className="lg:col-span-5 space-y-5 lg:border-l lg:border-warm-border/80 lg:pl-8">
+                <div>
+                  <div className="text-xs text-muted-grey mb-2 font-medium">Open to:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {education.openTo.map((item) => (
+                      <Tag key={item} variant="mono">
+                        {item}
+                      </Tag>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-warm-border/60">
+                  <div className="text-xs font-mono uppercase tracking-wider text-muted-grey mb-2.5 font-medium">
                     Relevant Coursework:
                   </div>
                   <div className="flex flex-wrap gap-1.5">
@@ -179,12 +170,11 @@ export const About: React.FC = () => {
                     ))}
                   </div>
                 </div>
-              </Card>
+              </div>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     </section>
   );
 };
-
