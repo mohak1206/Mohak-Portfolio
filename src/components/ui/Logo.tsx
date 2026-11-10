@@ -23,3 +23,4 @@ export default function Logo({ className = "h-8 w-auto" }: LogoProps) {
     </svg>
   );
 }
+
