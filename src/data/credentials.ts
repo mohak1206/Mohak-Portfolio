@@ -24,3 +24,4 @@ export const credentialsData: CredentialItem[] = [
     description: "Led the college NSS unit and successfully organised 10+ impactful campus and community service events with 50+ student volunteers.",
   },
 ];
+

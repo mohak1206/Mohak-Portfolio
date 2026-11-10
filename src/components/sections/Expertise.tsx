@@ -1,7 +1,8 @@
 import React from 'react';
-import { Sparkles, Terminal } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { handsOnSkills, exploringSkills } from '../../data/skills';
-import { SectionLabel } from '../common/SectionLabel';
+import { SectionLabel } from '../ui/SectionLabel';
+import { Card } from '../ui/Card';
 
 export const Expertise: React.FC = () => {
   return (
@@ -26,9 +27,9 @@ export const Expertise: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {handsOnSkills.map((group, idx) => (
-              <div
+              <Card
                 key={idx}
-                className="bg-white/80 border border-warm-border rounded-[6px] p-5 space-y-3 hover:border-burnt-orange/50 transition-colors shadow-sm flex flex-col justify-between"
+                className="p-5 space-y-3 flex flex-col justify-between"
               >
                 <div>
                   <h3 className="font-mono text-xs uppercase tracking-wider text-burnt-orange font-semibold border-b border-warm-border pb-2 mb-3">
@@ -46,7 +47,7 @@ export const Expertise: React.FC = () => {
                     ))}
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </div>

@@ -202,3 +202,4 @@ export const labIdeasData: LabIdea[] = [
     stack: ["Agentic AI", "Multi-Agent Systems", "Task Orchestration"],
   },
 ];
+

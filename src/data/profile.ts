@@ -54,3 +54,4 @@ export const profileData: ProfileData = {
     ],
   },
 };
+

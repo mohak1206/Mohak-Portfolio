@@ -154,3 +154,4 @@ vercel --prod
 - **Reduced Motion:** Fully complies with `prefers-reduced-motion` settings.
 - **Keyboard Navigation:** Focus states, Skip-to-content anchor, and Escape-to-close modals.
 - **SEO & Social:** Open Graph, Twitter Summary Cards, and structured JSON-LD Person schema.
+

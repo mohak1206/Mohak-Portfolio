@@ -110,3 +110,4 @@ export interface ProfileData {
     coursework: string[];
   };
 }
+

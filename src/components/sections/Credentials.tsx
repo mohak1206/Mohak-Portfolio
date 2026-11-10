@@ -1,7 +1,8 @@
 import React from 'react';
 import { Award, Users, CheckCircle } from 'lucide-react';
 import { credentialsData } from '../../data/credentials';
-import { SectionLabel } from '../common/SectionLabel';
+import { SectionLabel } from '../ui/SectionLabel';
+import { Card } from '../ui/Card';
 
 export const Credentials: React.FC = () => {
   return (
@@ -19,9 +20,9 @@ export const Credentials: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {credentialsData.map((cred) => (
-            <div
+            <Card
               key={cred.id}
-              className="bg-white/80 border border-warm-border rounded-[6px] p-6 space-y-4 shadow-sm hover:border-burnt-orange/40 transition-colors flex flex-col justify-between"
+              className="p-6 space-y-4 flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -48,7 +49,6 @@ export const Credentials: React.FC = () => {
                 </p>
               </div>
 
-              {/* Status / Link Placeholder */}
               <div className="pt-3 border-t border-warm-border/60 flex items-center justify-between text-xs text-muted-grey font-mono">
                 {cred.period ? (
                   <span>Academic Year {cred.period}</span>
@@ -60,7 +60,7 @@ export const Credentials: React.FC = () => {
                 )}
                 <span className="text-[11px] text-muted-grey/80">Documented</span>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>

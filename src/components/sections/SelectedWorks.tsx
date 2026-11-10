@@ -1,21 +1,25 @@
-import React, { useEffect, useRef } from 'react';
-import { X, ArrowUpRight, Github, AlertCircle, CheckCircle2, Cpu, Wrench } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ArrowRight, ArrowUpRight, Github, X, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { projectsData } from '../../data/projects';
 import { Project } from '../../types';
-import { ProjectCardArt } from '../common/ProjectCardArt';
+import { SectionLabel } from '../ui/SectionLabel';
+import { ProjectCover } from '../ui/ProjectCover';
+import { Card } from '../ui/Card';
+import { Tag } from '../ui/Tag';
+import { Button } from '../ui/Button';
 
 interface ProjectModalProps {
   project: Project | null;
   onClose: () => void;
 }
 
-export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
+const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
+      if (e.key === 'Escape') onClose();
     };
 
     if (project) {
@@ -45,18 +49,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
         ref={modalRef}
         className="relative w-full max-w-3xl bg-ivory border border-warm-border rounded-[8px] shadow-modal overflow-hidden my-auto max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-200"
       >
-        {/* Modal Header */}
         <div className="sticky top-0 z-20 flex items-center justify-between px-6 py-4 bg-ivory/95 backdrop-blur-md border-b border-warm-border">
           <div className="flex items-center gap-3">
-            <span
-              className={`px-2.5 py-0.5 rounded text-xs font-mono font-medium ${
-                project.status === 'Completed'
-                  ? 'bg-emerald-100/80 text-emerald-800 border border-emerald-300/60'
-                  : 'bg-amber-100/80 text-amber-800 border border-amber-300/60'
-              }`}
-            >
+            <Tag variant="badge" status={project.status}>
               {project.status} {project.badge ? `(${project.badge})` : ''}
-            </span>
+            </Tag>
             <span className="text-xs font-mono text-muted-grey uppercase tracking-wider">
               {project.category}
             </span>
@@ -72,9 +69,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
           </button>
         </div>
 
-        {/* Modal Scrollable Body */}
         <div className="p-6 sm:p-8 overflow-y-auto space-y-8">
-          {/* Title & Cover */}
           <div className="space-y-4">
             <h3 id="modal-title" className="font-serif text-3xl sm:text-4xl text-charcoal font-medium">
               {project.title}
@@ -84,13 +79,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
             </p>
 
             <div className="w-full aspect-[16/9] rounded-[6px] overflow-hidden border border-warm-border shadow-sm">
-              <ProjectCardArt slug={project.slug} title={project.title} />
+              <ProjectCover slug={project.slug} title={project.title} />
             </div>
           </div>
 
-          {/* Metrics Strip (if available) */}
           {project.metrics && project.metrics.length > 0 && (
-            <div className="bg-white border border-warm-border rounded-[6px] p-4 sm:p-5 shadow-sm">
+            <Card elevated className="p-5">
               <div className="text-xs font-mono uppercase tracking-wider text-muted-grey mb-3 font-semibold">
                 Verified Test Results
               </div>
@@ -104,10 +98,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           )}
 
-          {/* Honest Note / Limitations (e.g. for Fire & Smoke) */}
           {project.limitations && (
             <div className="flex items-start gap-3 bg-amber-50/70 border border-amber-200/80 rounded-[6px] p-4 text-xs sm:text-sm text-amber-900">
               <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
@@ -118,7 +111,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
             </div>
           )}
 
-          {/* Accuracy Note (e.g. for Inventory) */}
           {project.accuracyNote && (
             <div className="flex items-start gap-3 bg-stone-100/90 border border-stone-300/80 rounded-[6px] p-4 text-xs sm:text-sm text-charcoal">
               <AlertCircle className="w-4 h-4 text-muted-grey shrink-0 mt-0.5" />
@@ -129,24 +121,22 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
             </div>
           )}
 
-          {/* Problem & Solution Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white/70 border border-warm-border rounded-[6px] p-5 space-y-2">
+            <Card elevated className="p-5 space-y-2">
               <div className="text-xs font-mono uppercase tracking-wider text-burnt-orange font-semibold">
                 Problem Statement
               </div>
               <p className="text-sm text-charcoal/90 leading-relaxed">{project.problem}</p>
-            </div>
+            </Card>
 
-            <div className="bg-white/70 border border-warm-border rounded-[6px] p-5 space-y-2">
+            <Card elevated className="p-5 space-y-2">
               <div className="text-xs font-mono uppercase tracking-wider text-burnt-orange font-semibold">
                 Solution Approach
               </div>
               <p className="text-sm text-charcoal/90 leading-relaxed">{project.solution}</p>
-            </div>
+            </Card>
           </div>
 
-          {/* Features (if present) */}
           {project.features && project.features.length > 0 && (
             <div className="space-y-3">
               <div className="text-xs font-mono uppercase tracking-wider text-charcoal/80 font-semibold">
@@ -163,7 +153,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
             </div>
           )}
 
-          {/* Dataset & Training Specs (if present) */}
           {project.dataset && (
             <div className="space-y-2">
               <div className="text-xs font-mono uppercase tracking-wider text-charcoal/80 font-semibold">
@@ -173,7 +162,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
             </div>
           )}
 
-          {/* My Contribution */}
           <div className="space-y-2 bg-cream/50 border border-warm-border rounded-[6px] p-4">
             <div className="text-xs font-mono uppercase tracking-wider text-charcoal/80 font-semibold">
               My Contribution
@@ -181,7 +169,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
             <p className="text-sm text-charcoal/90 font-medium">{project.contribution}</p>
           </div>
 
-          {/* Challenges & Learnings */}
           <div className="space-y-2">
             <div className="text-xs font-mono uppercase tracking-wider text-charcoal/80 font-semibold">
               Challenge & Learning
@@ -191,47 +178,152 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
             </p>
           </div>
 
-          {/* Tech Stack */}
           <div className="space-y-3">
             <div className="text-xs font-mono uppercase tracking-wider text-charcoal/80 font-semibold">
               Technologies Used
             </div>
             <div className="flex flex-wrap gap-2">
               {project.stack.map((tech) => (
-                <span
-                  key={tech}
-                  className="px-2.5 py-1 text-xs font-mono bg-white border border-warm-border text-charcoal rounded-[4px]"
-                >
+                <Tag key={tech} variant="mono" className="px-2.5 py-1 text-xs bg-white">
                   {tech}
-                </span>
+                </Tag>
               ))}
             </div>
           </div>
 
-          {/* Screenshot Gallery Placeholder */}
           <div className="p-6 border border-dashed border-warm-border rounded-[6px] text-center bg-cream/30">
             <p className="text-xs sm:text-sm text-muted-grey font-mono">
               Screenshots coming soon · High-resolution outputs will be populated here
             </p>
           </div>
 
-          {/* GitHub CTA (Rule: No live demo exists yet, so do NOT show a "Live demo" button. Show "GitHub" only.) */}
           {project.githubUrl && (
             <div className="pt-2 flex justify-end">
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-burnt-orange hover:bg-light-orange text-white text-sm font-medium rounded-[5px] shadow-sm transition-all"
-              >
+              <Button asAnchor href={project.githubUrl} target="_blank" rel="noopener noreferrer" variant="primary">
                 <Github className="w-4 h-4" />
                 <span>View on GitHub</span>
                 <ArrowUpRight className="w-4 h-4" />
-              </a>
+              </Button>
             </div>
           )}
         </div>
       </div>
     </div>
+  );
+};
+
+interface SelectedWorksProps {
+  showAll?: boolean;
+}
+
+export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false }) => {
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+  const featuredProjects = projectsData.filter((p) => p.isFeatured).slice(0, 4);
+  const displayProjects = showAll ? projectsData : featuredProjects;
+
+  return (
+    <section id="projects" aria-label="Projects" className="py-20 lg:py-28 bg-ivory border-b border-warm-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div className="space-y-2">
+            <SectionLabel label="PROJECTS" />
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal text-charcoal">
+              Selected Works
+            </h2>
+          </div>
+
+          {!showAll && (
+            <Link
+              to="/projects"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-burnt-orange hover:text-light-orange transition-colors"
+            >
+              <span>View all projects</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {displayProjects.map((project) => (
+            <article
+              key={project.slug}
+              onClick={() => setSelectedProject(project)}
+              className="group cursor-pointer bg-white rounded-[6px] border border-warm-border overflow-hidden hover:border-burnt-orange/50 transition-all duration-300 shadow-sm hover:shadow-float flex flex-col h-full"
+            >
+              <div className="relative w-full aspect-[16/10] bg-cream overflow-hidden border-b border-warm-border">
+                <ProjectCover slug={project.slug} title={project.title} />
+
+                <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-[4px] bg-white/95 text-charcoal flex items-center justify-center shadow-md border border-warm-border group-hover:bg-burnt-orange group-hover:text-white group-hover:border-burnt-orange transition-all duration-200">
+                  <ArrowUpRight className="w-4 h-4 stroke-[2.2]" />
+                </div>
+              </div>
+
+              <div className="p-5 flex flex-col flex-grow justify-between space-y-4">
+                <div className="space-y-1.5">
+                  <h3 className="font-serif text-xl sm:text-[22px] font-semibold text-charcoal group-hover:text-burnt-orange transition-colors duration-200">
+                    {project.title.replace(' using YOLOv8', '').replace(': Cross-Platform College App', '')}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-grey line-clamp-2 leading-relaxed">
+                    {project.oneLiner}
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {project.tags.map((tag) => (
+                    <Tag key={tag} variant="mono">
+                      {tag}
+                    </Tag>
+                  ))}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {showAll && (
+          <div className="pt-8 space-y-6">
+            <h3 className="font-serif text-2xl text-charcoal font-medium">In-Progress Systems</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {projectsData
+                .filter((p) => !p.isFeatured)
+                .map((project) => (
+                  <Card
+                    key={project.slug}
+                    onClick={() => setSelectedProject(project)}
+                    className="cursor-pointer p-6 flex flex-col justify-between"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Tag variant="badge" status="In progress">
+                          In progress ({project.badge})
+                        </Tag>
+                        <div className="w-7 h-7 rounded bg-ivory border border-warm-border flex items-center justify-center text-charcoal">
+                          <ArrowUpRight className="w-3.5 h-3.5" />
+                        </div>
+                      </div>
+                      <h4 className="font-serif text-xl font-semibold text-charcoal">{project.title}</h4>
+                      <p className="text-sm text-muted-grey leading-relaxed">{project.oneLiner}</p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 pt-4">
+                      {project.tags.map((t) => (
+                        <Tag key={t} variant="mono">
+                          {t}
+                        </Tag>
+                      ))}
+                    </div>
+                  </Card>
+                ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <ProjectModal
+        project={selectedProject}
+        onClose={() => setSelectedProject(null)}
+      />
+    </section>
   );
 };

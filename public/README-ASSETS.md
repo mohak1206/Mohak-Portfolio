@@ -1,6 +1,6 @@
 # Asset Guidelines for Mohak Agrawal's Portfolio
 
-To replace the built-in SVG fallbacks and placeholders with your real media, drop your files into the designated paths below. The application will automatically detect and render them.
+To replace the built-in SVG fallbacks and placeholders with your real media, drop your files into the designated paths below. The application automatically detects and renders them.
 
 ## 1. Resume Document
 - **Destination:** `/public/Mohak_Agrawal_Resume.pdf`
@@ -31,6 +31,6 @@ Drop 16:10 or 4:3 screenshots / detection result images into `/public/projects/`
 *Note: If any image is absent, the site automatically renders an elegant architectural SVG fallback in the editorial design palette (#F7F3EC, #191919, #C94F17).*
 
 ## 4. Certificates
-Place verification image scans or credential badges in `/public/credentials/`:
-- `/public/credentials/google-ai-essentials.jpg`
-- `/public/credentials/meta-llm.jpg`
+Place verification image scans or credential badges in `/public/certificates/`:
+- `/public/certificates/google-ai-essentials.jpg`
+- `/public/certificates/meta-llm.jpg`

@@ -82,3 +82,4 @@ export const exploringSkills: string[] = [
   "Weights & Biases (offline mode)",
   "Tesseract.js",
 ];
+

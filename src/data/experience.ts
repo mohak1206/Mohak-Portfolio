@@ -40,3 +40,4 @@ export const experienceData: ExperienceItem[] = [
     description: "Pursuing specialized undergraduate degree in AI & Machine Learning. Maintaining an 8.6 / 10 CGPA through Semester 5 with rigorous coursework across systems and algorithms.",
   },
 ];
+

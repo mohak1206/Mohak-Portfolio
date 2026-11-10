@@ -1,7 +1,8 @@
 import React from 'react';
 import { Mail, ArrowUpRight, MapPin, Github, Linkedin } from 'lucide-react';
 import { profileData } from '../../data/profile';
-import { SectionLabel } from '../common/SectionLabel';
+import { SectionLabel } from '../ui/SectionLabel';
+import { Button } from '../ui/Button';
 
 export const Contact: React.FC = () => {
   return (
@@ -10,7 +11,6 @@ export const Contact: React.FC = () => {
         <div className="max-w-3xl mx-auto text-center space-y-8">
           <SectionLabel label="CONTACT" centered twoSided />
 
-          {/* Large Editorial Headline */}
           <h2 className="font-serif text-3xl sm:text-5xl lg:text-[54px] font-normal leading-[1.15] text-charcoal tracking-[-0.01em]">
             Let’s build something <br />
             <span className="italic text-burnt-orange font-normal">useful together.</span>
@@ -20,19 +20,20 @@ export const Contact: React.FC = () => {
             I'm open to internships, full-time roles and freelance projects. If you have an idea or an opportunity, I'd love to hear about it.
           </p>
 
-          {/* Primary Email CTA */}
           <div className="pt-2">
-            <a
+            <Button
+              asAnchor
               href={`mailto:${profileData.email}`}
-              className="inline-flex items-center gap-2.5 px-8 py-3.5 text-base font-medium text-white bg-burnt-orange hover:bg-light-orange transition-all duration-200 rounded-[5px] shadow-sm hover:shadow"
+              variant="primary"
+              size="lg"
+              className="gap-2.5"
             >
               <Mail className="w-5 h-5 stroke-[2]" />
               <span>Email me</span>
               <ArrowUpRight className="w-4 h-4 stroke-[2.2]" />
-            </a>
+            </Button>
           </div>
 
-          {/* Location & Social Connections */}
           <div className="pt-8 border-t border-warm-border flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-charcoal/80">
             <div className="flex items-center gap-1.5 text-muted-grey">
               <MapPin className="w-4 h-4 text-burnt-orange" />

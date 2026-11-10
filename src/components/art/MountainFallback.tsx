@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
+import { cn } from '../../lib/utils';
 
-interface MountainImageProps {
+interface MountainFallbackProps {
   type: 'hero-sunrise' | 'about-bw';
   className?: string;
   alt: string;
 }
 
-export const MountainIllustration: React.FC<MountainImageProps> = ({ type, className = '', alt }) => {
+export const MountainFallback: React.FC<MountainFallbackProps> = ({ type, className, alt }) => {
   const [imgError, setImgError] = useState(false);
   const src = type === 'hero-sunrise' ? '/images/hero-mountain.jpg' : '/images/about-mountain-bw.jpg';
 
@@ -15,24 +16,22 @@ export const MountainIllustration: React.FC<MountainImageProps> = ({ type, class
       <img
         src={src}
         alt={alt}
-        className={`w-full h-full object-cover ${className}`}
+        className={cn('w-full h-full object-cover', className)}
         loading="lazy"
         onError={() => setImgError(true)}
       />
     );
   }
 
-  // High-fidelity editorial SVG fallback matching the exact palette and mood
   if (type === 'hero-sunrise') {
     return (
-      <div className={`w-full h-full relative overflow-hidden bg-gradient-to-b from-[#E7D6C4] via-[#DECBBC] to-[#C9BAAE] ${className}`}>
+      <div className={cn('w-full h-full relative overflow-hidden bg-gradient-to-b from-[#E7D6C4] via-[#DECBBC] to-[#C9BAAE]', className)}>
         <svg
           viewBox="0 0 600 900"
           className="w-full h-full object-cover"
           preserveAspectRatio="xMidYMid slice"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Subtle gradient sky */}
           <defs>
             <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#DFC3AF" />
@@ -58,30 +57,20 @@ export const MountainIllustration: React.FC<MountainImageProps> = ({ type, class
             </linearGradient>
           </defs>
 
-          {/* Sky background */}
           <rect width="600" height="900" fill="url(#skyGrad)" />
-
-          {/* Golden sunrise orb */}
           <circle cx="240" cy="380" r="160" fill="url(#sunGlow)" opacity="0.8" />
 
-          {/* Distant mountain silhouette */}
           <polygon points="40,680 180,480 320,680" fill="#58453A" opacity="0.35" />
           <polygon points="260,680 420,440 580,680" fill="#4B3B32" opacity="0.4" />
 
-          {/* Main Alpine Peak */}
-          {/* Sunny left facet */}
           <polygon points="300,240 180,560 300,560" fill="url(#peakLight)" />
-          {/* Shadowed right facet */}
           <polygon points="300,240 300,560 460,560" fill="url(#peakShadow)" />
-          {/* Secondary crag */}
           <polygon points="190,420 120,580 260,580" fill="#E4D3C2" />
           <polygon points="380,360 330,550 490,550" fill="#24211E" />
 
-          {/* Foreground mountain ridges */}
           <polygon points="-50,900 150,620 400,900" fill="#24201D" />
           <polygon points="220,900 450,590 650,900" fill="#1C1816" />
 
-          {/* Low morning mist & clouds */}
           <path
             d="M-20,680 Q100,650 250,670 T550,660 T700,680 L700,900 L-20,900 Z"
             fill="url(#fog)"
@@ -96,9 +85,8 @@ export const MountainIllustration: React.FC<MountainImageProps> = ({ type, class
     );
   }
 
-  // Black and White Mountain for About section
   return (
-    <div className={`w-full h-full relative overflow-hidden bg-[#242424] ${className}`}>
+    <div className={cn('w-full h-full relative overflow-hidden bg-[#242424]', className)}>
       <svg
         viewBox="0 0 800 500"
         className="w-full h-full object-cover"
@@ -115,23 +103,16 @@ export const MountainIllustration: React.FC<MountainImageProps> = ({ type, class
 
         <rect width="800" height="500" fill="url(#bwSky)" />
 
-        {/* Distant peaks */}
         <polygon points="100,380 260,200 420,380" fill="#5E5E5E" />
         <polygon points="350,400 520,180 690,400" fill="#474747" />
 
-        {/* Prominent Foreground Mountain Peak */}
-        {/* Highlighted slope */}
         <polygon points="380,110 200,420 380,420" fill="#EAEAEA" />
-        {/* Shaded slope */}
         <polygon points="380,110 380,420 580,420" fill="#1A1A1A" />
-        {/* Ridge shadow details */}
         <polygon points="380,110 360,280 380,420" fill="#C4C4C4" />
 
-        {/* Lower foothills */}
         <polygon points="-50,500 180,340 450,500" fill="#141414" />
         <polygon points="320,500 580,310 850,500" fill="#0D0D0D" />
 
-        {/* Base mist */}
         <path
           d="M0,420 Q200,390 400,410 T800,400 L800,500 L0,500 Z"
           fill="#EEEEEE"

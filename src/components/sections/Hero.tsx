@@ -2,9 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Cpu, Layers, Eye, Zap } from 'lucide-react';
 import { profileData } from '../../data/profile';
-import { SectionLabel } from '../common/SectionLabel';
-import { ContourBackground } from '../common/ContourBackground';
-import { MountainIllustration } from '../common/MountainIllustration';
+import { Button } from '../ui/Button';
+import { SectionLabel } from '../ui/SectionLabel';
+import { ContourLines } from '../art/ContourLines';
+import { ArchFrame } from '../art/ArchFrame';
+import { MountainFallback } from '../art/MountainFallback';
 
 export const Hero: React.FC = () => {
   const { stats } = profileData;
@@ -23,14 +25,12 @@ export const Hero: React.FC = () => {
       aria-label="Hero"
       className="relative pt-28 pb-16 lg:pt-36 lg:pb-24 overflow-hidden border-b border-warm-border bg-ivory"
     >
-      {/* Topographic contour background lines radiating across the right */}
-      <ContourBackground />
+      <ContourLines />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center min-h-[calc(100vh-140px)]">
           {/* Left Column */}
           <div className="lg:col-span-7 flex flex-col justify-center space-y-6 lg:pr-4">
-            {/* Top Label */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -39,7 +39,6 @@ export const Hero: React.FC = () => {
               <SectionLabel label="MOHAK AGRAWAL" twoSided />
             </motion.div>
 
-            {/* Huge Serif Headline */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -50,7 +49,6 @@ export const Hero: React.FC = () => {
               <span className="font-serif italic text-burnt-orange font-normal">to be built.</span>
             </motion.h1>
 
-            {/* Subheadline with small separators */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -64,7 +62,6 @@ export const Hero: React.FC = () => {
               <span>Problem Solver</span>
             </motion.div>
 
-            {/* Body Paragraph */}
             <motion.p
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -81,27 +78,24 @@ export const Hero: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="flex flex-wrap items-center gap-4 pt-2"
             >
-              <a
-                href="#projects"
-                onClick={scrollToProjects}
-                className="inline-flex items-center gap-2 px-6 py-3 text-sm sm:text-base font-medium text-white bg-burnt-orange hover:bg-light-orange transition-all duration-200 rounded-[5px] shadow-sm hover:shadow"
-              >
+              <Button asAnchor href="#projects" onClick={scrollToProjects} variant="primary" size="lg">
                 <span>Explore Projects</span>
                 <ArrowRight className="w-4 h-4 stroke-[2.2]" />
-              </a>
+              </Button>
 
-              <a
+              <Button
+                asAnchor
                 href={profileData.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 px-6 py-3 text-sm sm:text-base font-medium text-charcoal bg-white/80 hover:bg-white border border-warm-border hover:border-charcoal/40 transition-all duration-200 rounded-[5px] shadow-sm"
+                variant="outline"
+                size="lg"
               >
-                {/* Minimal GitHub Icon */}
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                   <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
                 </svg>
                 <span>GitHub</span>
-              </a>
+              </Button>
             </motion.div>
 
             {/* True Stats Row with thin vertical dividers */}
@@ -154,7 +148,7 @@ export const Hero: React.FC = () => {
           {/* Right Column: Signature Visual Composition */}
           <div className="lg:col-span-5 relative flex items-center justify-center pt-8 lg:pt-0">
             <div className="relative w-full max-w-[380px] sm:max-w-[420px] aspect-[4/5] mx-auto">
-              {/* Plus (+) Crosshair marker near top right of arch */}
+              {/* Plus (+) Crosshair marker */}
               <div
                 className="absolute -top-3 right-4 sm:-right-2 z-20 text-charcoal/60 font-mono text-2xl select-none"
                 aria-hidden="true"
@@ -162,7 +156,7 @@ export const Hero: React.FC = () => {
                 +
               </div>
 
-              {/* Large Soft Burnt-Orange Sun Circle overlapping left edge of the arch */}
+              {/* Large Soft Burnt-Orange Sun Circle */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -174,41 +168,34 @@ export const Hero: React.FC = () => {
                 aria-hidden="true"
               />
 
-              {/* Thin Burnt-Orange Arch Outline offset slightly outside the image */}
-              <div
-                className="absolute -inset-2.5 sm:-inset-3 border border-burnt-orange/50 pointer-events-none arch-outline z-10"
-                aria-hidden="true"
-              />
-
-              {/* Tall Arch-Shaped Image Container */}
+              {/* Arch Image with Frame */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
-                className="relative w-full h-full overflow-hidden arch-mask shadow-float z-10 bg-cream"
+                className="w-full h-full"
               >
-                <MountainIllustration
-                  type="hero-sunrise"
-                  alt="Mountain peak at sunrise framed by an architectural arch"
-                  className="w-full h-full object-cover"
-                />
+                <ArchFrame>
+                  <MountainFallback
+                    type="hero-sunrise"
+                    alt="Mountain peak at sunrise framed by an architectural arch"
+                  />
+                </ArchFrame>
               </motion.div>
 
-              {/* Floating Dark Terminal Card (overlaps bottom-left of the arch) */}
+              {/* Floating Dark Terminal Card */}
               <motion.div
                 initial={{ opacity: 0, x: -20, y: 20 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.4 }}
                 className="animate-float-slow absolute -bottom-5 sm:-bottom-7 -left-4 sm:-left-8 z-30 bg-[#1E1E1E] text-white/90 rounded-[8px] p-4 sm:p-5 shadow-2xl border border-white/10 w-[240px] sm:w-[270px] backdrop-blur-md"
               >
-                {/* 3 Window Dots */}
                 <div className="flex items-center space-x-1.5 mb-3" aria-hidden="true">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] inline-block" />
                   <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] inline-block" />
                   <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] inline-block" />
                 </div>
 
-                {/* Terminal Code Text matching exact prompt instructions */}
                 <div className="font-mono text-xs sm:text-[13px] leading-relaxed text-[#D4D4D4] space-y-0.5">
                   <p className="text-[#6A9955] italic"># building...</p>
                   <p>
@@ -224,7 +211,7 @@ export const Hero: React.FC = () => {
                 </div>
               </motion.div>
 
-              {/* Floating White Skills Card (on right edge) */}
+              {/* Floating White Skills Card */}
               <motion.div
                 initial={{ opacity: 0, x: 20, y: -10 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}

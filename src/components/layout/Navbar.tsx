@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useScrollSpy } from '../../hooks/useScrollSpy';
+import { MobileMenu } from './MobileMenu';
 
 const navItems = [
   { label: 'Home', href: '#home', id: 'home' },
@@ -11,37 +13,24 @@ const navItems = [
 ];
 
 export const Navbar: React.FC = () => {
-  const [activeSection, setActiveSection] = useState('home');
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Scroll spy
+  const activeSection = useScrollSpy(
+    navItems.map((n) => n.id),
+    160
+  );
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
-
-      if (location.pathname !== '/') return;
-
-      const scrollPosition = window.scrollY + 160;
-      for (let i = navItems.length - 1; i >= 0; i--) {
-        const item = navItems[i];
-        const element = document.getElementById(item.id);
-        if (element) {
-          const top = element.offsetTop;
-          if (scrollPosition >= top) {
-            setActiveSection(item.id);
-            break;
-          }
-        }
-      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [location.pathname]);
+  }, []);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, id: string) => {
     e.preventDefault();
@@ -144,29 +133,13 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-ivory border-b border-warm-border px-6 py-6 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
-          <nav className="flex flex-col space-y-4" aria-label="Mobile Navigation">
-            {navItems.map((item) => {
-              const isActive = location.pathname === '/' && activeSection === item.id;
-              return (
-                <a
-                  key={item.id}
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href, item.id)}
-                  className={`flex items-center justify-between py-2 text-base font-medium transition-colors ${
-                    isActive ? 'text-burnt-orange font-semibold' : 'text-charcoal'
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange" />}
-                </a>
-              );
-            })}
-          </nav>
-        </div>
-      )}
+      <MobileMenu
+        isOpen={mobileMenuOpen}
+        navItems={navItems}
+        activeSection={activeSection}
+        onItemClick={handleNavClick}
+        onClose={() => setMobileMenuOpen(false)}
+      />
     </header>
   );
 };

@@ -1,9 +1,10 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Code, Layers, Users, Sparkles, ArrowRight, MapPin, GraduationCap, Calendar, Award } from 'lucide-react';
 import { profileData } from '../../data/profile';
-import { SectionLabel } from '../common/SectionLabel';
-import { MountainIllustration } from '../common/MountainIllustration';
+import { SectionLabel } from '../ui/SectionLabel';
+import { Tag } from '../ui/Tag';
+import { Card } from '../ui/Card';
+import { MountainFallback } from '../art/MountainFallback';
 
 export const About: React.FC = () => {
   const { aboutStory, education } = profileData;
@@ -16,18 +17,15 @@ export const About: React.FC = () => {
           {/* Left Column: Landscape B&W mountain with burnt-orange sun circle behind peak */}
           <div className="lg:col-span-4 relative flex items-center justify-center">
             <div className="relative w-full max-w-[360px] aspect-[16/11]">
-              {/* Solid burnt-orange circle overlapping the image behind the peak */}
               <div
                 className="absolute -top-6 right-6 w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-burnt-orange z-0 shadow-md"
                 aria-hidden="true"
               />
 
-              {/* Landscape image frame */}
               <div className="relative w-full h-full rounded-[10px] overflow-hidden border border-warm-border shadow-float z-10 bg-cream">
-                <MountainIllustration
+                <MountainFallback
                   type="about-bw"
                   alt="Dramatic black and white mountain peak"
-                  className="w-full h-full object-cover"
                 />
               </div>
             </div>
@@ -48,22 +46,22 @@ export const About: React.FC = () => {
 
             {/* 4 Pill Tags with small orange icons */}
             <div className="flex flex-wrap gap-2.5 pt-2">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white border border-warm-border text-charcoal shadow-sm">
+              <Tag variant="pill">
                 <Code className="w-3.5 h-3.5 text-burnt-orange stroke-[2]" />
                 AI/ML
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white border border-warm-border text-charcoal shadow-sm">
+              </Tag>
+              <Tag variant="pill">
                 <Layers className="w-3.5 h-3.5 text-burnt-orange stroke-[2]" />
                 Web Development
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white border border-warm-border text-charcoal shadow-sm">
+              </Tag>
+              <Tag variant="pill">
                 <Users className="w-3.5 h-3.5 text-burnt-orange stroke-[2]" />
                 Leadership
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white border border-warm-border text-charcoal shadow-sm">
+              </Tag>
+              <Tag variant="pill">
                 <Sparkles className="w-3.5 h-3.5 text-burnt-orange stroke-[2]" />
                 Social Impact
-              </span>
+              </Tag>
             </div>
           </div>
 
@@ -107,83 +105,81 @@ export const About: React.FC = () => {
             </div>
 
             {/* Right 5 Columns: Secondary Info & Coursework */}
-            <div className="lg:col-span-5 bg-white/70 border border-warm-border rounded-[8px] p-6 space-y-6">
-              <h4 className="font-mono text-xs uppercase tracking-wider text-charcoal/80 font-semibold border-b border-warm-border pb-3">
-                Academic & Profile Summary
-              </h4>
+            <div className="lg:col-span-5">
+              <Card elevated className="p-6 space-y-6">
+                <h4 className="font-mono text-xs uppercase tracking-wider text-charcoal/80 font-semibold border-b border-warm-border pb-3">
+                  Academic & Profile Summary
+                </h4>
 
-              <div className="space-y-3.5 text-sm">
-                <div className="flex items-start gap-2.5">
-                  <MapPin className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
-                  <div>
-                    <span className="text-muted-grey">Location: </span>
-                    <span className="font-medium text-charcoal">{profileData.location}</span>
+                <div className="space-y-3.5 text-sm">
+                  <div className="flex items-start gap-2.5">
+                    <MapPin className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
+                    <div>
+                      <span className="text-muted-grey">Location: </span>
+                      <span className="font-medium text-charcoal">{profileData.location}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <GraduationCap className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
+                    <div>
+                      <span className="text-muted-grey">Degree: </span>
+                      <span className="font-medium text-charcoal">{education.degree}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <span className="w-4 h-4 flex items-center justify-center font-mono text-xs text-burnt-orange font-bold mt-0.5 shrink-0">🏛</span>
+                    <div>
+                      <span className="text-muted-grey">Institution: </span>
+                      <span className="font-medium text-charcoal">{education.institution}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <Calendar className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
+                    <div>
+                      <span className="text-muted-grey">Expected Graduation: </span>
+                      <span className="font-medium text-charcoal">{education.expectedGraduation}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <Award className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
+                    <div>
+                      <span className="text-muted-grey">Academic Performance: </span>
+                      <span className="font-semibold text-burnt-orange">{education.cgpa}</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <div className="text-xs text-muted-grey mb-2">Open to:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {education.openTo.map((item) => (
+                        <Tag key={item} variant="mono">
+                          {item}
+                        </Tag>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-2.5">
-                  <GraduationCap className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
-                  <div>
-                    <span className="text-muted-grey">Degree: </span>
-                    <span className="font-medium text-charcoal">{education.degree}</span>
+                <div className="pt-2 border-t border-warm-border">
+                  <div className="text-xs font-mono uppercase tracking-wider text-muted-grey mb-2.5">
+                    Relevant Coursework:
                   </div>
-                </div>
-
-                <div className="flex items-start gap-2.5">
-                  <span className="w-4 h-4 flex items-center justify-center font-mono text-xs text-burnt-orange font-bold mt-0.5 shrink-0">🏛</span>
-                  <div>
-                    <span className="text-muted-grey">Institution: </span>
-                    <span className="font-medium text-charcoal">{education.institution}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5">
-                  <Calendar className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
-                  <div>
-                    <span className="text-muted-grey">Expected Graduation: </span>
-                    <span className="font-medium text-charcoal">{education.expectedGraduation}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5">
-                  <Award className="w-4 h-4 text-burnt-orange mt-0.5 shrink-0" />
-                  <div>
-                    <span className="text-muted-grey">Academic Performance: </span>
-                    <span className="font-semibold text-burnt-orange">{education.cgpa}</span>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <div className="text-xs text-muted-grey mb-2">Open to:</div>
-                  <div className="flex flex-wrap gap-2">
-                    {education.openTo.map((item) => (
+                  <div className="flex flex-wrap gap-1.5">
+                    {education.coursework.map((course) => (
                       <span
-                        key={item}
-                        className="px-2.5 py-1 text-xs font-medium bg-ivory text-charcoal rounded border border-warm-border"
+                        key={course}
+                        className="px-2 py-0.5 font-mono text-[11px] bg-ivory text-charcoal/80 rounded border border-warm-border"
                       >
-                        {item}
+                        {course}
                       </span>
                     ))}
                   </div>
                 </div>
-              </div>
-
-              {/* Coursework Tags */}
-              <div className="pt-2 border-t border-warm-border">
-                <div className="text-xs font-mono uppercase tracking-wider text-muted-grey mb-2.5">
-                  Relevant Coursework:
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {education.coursework.map((course) => (
-                    <span
-                      key={course}
-                      className="px-2 py-0.5 font-mono text-[11px] bg-ivory text-charcoal/80 rounded border border-warm-border"
-                    >
-                      {course}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              </Card>
             </div>
           </div>
         </div>

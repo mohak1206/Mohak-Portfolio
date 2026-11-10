@@ -1,8 +1,8 @@
 import React from 'react';
-import { ArrowUpRight, Briefcase } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 import { experienceData } from '../../data/experience';
-import { SectionLabel } from '../common/SectionLabel';
+import { SectionLabel } from '../ui/SectionLabel';
+import { Card } from '../ui/Card';
 
 export const Experience: React.FC = () => {
   return (
@@ -32,8 +32,7 @@ export const Experience: React.FC = () => {
                 aria-hidden="true"
               />
 
-              {/* Item Card */}
-              <div className="bg-white/80 border border-warm-border rounded-[6px] p-6 space-y-3 shadow-sm hover:border-burnt-orange/40 transition-colors">
+              <Card className="p-6 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                   <div>
                     <h3 className="font-serif text-xl sm:text-2xl font-semibold text-charcoal">
@@ -59,7 +58,7 @@ export const Experience: React.FC = () => {
                 {item.projectLink && (
                   <div className="pt-1">
                     <a
-                      href={`#projects`}
+                      href="#projects"
                       className="inline-flex items-center gap-1.5 text-xs font-semibold text-burnt-orange hover:text-light-orange transition-colors"
                     >
                       <span>{item.projectLink.text}</span>
@@ -67,7 +66,7 @@ export const Experience: React.FC = () => {
                     </a>
                   </div>
                 )}
-              </div>
+              </Card>
             </div>
           ))}
         </div>

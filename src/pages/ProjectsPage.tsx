@@ -1,9 +1,10 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Navbar } from '../components/common/Navbar';
-import { ProjectsSection } from '../components/projects/Projects';
-import { Footer } from '../components/common/Footer';
+import { Navbar } from '../components/layout/Navbar';
+import { SelectedWorks } from '../components/sections/SelectedWorks';
+import { LabIdeas } from '../components/sections/LabIdeas';
+import { Footer } from '../components/layout/Footer';
 
 export const ProjectsPage: React.FC = () => {
   return (
@@ -21,7 +22,8 @@ export const ProjectsPage: React.FC = () => {
           </Link>
         </div>
 
-        <ProjectsSection showAll={true} />
+        <SelectedWorks showAll={true} />
+        <LabIdeas />
       </main>
 
       <Footer />
