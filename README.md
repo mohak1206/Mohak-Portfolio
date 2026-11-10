@@ -56,45 +56,84 @@ npm run preview
 
 ---
 
-## 📁 Project Architecture
+## 📁 Exact Project Architecture
 
 ```
-mohak-agrawal-portfolio/
+mohak-portfolio/
+├── index.html                  # SEO meta tags, fonts, favicon link
+├── package.json
+├── vite.config.ts
+├── tsconfig.json
+├── tailwind.config.ts          # colour and font tokens
+├── postcss.config.js
+├── vercel.json                 # SPA rewrite so /projects/:slug works on refresh
+├── README.md
 ├── public/
-│   ├── images/                # Hero and About photographic assets
-│   ├── projects/              # Real project screenshots and detection outputs
-│   ├── credentials/           # Certificate badges and verification documents
-│   ├── favicon.svg            # MA monogram brand favicon
-│   ├── robots.txt             # Search engine crawling rules
-│   ├── sitemap.xml            # SEO sitemap with route definitions
-│   ├── Mohak_Agrawal_Resume.pdf # Downloadable resume PDF
-│   └── README-ASSETS.md       # Guidelines for dropping in personalized media
-├── src/
-│   ├── components/
-│   │   ├── about/             # 3-column About section and academic narrative
-│   │   ├── common/            # Navbar, Footer, SectionLabel, Fallback illustrations
-│   │   ├── contact/           # Editorial contact invitation and social channels
-│   │   ├── credentials/       # Certifications and leadership cards
-│   │   ├── experience/        # Milestones and career timeline
-│   │   ├── hero/              # Signature arch composition, sun circle & terminal
-│   │   ├── projects/          # Selected works, interactive cards, and detail modal
-│   │   └── skills/            # Technical capability matrix (hands-on vs exploring)
-│   ├── data/
-│   │   ├── credentials.ts     # Certifications & leadership records
-│   │   ├── experience.ts      # Timeline items and internships
-│   │   ├── profile.ts         # Bio, true metrics, education, and links
-│   │   ├── projects.ts        # Case studies, test metrics, and Lab & Ideas
-│   │   └── skills.ts          # Categorized technical competencies
-│   ├── pages/
-│   │   ├── HomePage.tsx       # Primary single-page portfolio layout
-│   │   ├── ProjectsPage.tsx   # Complete project archive (including Civic-I)
-│   │   └── ProjectDetailPage.tsx # Deep-linkable `/projects/:slug` route
-│   ├── types/                 # Shared TypeScript interfaces
-│   ├── App.tsx                # Client-side router configuration
-│   ├── index.css              # Tailwind base, utilities, and reduced-motion rules
-│   └── main.tsx               # Application entry point
-├── vercel.json                # SPA rewrite rules for direct deep-linking
-└── vite.config.ts             # Vite configuration with alias support
+│   ├── favicon.svg             # MA monogram
+│   ├── robots.txt
+│   ├── sitemap.xml
+│   ├── og-image.png            # social share preview
+│   ├── Mohak_Agrawal_Resume.pdf
+│   ├── profile.jpg             # headshot (optional)
+│   ├── README-ASSETS.md        # list of files you still need to add
+│   ├── images/
+│   │   ├── hero-mountain.jpg
+│   │   └── about-mountain-bw.jpg
+│   ├── projects/               # screenshots, named by project slug
+│   │   ├── signature-detection.jpg
+│   │   ├── fire-smoke-detection.jpg
+│   │   ├── inventory-management.jpg
+│   │   ├── alumni-connect.jpg
+│   │   └── civic-i.jpg
+│   └── certificates/
+│       ├── google-ai-essentials.jpg
+│       └── meta-llm.jpg
+└── src/
+    ├── main.tsx
+    ├── App.tsx                 # routes: "/", "/projects", "/projects/:slug"
+    ├── index.css               # CSS variables, base styles, font imports
+    ├── data/                   # ALL content lives here
+    │   ├── profile.ts          # name, tagline, about text, stats, contact links
+    │   ├── skills.ts
+    │   ├── projects.ts         # five projects plus the Lab & Ideas list
+    │   ├── experience.ts
+    │   └── credentials.ts
+    ├── types/
+    │   └── index.ts            # TypeScript types for the data
+    ├── hooks/
+    │   ├── useScrollSpy.ts     # highlights the active nav link
+    │   └── useReducedMotion.ts
+    ├── lib/
+    │   └── utils.ts
+    ├── components/
+    │   ├── layout/
+    │   │   ├── Navbar.tsx
+    │   │   ├── MobileMenu.tsx
+    │   │   └── Footer.tsx
+    │   ├── ui/                 # reusable pieces
+    │   │   ├── Button.tsx
+    │   │   ├── SectionLabel.tsx
+    │   │   ├── Tag.tsx
+    │   │   ├── Card.tsx
+    │   │   ├── Reveal.tsx      # scroll fade-up wrapper
+    │   │   └── ProjectCover.tsx # real image or generated SVG fallback
+    │   ├── art/                # decorative SVGs
+    │   │   ├── ContourLines.tsx
+    │   │   ├── ArchFrame.tsx
+    │   │   └── MountainFallback.tsx
+    │   └── sections/
+    │       ├── Hero.tsx        # arch, sun, terminal card, tags card, stats
+    │       ├── About.tsx
+    │       ├── Expertise.tsx
+    │       ├── SelectedWorks.tsx
+    │       ├── LabIdeas.tsx
+    │       ├── Experience.tsx
+    │       ├── Credentials.tsx
+    │       └── Contact.tsx
+    └── pages/
+        ├── Home.tsx
+        ├── ProjectsPage.tsx    # "View all projects"
+        └── ProjectDetail.tsx   # case-study page
 ```
 
 ---
@@ -123,7 +162,8 @@ The application includes high-fidelity SVG fallbacks for every image. To replace
 1. **Hero Mountain Arch:** Drop a warm sunrise mountain photo in `public/images/hero-mountain.jpg`.
 2. **About Section Mountain:** Drop a monochrome mountain photo in `public/images/about-mountain-bw.jpg`.
 3. **Project Screenshots:** Drop `<slug>.jpg` (e.g. `signature-detection.jpg`) into `public/projects/`.
-4. **Resume:** Replace `public/Mohak_Agrawal_Resume.pdf` with your updated PDF.
+4. **Certificates:** Drop credentials in `public/certificates/`.
+5. **Resume:** Replace `public/Mohak_Agrawal_Resume.pdf` with your updated PDF.
 
 Refer to [`public/README-ASSETS.md`](file:///public/README-ASSETS.md) for detailed image dimensions and search terms.
 
@@ -144,7 +184,6 @@ The repository is pre-configured with `vercel.json` ensuring client-side routes 
 ```bash
 npm i -g vercel
 vercel
-# Follow prompts, choose defaults, deploy to production:
 vercel --prod
 ```
 
@@ -154,4 +193,3 @@ vercel --prod
 - **Reduced Motion:** Fully complies with `prefers-reduced-motion` settings.
 - **Keyboard Navigation:** Focus states, Skip-to-content anchor, and Escape-to-close modals.
 - **SEO & Social:** Open Graph, Twitter Summary Cards, and structured JSON-LD Person schema.
-
