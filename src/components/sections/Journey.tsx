@@ -3,7 +3,9 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { journeyData } from '../../data/journey';
 import { SectionLabel } from '../ui/SectionLabel';
+import { SplitLines } from '../ui/SplitLines';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { DEFAULT_VIEWPORT, EASING } from '../../lib/animation';
 
 export const Journey: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
@@ -19,24 +21,30 @@ export const Journey: React.FC = () => {
         <div className="space-y-4">
           <SectionLabel label={journeyData.heading.label} />
 
-          <motion.h2
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
-            whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.6 }}
-            className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal text-charcoal leading-[1.15]"
-          >
-            {journeyData.heading.titleRegular}
-            <span className="font-serif italic text-burnt-orange font-normal">
-              {journeyData.heading.titleItalic}
-            </span>
-          </motion.h2>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal text-charcoal leading-[1.15]">
+            <SplitLines
+              lines={[
+                <span key="journey-heading">
+                  {journeyData.heading.titleRegular}{' '}
+                  <motion.span
+                    initial={prefersReducedMotion ? false : { opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={DEFAULT_VIEWPORT}
+                    transition={{ duration: 0.5, delay: prefersReducedMotion ? 0 : 0.35, ease: EASING }}
+                    className="font-serif italic text-burnt-orange font-normal"
+                  >
+                    {journeyData.heading.titleItalic}
+                  </motion.span>
+                </span>,
+              ]}
+            />
+          </h2>
 
           <motion.p
             initial={prefersReducedMotion ? false : { opacity: 0, y: 15 }}
             whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            viewport={DEFAULT_VIEWPORT}
+            transition={{ duration: 0.5, delay: 0.1, ease: EASING }}
             className="text-muted-grey text-base sm:text-lg max-w-[60ch] leading-relaxed"
           >
             {journeyData.intro}

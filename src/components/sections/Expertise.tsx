@@ -1,11 +1,57 @@
 import React from 'react';
+import { motion, type Variants } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { handsOnSkills, exploringSkills } from '../../data/skills';
 import { SectionLabel } from '../ui/SectionLabel';
 import { Card } from '../ui/Card';
 import { Reveal } from '../ui/Reveal';
+import { SplitLines } from '../ui/SplitLines';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
 
 export const Expertise: React.FC = () => {
+  const prefersReducedMotion = useReducedMotion();
+
+  const blocksContainerVariants: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: prefersReducedMotion ? 0 : 0.1,
+      },
+    },
+  };
+
+  const blockItemVariants: Variants = {
+    hidden: { opacity: 0, y: 24 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.65, ease: EASING },
+    },
+  };
+
+  const chipsContainerVariants: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.03,
+        delayChildren: prefersReducedMotion ? 0 : 0.1,
+      },
+    },
+  };
+
+  const chipItemVariants: Variants = {
+    hidden: { opacity: 0, scale: 0.94 },
+    show: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.35, ease: EASING },
+    },
+  };
+
   return (
     <section id="expertise" aria-label="Expertise" className="py-20 lg:py-28 bg-ivory border-b border-warm-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
@@ -13,7 +59,7 @@ export const Expertise: React.FC = () => {
           <div className="space-y-3">
             <SectionLabel label="EXPERTISE & TOOLING" />
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal text-charcoal">
-              Technical Capabilities
+              <SplitLines lines={['Technical Capabilities']} />
             </h2>
             <p className="text-muted-grey text-base max-w-2xl">
               A comprehensive look at languages, production frameworks, and AI workflows I build with daily, alongside cutting-edge systems currently in research.
@@ -30,32 +76,58 @@ export const Expertise: React.FC = () => {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* Category blocks stagger up */}
+          <motion.div
+            variants={blocksContainerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={DEFAULT_VIEWPORT}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"
+          >
             {handsOnSkills.map((group, idx) => (
-              <Reveal key={idx} delay={0.1 + idx * 0.08} className="h-full">
-                <Card
-                  className="p-5 space-y-3 flex flex-col justify-between h-full"
-                >
+              <motion.div key={idx} variants={blockItemVariants} className="h-full">
+                <Card className="p-5 space-y-3 flex flex-col justify-between h-full">
                   <div>
-                    <h3 className="font-mono text-xs uppercase tracking-wider text-burnt-orange font-semibold border-b border-warm-border pb-2 mb-3">
+                    <h3 className="font-mono text-xs uppercase tracking-wider text-burnt-orange font-semibold pb-2">
                       {group.category}
                     </h3>
 
-                    <div className="flex flex-wrap gap-1.5">
+                    {/* Thin separator lines grow from left to right */}
+                    <motion.div
+                      className="h-[1px] bg-warm-border origin-left w-full mb-3"
+                      initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                      whileInView={{ scaleX: 1 }}
+                      viewport={DEFAULT_VIEWPORT}
+                      transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.15, ease: EASING }}
+                    />
+
+                    {/* Skill chips fade in with small stagger; on hover gets orange border and small orange dot scales in */}
+                    <motion.div
+                      variants={chipsContainerVariants}
+                      initial="hidden"
+                      whileInView="show"
+                      viewport={DEFAULT_VIEWPORT}
+                      className="flex flex-wrap gap-1.5"
+                    >
                       {group.skills.map((skill) => (
-                        <span
+                        <motion.span
                           key={skill}
-                          className="px-2 py-1 text-xs font-medium bg-ivory text-charcoal/90 rounded-[3px] border border-warm-border hover:bg-cream transition-colors"
+                          variants={chipItemVariants}
+                          className="group/chip relative inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium bg-ivory text-charcoal/90 rounded-[3px] border border-warm-border hover:border-burnt-orange hover:bg-cream transition-all duration-200 cursor-default"
                         >
-                          {skill}
-                        </span>
+                          <span
+                            className="w-1.5 h-1.5 rounded-full bg-burnt-orange scale-0 group-hover/chip:scale-100 transition-transform duration-200 shrink-0"
+                            aria-hidden="true"
+                          />
+                          <span>{skill}</span>
+                        </motion.span>
                       ))}
-                    </div>
+                    </motion.div>
                   </div>
                 </Card>
-              </Reveal>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {/* Exploring Group */}
@@ -75,7 +147,7 @@ export const Expertise: React.FC = () => {
               {exploringSkills.map((tech) => (
                 <div
                   key={tech}
-                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white text-charcoal border border-warm-border shadow-sm"
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white text-charcoal border border-warm-border shadow-sm hover:border-burnt-orange transition-colors"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange" />
                   <span>{tech}</span>
@@ -89,3 +161,4 @@ export const Expertise: React.FC = () => {
   );
 };
 
+export default Expertise;

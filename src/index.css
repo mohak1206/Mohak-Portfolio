@@ -114,3 +114,47 @@ html {
     animation: heroIdleFloatB 6s ease-in-out 3s infinite;
   }
 }
+
+/* "Currently exploring" orange dot pulse (scale 1 -> 1.6 -> 1 with fading ring, 3s loop) */
+@keyframes pulseOrangeRing {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(201, 79, 23, 0.7);
+  }
+  30% {
+    transform: scale(1.6);
+    box-shadow: 0 0 0 8px rgba(201, 79, 23, 0);
+  }
+  60%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(201, 79, 23, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dot-pulse-slow {
+    animation: pulseOrangeRing 3s ease-in-out infinite;
+  }
+}
+
+/* Timeline current marker soft pulsing ring (loop, 2.5s) */
+@keyframes markerPulseRing {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(201, 79, 23, 0.6);
+  }
+  40% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 8px rgba(201, 79, 23, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(201, 79, 23, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .marker-pulse-ring {
+    animation: markerPulseRing 2.5s ease-in-out infinite;
+  }
+}
