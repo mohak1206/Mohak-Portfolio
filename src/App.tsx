@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, m, LazyMotion, domAnimation, MotionConfig, type Variants } from 'framer-motion';
 import { Home } from './pages/Home';
@@ -22,6 +22,9 @@ const ProjectDetail = React.lazy(() =>
 );
 const CommandPaletteModal = React.lazy(() =>
   import('./components/ui/CommandPalette').then((module) => ({ default: module.CommandPaletteModal }))
+);
+const QuickTourModal = React.lazy(() =>
+  import('./components/ui/QuickTourModal').then((module) => ({ default: module.QuickTourModal }))
 );
 
 const ScrollToTop: React.FC = () => {
@@ -105,6 +108,13 @@ const AnimatedRoutes: React.FC = () => {
 
 const AppContent: React.FC = () => {
   const { isReducedMotion } = useMotionPreference();
+  const [isTourOpen, setIsTourOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpenTour = () => setIsTourOpen(true);
+    window.addEventListener('open-quick-tour', handleOpenTour);
+    return () => window.removeEventListener('open-quick-tour', handleOpenTour);
+  }, []);
 
   // Tab Title Fun: when visitor switches tabs, display playful title, restore on return
   useEffect(() => {
@@ -136,6 +146,7 @@ const AppContent: React.FC = () => {
             <BackToTop />
             <Suspense fallback={null}>
               <CommandPaletteModal />
+              <QuickTourModal isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />
             </Suspense>
           </SmoothScrollProvider>
         </BrowserRouter>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, Suspense } from 'react';
 import { m, useScroll, useTransform, useMotionValue, useSpring, useInView, type Variants } from 'framer-motion';
-import { ArrowRight, Cpu, Layers, Eye, Zap } from 'lucide-react';
+import { ArrowRight, Cpu, Layers, Eye, Zap, Play } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { projectsData } from '../../data/projects';
 import { Button } from '../ui/Button';
@@ -379,6 +379,26 @@ export const Hero: React.FC = () => {
                   <span>GitHub</span>
                 </Button>
               </Magnetic>
+            </m.div>
+
+            {/* 60-second tour entry point */}
+            <m.div
+              initial={prefersReducedMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.55, ease: EASING }}
+              className="pt-1"
+            >
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent('open-quick-tour'))}
+                className="inline-flex items-center gap-2 text-xs font-mono font-medium text-muted-grey hover:text-burnt-orange transition-colors cursor-pointer select-none group focus:outline-none focus-visible:ring-1 focus-visible:ring-burnt-orange rounded py-0.5 px-1"
+                aria-label="Start 60-second portfolio tour"
+              >
+                <span className="w-5 h-5 rounded-full bg-cream border border-warm-border group-hover:border-burnt-orange flex items-center justify-center transition-colors shadow-2xs">
+                  <Play className="w-2.5 h-2.5 fill-current text-burnt-orange ml-0.5" />
+                </span>
+                <span className="draw-underline-link py-0.5">60-second tour</span>
+              </button>
             </m.div>
 
             {/* True Stats Row with CountUp and growing dividers */}

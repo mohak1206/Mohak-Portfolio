@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Search, X, FileText, ArrowUpRight, FolderGit2, Compass, Mail, Check, CornerDownLeft } from 'lucide-react';
+import { Search, X, FileText, ArrowUpRight, FolderGit2, Compass, Mail, Check, CornerDownLeft, Play } from 'lucide-react';
 import { projectsData } from '../../data/projects';
 import { profileData } from '../../data/profile';
 import { scrollToTarget } from '../../lib/lenis';
@@ -111,6 +111,17 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
         action: () => {
           onClose();
           navigate('/projects');
+        },
+      },
+      {
+        id: 'act-tour',
+        title: '60-Second Tour',
+        subtitle: 'Quick 5-slide portfolio overview for busy recruiters',
+        category: 'ACTIONS & LINKS',
+        icon: <Play className="w-4 h-4 text-burnt-orange" />,
+        action: () => {
+          onClose();
+          window.dispatchEvent(new CustomEvent('open-quick-tour'));
         },
       },
       {
