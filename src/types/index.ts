@@ -1,6 +1,7 @@
 export interface Metric {
   label: string;
   value: string;
+  numericValue?: number;
 }
 
 export interface Project {
@@ -8,6 +9,8 @@ export interface Project {
   title: string;
   oneLiner: string;
   category: string;
+  categories: string[];
+  highlight?: string;
   status: 'Completed' | 'In progress' | 'Concept' | 'Early prototype';
   badge?: string;
   tags: string[];

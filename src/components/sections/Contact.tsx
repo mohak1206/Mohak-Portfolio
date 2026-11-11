@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { m } from 'framer-motion';
 import { Mail, ArrowUpRight, MapPin, Github, Linkedin, Copy, Check } from 'lucide-react';
 import { profileData } from '../../data/profile';
@@ -13,6 +13,31 @@ export const Contact: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
   const [copied, setCopied] = useState(false);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [currentTime, setCurrentTime] = useState<string>(() => {
+    return new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Kolkata',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(new Date());
+  });
+
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTime(
+        new Intl.DateTimeFormat('en-GB', {
+          timeZone: 'Asia/Kolkata',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }).format(new Date())
+      );
+    };
+
+    const interval = setInterval(updateTime, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCopyEmail = async () => {
     try {
@@ -119,9 +144,9 @@ export const Contact: React.FC = () => {
 
             {/* Bottom info & social links */}
             <div className="pt-8 border-t border-warm-border flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-charcoal/80">
-              <div className="flex items-center gap-1.5 text-muted-grey">
-                <MapPin className="w-4 h-4 text-burnt-orange" />
-                <span>{profileData.location}</span>
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm font-mono text-muted-grey">
+                <MapPin className="w-4 h-4 text-burnt-orange shrink-0" />
+                <span>Maharashtra, India · {currentTime} IST</span>
               </div>
 
               <span className="hidden sm:inline text-warm-border">|</span>

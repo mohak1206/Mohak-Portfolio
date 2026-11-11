@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, Github, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { m } from 'framer-motion';
 import { projectsData } from '../data/projects';
 import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
@@ -11,12 +12,16 @@ import { Button } from '../components/ui/Button';
 import { SplitLines } from '../components/ui/SplitLines';
 import { CountUp } from '../components/ui/CountUp';
 import { Reveal } from '../components/ui/Reveal';
+import { useReducedMotion } from '../hooks/useReducedMotion';
+import { EASING, DEFAULT_VIEWPORT } from '../lib/animation';
 
 export const ProjectDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const prefersReducedMotion = useReducedMotion();
 
   const project = projectsData.find((p) => p.slug === slug);
+  const hasNumericMetrics = !!(project?.metrics && project.metrics.some((m) => m.numericValue !== undefined));
 
   if (!project) {
     return (
@@ -82,21 +87,72 @@ export const ProjectDetail: React.FC = () => {
             </div>
           </Reveal>
 
-          {project.metrics && project.metrics.length > 0 && (
+          {hasNumericMetrics && project.metrics && (
             <Reveal delay={0.15}>
-              <Card elevated className="p-6">
-                <div className="text-xs font-mono uppercase tracking-wider text-muted-grey mb-4 font-semibold">
-                  Verified Test Results
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-warm-border">
-                  {project.metrics.map((m, idx) => (
-                    <div key={idx} className={`${idx > 0 ? 'sm:pl-6 pt-3 sm:pt-0' : ''}`}>
-                      <div className="font-serif text-3xl text-charcoal font-semibold">
-                        <CountUp value={m.value} />
-                      </div>
-                      <div className="text-xs text-muted-grey mt-1">{m.label}</div>
+              <Card elevated className="p-6 sm:p-8 space-y-6 bg-white">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-warm-border pb-4">
+                  <div>
+                    <div className="text-xs font-mono uppercase tracking-wider text-burnt-orange font-semibold">
+                      VERIFIED TEST RESULTS & BENCHMARKS
                     </div>
-                  ))}
+                    <h2 className="font-serif text-2xl text-charcoal font-medium mt-1">
+                      Empirical Model Performance
+                    </h2>
+                  </div>
+                  <span className="text-xs font-mono text-muted-grey">
+                    Independent Validation & Test Evaluation
+                  </span>
+                </div>
+
+                {/* Horizontal Result Bars: charcoal track on cream, burnt-orange fill animated from 0 on view */}
+                <div className="space-y-4 pt-1">
+                  {project.metrics.map((metricItem, idx) => {
+                    const valNum = metricItem.numericValue ?? parseFloat(metricItem.value.replace(/[^0-9.]/g, ''));
+                    const isNumeric = !isNaN(valNum) && valNum > 0;
+
+                    return (
+                      <div
+                        key={idx}
+                        tabIndex={0}
+                        aria-label={`${metricItem.label}: ${metricItem.value}`}
+                        className="group/bar relative space-y-1.5 focus:outline-none focus:ring-1 focus:ring-burnt-orange rounded p-1 transition-colors"
+                      >
+                        {/* Hover/focus tooltip */}
+                        <div
+                          role="tooltip"
+                          className="absolute -top-7 right-0 opacity-0 group-hover/bar:opacity-100 group-focus/bar:opacity-100 group-focus-within/bar:opacity-100 transition-opacity duration-200 bg-charcoal text-white text-[11px] font-mono px-2 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-20"
+                        >
+                          {metricItem.label}: {metricItem.value}
+                        </div>
+
+                        <div className="flex items-center justify-between text-xs sm:text-sm font-mono">
+                          <span className="text-charcoal font-medium">{metricItem.label}</span>
+                          <span className="text-burnt-orange font-semibold">
+                            <CountUp value={metricItem.value} />
+                          </span>
+                        </div>
+
+                        {/* Charcoal track on cream */}
+                        <div className="h-3 w-full bg-[#EFE8DD] rounded-full overflow-hidden p-0.5 border border-warm-border">
+                          {isNumeric ? (
+                            <m.div
+                              className="h-full bg-burnt-orange rounded-full group-hover/bar:bg-light-orange transition-colors"
+                              initial={prefersReducedMotion ? false : { width: '0%' }}
+                              whileInView={{ width: `${Math.min(valNum, 100)}%` }}
+                              viewport={DEFAULT_VIEWPORT}
+                              transition={{
+                                duration: 0.85,
+                                delay: prefersReducedMotion ? 0 : 0.1 + idx * 0.08,
+                                ease: EASING,
+                              }}
+                            />
+                          ) : (
+                            <div className="h-full bg-muted-grey/30 rounded-full w-full" />
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </Card>
             </Reveal>

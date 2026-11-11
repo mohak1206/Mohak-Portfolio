@@ -6,13 +6,18 @@ import { EASING } from './lib/animation';
 import { useReducedMotion } from './hooks/useReducedMotion';
 import { DelayedFallback } from './components/ui/DelayedFallback';
 import { ProjectsPageSkeleton, ProjectDetailSkeleton } from './components/ui/SectionSkeletons';
+import { CursorRing } from './components/ui/CursorRing';
+import { SectionDots } from './components/ui/SectionDots';
 
-// Route-level code splitting
+// Route-level and feature code splitting
 const ProjectsPage = React.lazy(() =>
   import('./pages/ProjectsPage').then((module) => ({ default: module.ProjectsPage }))
 );
 const ProjectDetail = React.lazy(() =>
   import('./pages/ProjectDetail').then((module) => ({ default: module.ProjectDetail }))
+);
+const CommandPaletteModal = React.lazy(() =>
+  import('./components/ui/CommandPalette').then((module) => ({ default: module.CommandPaletteModal }))
 );
 
 const ScrollToTop: React.FC = () => {
@@ -100,7 +105,12 @@ export const App: React.FC = () => {
       <LazyMotion features={domAnimation} strict>
         <BrowserRouter>
           <ScrollToTop />
+          <CursorRing />
+          <SectionDots />
           <AnimatedRoutes />
+          <Suspense fallback={null}>
+            <CommandPaletteModal />
+          </Suspense>
         </BrowserRouter>
       </LazyMotion>
     </MotionConfig>

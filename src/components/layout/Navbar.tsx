@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
+import { ArrowUpRight, Menu, X, Search } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { m, useScroll } from 'framer-motion';
 import { useScrollSpy } from '../../hooks/useScrollSpy';
@@ -120,8 +120,21 @@ export const Navbar: React.FC = () => {
             })}
           </nav>
 
-          {/* Right: Resume CTA Button with Magnetic effect */}
-          <div className="hidden md:flex items-center">
+          {/* Right: Search trigger & Resume CTA Button */}
+          <div className="hidden md:flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
+              aria-label="Search site and commands (Ctrl+K)"
+              className="inline-flex items-center gap-2 px-2.5 py-1.5 text-xs font-mono text-charcoal/80 bg-white hover:bg-cream border border-warm-border hover:border-burnt-orange rounded-[5px] transition-colors shadow-2xs select-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-burnt-orange"
+            >
+              <Search className="w-3.5 h-3.5 text-burnt-orange" />
+              <span className="hidden lg:inline text-muted-grey">Search</span>
+              <kbd className="text-[10px] bg-ivory px-1.5 py-0.5 rounded border border-warm-border font-sans text-muted-grey font-medium">
+                ⌘K
+              </kbd>
+            </button>
+
             <Magnetic>
               <a
                 href="/Mohak_Agrawal_Resume.pdf"
@@ -136,7 +149,16 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Mobile menu trigger */}
-          <div className="md:hidden flex items-center gap-3">
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
+              aria-label="Search site and commands"
+              className="p-1.5 text-charcoal/80 hover:text-burnt-orange rounded-[4px] border border-warm-border bg-white"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+
             <a
               href="/Mohak_Agrawal_Resume.pdf"
               target="_blank"

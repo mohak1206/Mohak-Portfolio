@@ -5,12 +5,13 @@ import { projectsData } from '../../data/projects';
 import { Project } from '../../types';
 import { SectionLabel } from '../ui/SectionLabel';
 import { ProjectCover } from '../ui/ProjectCover';
+import { ProjectCard } from '../ui/ProjectCard';
 import { Card } from '../ui/Card';
 import { Tag } from '../ui/Tag';
 import { Button } from '../ui/Button';
 import { Reveal } from '../ui/Reveal';
 import { SplitLines } from '../ui/SplitLines';
-import { m, type Variants } from 'framer-motion';
+import { m, AnimatePresence, type Variants } from 'framer-motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
 
@@ -214,20 +215,31 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
             </div>
           )}
 
-          {project.githubUrl && (
-            <div className="pt-2 flex justify-end">
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-warm-border pt-4">
+            <Link
+              to={`/projects/${project.slug}`}
+              onClick={onClose}
+              className="text-xs sm:text-sm font-semibold text-charcoal hover:text-burnt-orange inline-flex items-center gap-1.5"
+            >
+              <span>Open dedicated project page</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+
+            {project.githubUrl && (
               <Button asAnchor href={project.githubUrl} target="_blank" rel="noopener noreferrer" variant="primary">
                 <Github className="w-4 h-4" />
                 <span>View on GitHub</span>
                 <ArrowUpRight className="w-4 h-4" />
               </Button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+const FILTER_CATEGORIES = ['All', 'AI / ML', 'Full-Stack', 'Mobile'];
 
 interface SelectedWorksProps {
   showAll?: boolean;
@@ -235,41 +247,46 @@ interface SelectedWorksProps {
 
 export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [activeFilter, setActiveFilter] = useState('All');
   const prefersReducedMotion = useReducedMotion();
 
-  // 5 featured projects
+  // 5 featured projects on Home, or filterable full list on /projects
   const featuredProjects = projectsData.filter((p) => p.isFeatured);
-  const displayProjects = showAll ? projectsData : featuredProjects;
+  const filteredProjects = activeFilter === 'All'
+    ? projectsData
+    : projectsData.filter((p) => p.categories && p.categories.includes(activeFilter));
+
+  const displayProjects = showAll ? filteredProjects : featuredProjects;
 
   const cardsContainerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: prefersReducedMotion ? 0 : 0.1,
+        staggerChildren: 0.08,
+        delayChildren: prefersReducedMotion ? 0 : 0.05,
       },
     },
   };
 
   const cardItemVariants: Variants = {
-    hidden: { opacity: 0, y: 32 },
+    hidden: { opacity: 0, y: 28 },
     show: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.7, ease: EASING },
+      transition: { duration: 0.6, ease: EASING },
     },
   };
 
   return (
     <section id="projects" aria-label="Projects" className="py-20 lg:py-28 bg-ivory border-b border-warm-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <Reveal>
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div className="space-y-2">
               <SectionLabel label="PROJECTS" />
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal text-charcoal">
-                <SplitLines lines={['Selected Works']} />
+                <SplitLines lines={showAll ? ['All Systems & Works'] : ['Selected Works']} />
               </h2>
             </div>
 
@@ -285,119 +302,105 @@ export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false })
           </div>
         </Reveal>
 
-        {/* 3-column grid on desktop, 2 columns on tablet, 1 column on mobile */}
-        {/* Cards stagger in (0.1s) from 32px below */}
-        <m.div
-          variants={cardsContainerVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={DEFAULT_VIEWPORT}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {displayProjects.map((project) => (
-            <m.div key={project.slug} variants={cardItemVariants} className="h-full">
-              <article
-                onClick={() => setSelectedProject(project)}
-                className="group cursor-pointer bg-white rounded-[6px] border border-warm-border overflow-hidden hover:border-[#E47B43] hover:-translate-y-1.5 hover:shadow-float transition-all duration-300 shadow-sm flex flex-col h-full"
-              >
-                <div className="relative w-full aspect-[16/10] bg-cream overflow-hidden border-b border-warm-border">
-                  <ProjectCover slug={project.slug} title={project.title} />
-
-                  {/* Top-right arrow button with diagonal swap: arrow slides out top-right and 2nd copy slides in from bottom-left */}
-                  <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-[4px] bg-white/95 text-charcoal flex items-center justify-center shadow-md border border-warm-border group-hover:bg-burnt-orange group-hover:text-white group-hover:border-burnt-orange transition-all duration-200 overflow-hidden">
-                    <ArrowUpRight className="w-4 h-4 stroke-[2.2] transition-transform duration-300 ease-out group-hover:translate-x-6 group-hover:-translate-y-6" />
-                    <ArrowUpRight className="w-4 h-4 stroke-[2.2] absolute transition-transform duration-300 ease-out -translate-x-6 translate-y-6 group-hover:translate-x-0 group-hover:translate-y-0" />
-                  </div>
-                </div>
-
-                <div className="p-5 flex flex-col flex-grow justify-between space-y-4">
-                  <div className="space-y-1.5">
-                    {project.status !== 'Completed' && (
-                      <div className="pb-1">
-                        <Tag variant="badge" status="In progress">
-                          In progress ({project.badge})
-                        </Tag>
-                      </div>
-                    )}
-                    <h3 className="font-serif text-xl sm:text-[22px] font-semibold text-charcoal group-hover:text-burnt-orange transition-colors duration-200">
-                      {project.title.replace(' using YOLOv8', '').replace(': Cross-Platform College App', '')}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-muted-grey line-clamp-2 leading-relaxed">
-                      {project.oneLiner}
-                    </p>
-                  </div>
-
-                  {/* Tags fade slightly up on card hover */}
-                  <div className="flex flex-wrap gap-1.5 pt-1 transition-all duration-300 group-hover:-translate-y-0.5">
-                    {project.tags.map((tag) => (
-                      <Tag key={tag} variant="mono">
-                        {tag}
-                      </Tag>
-                    ))}
-                  </div>
-                </div>
-              </article>
-            </m.div>
-          ))}
-
-          {/* 6th tile at the end: a cream card linking to /projects. Arrow moves 6px right on hover, bg deepens slightly */}
-          {!showAll && (
-            <m.div variants={cardItemVariants} className="h-full">
-              <Link
-                to="/projects"
-                className="group flex flex-col items-center justify-center p-8 bg-[#EFE8DD] hover:bg-[#E5DDD0] rounded-[6px] border border-warm-border hover:border-[#E47B43] hover:-translate-y-1.5 hover:shadow-float transition-all duration-300 shadow-sm text-center min-h-[300px] h-full"
-              >
-                <div className="w-12 h-12 rounded-full bg-white border border-warm-border flex items-center justify-center text-burnt-orange mb-4 group-hover:bg-burnt-orange group-hover:text-white group-hover:border-burnt-orange transition-all duration-200">
-                  <ArrowRight className="w-5 h-5 stroke-[2.2] transition-transform duration-300 group-hover:translate-x-[6px]" />
-                </div>
-                <span className="font-serif text-2xl font-semibold text-charcoal group-hover:text-burnt-orange transition-colors">
-                  View all projects
-                </span>
-                <span className="text-xs font-mono text-muted-grey mt-2">
-                  Explore all prototypes & lab ideas &rarr;
-                </span>
-              </Link>
-            </m.div>
-          )}
-        </m.div>
-
+        {/* Filter chips at top - /projects page only */}
         {showAll && (
-          <div className="pt-8 space-y-6">
-            <h3 className="font-serif text-2xl text-charcoal font-medium">In-Progress Systems</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {projectsData
-                .filter((p) => !p.isFeatured)
-                .map((project) => (
-                  <Card
-                    key={project.slug}
-                    onClick={() => setSelectedProject(project)}
-                    className="cursor-pointer p-6 flex flex-col justify-between"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Tag variant="badge" status="In progress">
-                          In progress ({project.badge})
-                        </Tag>
-                        <div className="w-7 h-7 rounded bg-ivory border border-warm-border flex items-center justify-center text-charcoal">
-                          <ArrowUpRight className="w-3.5 h-3.5" />
-                        </div>
-                      </div>
-                      <h4 className="font-serif text-xl font-semibold text-charcoal">{project.title}</h4>
-                      <p className="text-sm text-muted-grey leading-relaxed">{project.oneLiner}</p>
-                    </div>
+          <Reveal delay={0.08}>
+            <div className="flex flex-wrap items-center justify-between gap-4 py-2 border-b border-warm-border">
+              <div
+                role="group"
+                aria-label="Filter projects by category"
+                className="flex flex-wrap items-center gap-2"
+              >
+                {FILTER_CATEGORIES.map((cat) => {
+                  const isSelected = activeFilter === cat;
+                  return (
+                    <button
+                      key={cat}
+                      type="button"
+                      aria-pressed={isSelected}
+                      onClick={() => setActiveFilter(cat)}
+                      className={`relative px-4 py-1.5 text-xs sm:text-sm font-medium rounded-full transition-colors duration-200 select-none focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 ${
+                        isSelected
+                          ? 'text-white'
+                          : 'text-charcoal/80 bg-white hover:bg-cream border border-warm-border'
+                      }`}
+                    >
+                      {isSelected && (
+                        <m.span
+                          layoutId="activeFilterPill"
+                          className="absolute inset-0 bg-burnt-orange rounded-full -z-10"
+                          transition={
+                            prefersReducedMotion
+                              ? { duration: 0 }
+                              : { type: 'spring', stiffness: 380, damping: 28 }
+                          }
+                          aria-hidden="true"
+                        />
+                      )}
+                      <span className="relative z-10">{cat}</span>
+                    </button>
+                  );
+                })}
+              </div>
 
-                    <div className="flex flex-wrap gap-1.5 pt-4">
-                      {project.tags.map((t) => (
-                        <Tag key={t} variant="mono">
-                          {t}
-                        </Tag>
-                      ))}
-                    </div>
-                  </Card>
-                ))}
+              {/* Small mono count */}
+              <span className="text-xs font-mono text-muted-grey uppercase tracking-wider">
+                {filteredProjects.length} {filteredProjects.length === 1 ? 'project' : 'projects'}
+              </span>
             </div>
-          </div>
+          </Reveal>
         )}
+
+        {/* 3-column grid on desktop, 2 columns on tablet, 1 column on mobile */}
+        <AnimatePresence mode="popLayout">
+          <m.div
+            layout
+            key={showAll ? activeFilter : 'featured-grid'}
+            variants={cardsContainerVariants}
+            initial="hidden"
+            animate="show"
+            viewport={DEFAULT_VIEWPORT}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {displayProjects.map((project) => (
+              <m.div
+                key={project.slug}
+                layout
+                variants={cardItemVariants}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.35, ease: EASING }}
+                className="h-full"
+              >
+                <ProjectCard
+                  project={project}
+                  onClick={() => setSelectedProject(project)}
+                />
+              </m.div>
+            ))}
+
+            {/* 6th tile at the end on Home page: a cream card linking to /projects */}
+            {!showAll && (
+              <m.div variants={cardItemVariants} className="h-full">
+                <Link
+                  to="/projects"
+                  className="group flex flex-col items-center justify-center p-8 bg-[#EFE8DD] hover:bg-[#E5DDD0] rounded-[6px] border border-warm-border hover:border-[#E47B43] hover:-translate-y-1.5 hover:shadow-float transition-all duration-300 shadow-sm text-center min-h-[300px] h-full"
+                >
+                  <div className="w-12 h-12 rounded-full bg-white border border-warm-border flex items-center justify-center text-burnt-orange mb-4 group-hover:bg-burnt-orange group-hover:text-white group-hover:border-burnt-orange transition-all duration-200">
+                    <ArrowRight className="w-5 h-5 stroke-[2.2] transition-transform duration-300 group-hover:translate-x-[6px]" />
+                  </div>
+                  <span className="font-serif text-2xl font-semibold text-charcoal group-hover:text-burnt-orange transition-colors">
+                    View all projects
+                  </span>
+                  <span className="text-xs font-mono text-muted-grey mt-2">
+                    Explore all prototypes & lab ideas &rarr;
+                  </span>
+                </Link>
+              </m.div>
+            )}
+          </m.div>
+        </AnimatePresence>
       </div>
 
       <ProjectModal

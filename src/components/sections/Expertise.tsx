@@ -1,7 +1,9 @@
-import React from 'react';
-import { m, type Variants } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { m, AnimatePresence, type Variants } from 'framer-motion';
+import { Sparkles, ArrowUpRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { handsOnSkills, exploringSkills } from '../../data/skills';
+import { projectsData } from '../../data/projects';
 import { SectionLabel } from '../ui/SectionLabel';
 import { Card } from '../ui/Card';
 import { Reveal } from '../ui/Reveal';
@@ -9,8 +11,57 @@ import { SplitLines } from '../ui/SplitLines';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
 
+const SKILL_ALIASES: Record<string, string[]> = {
+  'python': ['python'],
+  'react 19': ['react', 'react 19', 'react (vite)'],
+  'react': ['react', 'react 19', 'react (vite)'],
+  'tailwind css': ['tailwind', 'tailwind css'],
+  'framer motion': ['framer motion'],
+  'recharts': ['recharts'],
+  'flask': ['flask', 'flask-cors'],
+  'flask-socketio (socket.io)': ['flask-socketio', 'socket.io', 'flask-socketio / socket.io'],
+  'rest apis': ['flask', 'fastapi', 'rest'],
+  'mysql': ['mysql', 'mysql-connector-python'],
+  'firebase firestore': ['firestore', 'firebase'],
+  'firebase authentication': ['authentication', 'firebase'],
+  'firebase storage': ['storage', 'firebase'],
+  'yolov8': ['yolov8', 'yolov8n', 'yolo', 'ultralytics'],
+  'object detection': ['yolov8', 'yolov8n', 'yolo'],
+  'machine learning': ['yolov8', 'pytorch', 'colab'],
+  'dataset preparation': ['roboflow', 'google colab'],
+  'image augmentation': ['roboflow', 'yolov8'],
+  'model training & evaluation': ['google colab', 'yolov8', 'pytorch'],
+  'pytorch': ['pytorch'],
+  'ultralytics': ['ultralytics', 'yolov8'],
+  'opencv': ['cv', 'opencv'],
+  'pandas': ['pandas', 'sheetjs'],
+  'flutter / dart': ['flutter', 'dart'],
+  'git': ['git', 'github'],
+  'github': ['github'],
+  'google colab': ['google colab', 'colab'],
+  'roboflow': ['roboflow'],
+  'mysql workbench': ['mysql'],
+  'node.js': ['node.js', 'react (vite)'],
+  'express': ['express', 'flask'],
+  'sqlite': ['sqlite', 'mysql', 'postgresql'],
+};
+
+const getProjectsForSkill = (skillName: string) => {
+  const normalized = skillName.toLowerCase().trim();
+  const aliases = SKILL_ALIASES[normalized] || [normalized];
+  return projectsData.filter((project) => {
+    const stackLower = project.stack.map((s) => s.toLowerCase());
+    const tagsLower = project.tags.map((t) => t.toLowerCase());
+    return aliases.some((alias) =>
+      stackLower.some((s) => s.includes(alias)) ||
+      tagsLower.some((t) => t.includes(alias))
+    );
+  });
+};
+
 export const Expertise: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
+  const [activeSkills, setActiveSkills] = useState<Record<string, string>>({});
 
   const blocksContainerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -52,6 +103,25 @@ export const Expertise: React.FC = () => {
     },
   };
 
+  const projectsStaggerVariants: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+      },
+    },
+  };
+
+  const projectItemVariants: Variants = {
+    hidden: { opacity: 0, x: -6 },
+    show: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.25, ease: EASING },
+    },
+  };
+
   return (
     <section id="expertise" aria-label="Expertise" className="py-20 lg:py-28 bg-ivory border-b border-warm-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
@@ -84,49 +154,124 @@ export const Expertise: React.FC = () => {
             viewport={DEFAULT_VIEWPORT}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"
           >
-            {handsOnSkills.map((group, idx) => (
-              <m.div key={idx} variants={blockItemVariants} className="h-full">
-                <Card className="p-5 space-y-3 flex flex-col justify-between h-full">
-                  <div>
-                    <h3 className="font-mono text-xs uppercase tracking-wider text-burnt-orange font-semibold pb-2">
-                      {group.category}
-                    </h3>
+            {handsOnSkills.map((group, idx) => {
+              const currentSkill = activeSkills[group.category];
+              const matchedProjects = currentSkill ? getProjectsForSkill(currentSkill) : [];
 
-                    {/* Thin separator lines grow from left to right */}
-                    <m.div
-                      className="h-[1px] bg-warm-border origin-left w-full mb-3"
-                      initial={prefersReducedMotion ? false : { scaleX: 0 }}
-                      whileInView={{ scaleX: 1 }}
-                      viewport={DEFAULT_VIEWPORT}
-                      transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.15, ease: EASING }}
-                    />
+              return (
+                <m.div key={idx} variants={blockItemVariants} className="h-full">
+                  <Card className="p-5 flex flex-col justify-between h-full space-y-3">
+                    <div>
+                      <h3 className="font-mono text-xs uppercase tracking-wider text-burnt-orange font-semibold pb-2">
+                        {group.category}
+                      </h3>
 
-                    {/* Skill chips fade in with small stagger; on hover gets orange border and small orange dot scales in */}
-                    <m.div
-                      variants={chipsContainerVariants}
-                      initial="hidden"
-                      whileInView="show"
-                      viewport={DEFAULT_VIEWPORT}
-                      className="flex flex-wrap gap-1.5"
-                    >
-                      {group.skills.map((skill) => (
-                        <m.span
-                          key={skill}
-                          variants={chipItemVariants}
-                          className="group/chip relative inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium bg-ivory text-charcoal/90 rounded-[3px] border border-warm-border hover:border-burnt-orange hover:bg-cream transition-all duration-200 cursor-default"
-                        >
-                          <span
-                            className="w-1.5 h-1.5 rounded-full bg-burnt-orange scale-0 group-hover/chip:scale-100 transition-transform duration-200 shrink-0"
-                            aria-hidden="true"
-                          />
-                          <span>{skill}</span>
-                        </m.span>
-                      ))}
-                    </m.div>
-                  </div>
-                </Card>
-              </m.div>
-            ))}
+                      {/* Thin separator lines grow from left to right */}
+                      <m.div
+                        className="h-[1px] bg-warm-border origin-left w-full mb-3"
+                        initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                        whileInView={{ scaleX: 1 }}
+                        viewport={DEFAULT_VIEWPORT}
+                        transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.15, ease: EASING }}
+                      />
+
+                      {/* Interactive skill chip buttons */}
+                      <m.div
+                        variants={chipsContainerVariants}
+                        initial="hidden"
+                        whileInView="show"
+                        viewport={DEFAULT_VIEWPORT}
+                        className="flex flex-wrap gap-1.5"
+                      >
+                        {group.skills.map((skill) => {
+                          const isSelected = currentSkill === skill;
+
+                          return (
+                            <m.button
+                              key={skill}
+                              type="button"
+                              variants={chipItemVariants}
+                              onClick={() => {
+                                setActiveSkills((prev) => ({
+                                  ...prev,
+                                  [group.category]: prev[group.category] === skill ? '' : skill,
+                                }));
+                              }}
+                              onMouseEnter={() => {
+                                setActiveSkills((prev) => ({ ...prev, [group.category]: skill }));
+                              }}
+                              onFocus={() => {
+                                setActiveSkills((prev) => ({ ...prev, [group.category]: skill }));
+                              }}
+                              className={`group/chip relative inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-[3px] border transition-all duration-200 select-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-burnt-orange ${
+                                isSelected
+                                  ? 'border-burnt-orange bg-cream text-charcoal font-semibold ring-1 ring-burnt-orange'
+                                  : 'bg-ivory text-charcoal/90 border-warm-border hover:border-burnt-orange hover:bg-cream'
+                              }`}
+                              aria-pressed={isSelected}
+                            >
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full bg-burnt-orange transition-transform duration-200 shrink-0 ${
+                                  isSelected ? 'scale-100' : 'scale-0 group-hover/chip:scale-100'
+                                }`}
+                                aria-hidden="true"
+                              />
+                              <span>{skill}</span>
+                            </m.button>
+                          );
+                        })}
+                      </m.div>
+                    </div>
+
+                    {/* "Used in" line under this skill group */}
+                    <div className="pt-3 mt-3 border-t border-warm-border min-h-[46px] flex items-center">
+                      <AnimatePresence mode="wait">
+                        {currentSkill ? (
+                          <m.div
+                            key={currentSkill}
+                            initial={{ opacity: 0, y: 4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -4 }}
+                            transition={{ duration: 0.2 }}
+                            className="w-full flex flex-wrap items-center gap-1.5 text-xs font-mono"
+                          >
+                            <span className="text-muted-grey font-medium">Used in:</span>
+                            {matchedProjects.length > 0 ? (
+                              <m.span
+                                variants={projectsStaggerVariants}
+                                initial="hidden"
+                                animate="show"
+                                className="inline-flex flex-wrap items-center gap-1.5"
+                              >
+                                {matchedProjects.map((p) => (
+                                  <m.span key={p.slug} variants={projectItemVariants}>
+                                    <Link
+                                      to={`/projects/${p.slug}`}
+                                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-cream hover:bg-burnt-orange text-charcoal hover:text-white transition-colors duration-200 border border-warm-border hover:border-burnt-orange shadow-2xs"
+                                    >
+                                      <span className="font-sans font-medium text-[11px]">
+                                        {p.title.replace(' using YOLOv8', '').replace(': Cross-Platform College App', '').replace(': AI-Assisted Civic Issue Reporting', '')}
+                                      </span>
+                                      <ArrowUpRight className="w-3 h-3" />
+                                    </Link>
+                                  </m.span>
+                                ))}
+                              </m.span>
+                            ) : (
+                              <span className="text-muted-grey text-[11px] italic">Coursework & prototypes</span>
+                            )}
+                          </m.div>
+                        ) : (
+                          <span className="text-[11px] font-mono text-muted-grey/60">
+                            Hover or tap skill to view linked projects &rarr;
+                          </span>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </Card>
+                </m.div>
+              );
+            })}
           </m.div>
         </div>
 
