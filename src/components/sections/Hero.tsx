@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, Suspense } from 'react';
-import { m, useScroll, useTransform, useMotionValue, useSpring, type Variants } from 'framer-motion';
+import { m, useScroll, useTransform, useMotionValue, useSpring, useInView, type Variants } from 'framer-motion';
 import { ArrowRight, Cpu, Layers, Eye, Zap } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { projectsData } from '../../data/projects';
@@ -7,7 +7,9 @@ import { Button } from '../ui/Button';
 import { ContourLines } from '../art/ContourLines';
 import { ArchFrame } from '../art/ArchFrame';
 import { MountainFallback } from '../art/MountainFallback';
-import { SplitLines } from '../ui/SplitLines';
+import { SectionLabel } from '../ui/SectionLabel';
+import { KineticHeadline } from '../ui/KineticHeadline';
+import { RotatingNowBuilding } from '../ui/RotatingNowBuilding';
 import { CountUp } from '../ui/CountUp';
 import { Magnetic } from '../ui/Magnetic';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
@@ -163,6 +165,8 @@ export const Hero: React.FC = () => {
   const [terminalFinished, setTerminalFinished] = useState(() => Boolean(prefersReducedMotion));
   const completedProjectsCount = projectsData.filter((p) => p.status === 'Completed').length.toString();
   const heroRef = useRef<HTMLElement>(null);
+  const isHeroInView = useInView(heroRef, { margin: '-20px' });
+  const rafPointerRef = useRef<number | null>(null);
 
   // Background detail: topographic contour lines shift by at most 16px vertically as page scrolls
   const { scrollYProgress } = useScroll({
@@ -206,16 +210,36 @@ export const Hero: React.FC = () => {
 
   const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
     if (!isPointerDepthActive || !heroRef.current) return;
-    const rect = heroRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1; // -1 to 1
-    const y = ((e.clientY - rect.top) / rect.height) * 2 - 1; // -1 to 1
-    normX.set(Math.max(-1, Math.min(1, x)));
-    normY.set(Math.max(-1, Math.min(1, y)));
+    const clientX = e.clientX;
+    const clientY = e.clientY;
+
+    if (rafPointerRef.current === null) {
+      rafPointerRef.current = requestAnimationFrame(() => {
+        rafPointerRef.current = null;
+        if (!heroRef.current) return;
+        const rect = heroRef.current.getBoundingClientRect();
+        const px = clientX - rect.left;
+        const py = clientY - rect.top;
+
+        // Set CSS variables for spotlight & dot grid
+        heroRef.current.style.setProperty('--mx', `${px.toFixed(1)}px`);
+        heroRef.current.style.setProperty('--my', `${py.toFixed(1)}px`);
+
+        const x = (px / rect.width) * 2 - 1; // -1 to 1
+        const y = (py / rect.height) * 2 - 1; // -1 to 1
+        normX.set(Math.max(-1, Math.min(1, x)));
+        normY.set(Math.max(-1, Math.min(1, y)));
+      });
+    }
   };
 
   const handlePointerLeave = () => {
     normX.set(0);
     normY.set(0);
+    if (heroRef.current) {
+      heroRef.current.style.setProperty('--mx', '-500px');
+      heroRef.current.style.setProperty('--my', '-500px');
+    }
   };
 
   const scrollToProjects = (e: React.MouseEvent) => {
@@ -254,10 +278,21 @@ export const Hero: React.FC = () => {
       ref={heroRef}
       id="home"
       aria-label="Hero"
+      data-in-view={isHeroInView}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       className="relative pt-28 pb-16 lg:pt-36 lg:pb-24 overflow-hidden border-b border-warm-border bg-ivory"
     >
+      {/* Living background: Soft spotlight follows pointer (fine pointers only) */}
+      {isFinePointer && !prefersReducedMotion && (
+        <div className="hero-spotlight absolute inset-0 pointer-events-none z-0" aria-hidden="true" />
+      )}
+
+      {/* Living background: Faint dot grid revealed around spotlight */}
+      {isFinePointer && !prefersReducedMotion && (
+        <div className="hero-dot-grid absolute inset-0 pointer-events-none z-0" aria-hidden="true" />
+      )}
+
       {/* Contour lines with spring pointer depth + scroll parallax */}
       <m.div
         style={{
@@ -273,58 +308,11 @@ export const Hero: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center min-h-[calc(100vh-140px)]">
           {/* Left Column */}
           <div className="lg:col-span-7 flex flex-col justify-center space-y-6 lg:pr-4">
-            {/* Label line grows from 0 to full width, then label text fades in (<300ms start) */}
-            <div className="inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.2em] text-charcoal/80 font-medium">
-              <m.span
-                className="w-5 h-[1.5px] bg-burnt-orange inline-block origin-left"
-                initial={prefersReducedMotion ? false : { scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.35, ease: EASING }}
-                aria-hidden="true"
-              />
-              <m.span
-                initial={prefersReducedMotion ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : 0.1, ease: EASING }}
-              >
-                MOHAK AGRAWAL
-              </m.span>
-              <m.span
-                className="w-5 h-[1.5px] bg-burnt-orange inline-block origin-right"
-                initial={prefersReducedMotion ? false : { scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.35, ease: EASING }}
-                aria-hidden="true"
-              />
-            </div>
+            {/* Section label with decode effect */}
+            <SectionLabel label="MOHAK AGRAWAL" twoSided />
 
-            {/* Headline using SplitLines + thin orange underline drawing under "built." */}
-            <h1 className="font-serif text-4xl sm:text-6xl lg:text-[70px] xl:text-[76px] font-normal leading-[1.08] tracking-[-0.02em] text-charcoal">
-              <SplitLines
-                lines={[
-                  'Ideas deserve',
-                  <span key="hero-line-2" className="inline-block">
-                    to be{' '}
-                    <span className="relative inline-block">
-                      <span className="font-serif italic text-burnt-orange font-normal">built.</span>
-                      <m.span
-                        className="absolute -bottom-1 left-0 right-0 h-[2px] bg-burnt-orange origin-left pointer-events-none"
-                        initial={prefersReducedMotion ? false : { scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{
-                          duration: 0.5,
-                          delay: prefersReducedMotion ? 0 : 0.45,
-                          ease: EASING,
-                        }}
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </span>,
-                ]}
-                delay={0.1}
-                staggerDelay={0.1}
-              />
-            </h1>
+            {/* Kinetic Headline with character-level pointer lifting and tilting */}
+            <KineticHeadline />
 
             {/* Subline with 0.08s stagger */}
             <m.div
@@ -349,6 +337,18 @@ export const Hero: React.FC = () => {
             >
               {profileData.heroBio}
             </m.p>
+
+            {/* Rotating "Now Building" Line */}
+            <m.div
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.46, ease: EASING }}
+            >
+              <RotatingNowBuilding
+                phrases={profileData.nowBuilding}
+                isHeroInView={isHeroInView}
+              />
+            </m.div>
 
             {/* CTAs with Magnetic Effect */}
             <m.div
@@ -494,7 +494,7 @@ export const Hero: React.FC = () => {
                   initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 16 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.2, ease: EASING }}
-                  className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-burnt-orange shadow-lg"
+                  className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-burnt-orange shadow-lg arch-sun-breathe"
                   style={{
                     background: 'radial-gradient(circle at 35% 35%, #E47B43, #C94F17)',
                   }}

@@ -208,7 +208,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-burnt-orange font-semibold hover:text-light-orange inline-flex items-center gap-1.5 shrink-0"
+                className="draw-underline-link text-burnt-orange font-semibold hover:text-light-orange inline-flex items-center gap-1.5 shrink-0 py-0.5"
               >
                 <span>View on GitHub &rarr;</span>
               </a>
@@ -219,7 +219,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
             <Link
               to={`/projects/${project.slug}`}
               onClick={onClose}
-              className="text-xs sm:text-sm font-semibold text-charcoal hover:text-burnt-orange inline-flex items-center gap-1.5"
+              className="draw-underline-link text-xs sm:text-sm font-semibold text-charcoal hover:text-burnt-orange inline-flex items-center gap-1.5 py-0.5"
             >
               <span>Open dedicated project page</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -293,7 +293,7 @@ export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false })
             {!showAll && (
               <Link
                 to="/projects"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-burnt-orange hover:text-light-orange transition-colors"
+                className="draw-underline-link inline-flex items-center gap-1.5 text-sm font-semibold text-burnt-orange hover:text-light-orange transition-colors py-0.5"
               >
                 <span>View all projects</span>
                 <ArrowRight className="w-4 h-4" />

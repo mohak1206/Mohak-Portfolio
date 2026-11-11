@@ -376,36 +376,28 @@ export const Contact: React.FC = () => {
 
               <span className="hidden sm:inline text-warm-border">|</span>
 
-              {/* Social links get an underline that draws on hover */}
+              {/* Social links with draw-and-retract underline and 4px arrow travel on hover */}
               <div className="flex items-center gap-6">
                 <a
                   href={profileData.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative inline-flex items-center gap-1.5 font-medium hover:text-burnt-orange transition-colors py-0.5"
+                  className="group draw-underline-link relative inline-flex items-center gap-1.5 font-medium hover:text-burnt-orange transition-colors py-0.5"
                 >
                   <Linkedin className="w-4 h-4 text-burnt-orange" />
                   <span>LinkedIn</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  <span
-                    className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-burnt-orange origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200 pointer-events-none"
-                    aria-hidden="true"
-                  />
+                  <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-1" />
                 </a>
 
                 <a
                   href={profileData.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative inline-flex items-center gap-1.5 font-medium hover:text-burnt-orange transition-colors py-0.5"
+                  className="group draw-underline-link relative inline-flex items-center gap-1.5 font-medium hover:text-burnt-orange transition-colors py-0.5"
                 >
                   <Github className="w-4 h-4 text-burnt-orange" />
                   <span>GitHub</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  <span
-                    className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-burnt-orange origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200 pointer-events-none"
-                    aria-hidden="true"
-                  />
+                  <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-1" />
                 </a>
               </div>
             </div>

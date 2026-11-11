@@ -15,7 +15,7 @@ export const ProjectsPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
           <Link
             to="/#projects"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-charcoal hover:text-burnt-orange transition-colors"
+            className="draw-underline-link inline-flex items-center gap-2 text-sm font-semibold text-charcoal hover:text-burnt-orange transition-colors py-0.5"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to home</span>

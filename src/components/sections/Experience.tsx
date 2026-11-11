@@ -104,7 +104,7 @@ export const Experience: React.FC = () => {
                     <div className="pt-1">
                       <a
                         href="#projects"
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-burnt-orange hover:text-light-orange transition-colors"
+                        className="draw-underline-link inline-flex items-center gap-1.5 text-xs font-semibold text-burnt-orange hover:text-light-orange transition-colors py-0.5"
                       >
                         <span>{item.projectLink.text}</span>
                         <ArrowUpRight className="w-3.5 h-3.5" />

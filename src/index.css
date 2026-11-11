@@ -344,3 +344,168 @@ html.lenis, html.lenis body {
     display: none !important;
   }
 }
+
+/* Hero Living Background: Spotlight & Faint Dot Grid */
+.hero-spotlight {
+  background: radial-gradient(320px circle at var(--mx, -500px) var(--my, -500px), rgba(201, 79, 23, 0.08), transparent 70%);
+}
+
+[data-theme="dark"] .hero-spotlight {
+  background: radial-gradient(320px circle at var(--mx, -500px) var(--my, -500px), rgba(228, 123, 67, 0.11), transparent 70%);
+}
+
+.hero-dot-grid {
+  background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.4;
+  mask-image: radial-gradient(160px circle at var(--mx, -500px) var(--my, -500px), black 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(160px circle at var(--mx, -500px) var(--my, -500px), black 0%, transparent 100%);
+}
+
+/* Topographic Contour Lines Ambient Drift (18s loop, translate up to 10px and back) */
+@keyframes contourDrift1 {
+  0%, 100% {
+    transform: translate(0px, 0px);
+  }
+  50% {
+    transform: translate(6px, -10px);
+  }
+}
+
+@keyframes contourDrift2 {
+  0%, 100% {
+    transform: translate(0px, 0px);
+  }
+  50% {
+    transform: translate(-6px, 8px);
+  }
+}
+
+@keyframes contourDrift3 {
+  0%, 100% {
+    transform: translate(0px, 0px);
+  }
+  50% {
+    transform: translate(8px, -5px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .contour-drift-1 {
+    animation: contourDrift1 18s ease-in-out infinite;
+  }
+  .contour-drift-2 {
+    animation: contourDrift2 18s ease-in-out 3s infinite;
+  }
+  .contour-drift-3 {
+    animation: contourDrift3 18s ease-in-out 6s infinite;
+  }
+}
+
+/* Arch Illustration Area: Clouds Drift (+/-12px, 30s) & Sun Glow Breathe (0.45 to 0.65, 6s) */
+@keyframes archCloudDrift {
+  0%, 100% {
+    transform: translateX(-12px);
+  }
+  50% {
+    transform: translateX(12px);
+  }
+}
+
+@keyframes archSunBreathe {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .arch-clouds-drift {
+    animation: archCloudDrift 30s ease-in-out infinite;
+  }
+  .arch-sun-breathe {
+    animation: archSunBreathe 6s ease-in-out infinite;
+  }
+}
+
+/* Pause animations when parent is off screen */
+[data-in-view="false"] .arch-clouds-drift,
+[data-in-view="false"] .arch-sun-breathe,
+[data-in-view="false"] .contour-drift-1,
+[data-in-view="false"] .contour-drift-2,
+[data-in-view="false"] .contour-drift-3 {
+  animation-play-state: paused !important;
+}
+
+/* All text links underline: draws from left to right on hover/focus, retracts to the right on leave (transform only) */
+.draw-underline-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.draw-underline-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.draw-underline-link:hover::after,
+.draw-underline-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Project Cover Life: Slow ambient 12s orbit loop & grid pulse (pause off screen) */
+@keyframes coverOrbitCircle {
+  0% {
+    transform: translate(0px, 0px);
+  }
+  25% {
+    transform: translate(4px, -5px);
+  }
+  50% {
+    transform: translate(6px, 0px);
+  }
+  75% {
+    transform: translate(2px, 5px);
+  }
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+
+@keyframes coverGridPulse {
+  0%, 100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cover-orbit-circle {
+    animation: coverOrbitCircle 12s ease-in-out infinite;
+  }
+  .cover-grid-pulse {
+    animation: coverGridPulse 6s ease-in-out infinite;
+  }
+}
+
+[data-in-view="false"] .cover-orbit-circle,
+[data-in-view="false"] .cover-grid-pulse {
+  animation-play-state: paused !important;
+}

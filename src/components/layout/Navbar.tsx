@@ -87,7 +87,7 @@ export const Navbar: React.FC = () => {
           </a>
 
           {/* Center: Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8" aria-label="Main Navigation">
+          <nav className="group/nav hidden md:flex items-center space-x-8" aria-label="Main Navigation">
             {navItems.map((item) => {
               const isActive = location.pathname === '/' && activeSection === item.id;
               return (
@@ -95,7 +95,7 @@ export const Navbar: React.FC = () => {
                   key={item.id}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href, item.id)}
-                  className={`relative py-1 text-sm font-medium transition-colors duration-200 ${
+                  className={`relative py-1 text-sm font-medium transition-all duration-200 group-hover/nav:opacity-55 hover:!opacity-100 ${
                     isActive ? 'text-burnt-orange' : 'text-charcoal/80 hover:text-charcoal'
                   }`}
                 >

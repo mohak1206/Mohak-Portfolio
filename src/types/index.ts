@@ -84,6 +84,7 @@ export interface ProfileData {
   };
   heroSubheadline: string;
   heroBio: string;
+  nowBuilding?: string[];
   location: string;
   currentStatus: string;
   email: string;

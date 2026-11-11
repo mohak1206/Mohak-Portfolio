@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { m } from 'framer-motion';
+import React, { useState, useRef } from 'react';
+import { m, useInView } from 'framer-motion';
 import { cn } from '../../lib/utils';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
@@ -16,6 +16,8 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
   const [imgError, setImgError] = useState(false);
   const localImg = `/projects/${slug}.webp`;
   const prefersReducedMotion = useReducedMotion();
+  const coverRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(coverRef, { margin: '-20px' });
 
   if (!imgError) {
     return (
@@ -59,6 +61,8 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
   // Generative Editorial Abstract Covers with Framer Motion draw-on lines and fading circles
   return (
     <div
+      ref={coverRef}
+      data-in-view={isInView}
       className={cn(
         'w-full h-full relative overflow-hidden bg-cream project-cover-container flex items-center justify-center transition-transform duration-[600ms] ease-out group-hover:scale-[1.06]',
         className
@@ -67,10 +71,12 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
       {slug === 'signature-detection' && (
         <svg viewBox="0 0 400 240" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <rect width="400" height="240" fill="#EFE8DD" />
-          <line x1="40" y1="0" x2="40" y2="240" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="3 3" />
-          <line x1="200" y1="0" x2="200" y2="240" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="3 3" />
-          <line x1="360" y1="0" x2="360" y2="240" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="3 3" />
-          <line x1="0" y1="120" x2="400" y2="120" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="3 3" />
+          <g className="cover-grid-pulse">
+            <line x1="40" y1="0" x2="40" y2="240" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="3 3" />
+            <line x1="200" y1="0" x2="200" y2="240" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="3 3" />
+            <line x1="360" y1="0" x2="360" y2="240" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="3 3" />
+            <line x1="0" y1="120" x2="400" y2="120" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="3 3" />
+          </g>
 
           <m.circle
             cx="280"
@@ -87,6 +93,7 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
             cy="110"
             r="28"
             fill="#C94F17"
+            className="cover-orbit-circle"
             initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 0.85, scale: 1 }}
             viewport={DEFAULT_VIEWPORT}
@@ -120,12 +127,14 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
       {slug === 'fire-smoke-detection' && (
         <svg viewBox="0 0 400 240" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <rect width="400" height="240" fill="#24201D" />
-          <line x1="0" y1="60" x2="400" y2="60" stroke="#3A332E" strokeWidth="1" />
-          <line x1="0" y1="120" x2="400" y2="120" stroke="#3A332E" strokeWidth="1" />
-          <line x1="0" y1="180" x2="400" y2="180" stroke="#3A332E" strokeWidth="1" />
-          <line x1="100" y1="0" x2="100" y2="240" stroke="#3A332E" strokeWidth="1" />
-          <line x1="200" y1="0" x2="200" y2="240" stroke="#3A332E" strokeWidth="1" />
-          <line x1="300" y1="0" x2="300" y2="240" stroke="#3A332E" strokeWidth="1" />
+          <g className="cover-grid-pulse">
+            <line x1="0" y1="60" x2="400" y2="60" stroke="#3A332E" strokeWidth="1" />
+            <line x1="0" y1="120" x2="400" y2="120" stroke="#3A332E" strokeWidth="1" />
+            <line x1="0" y1="180" x2="400" y2="180" stroke="#3A332E" strokeWidth="1" />
+            <line x1="100" y1="0" x2="100" y2="240" stroke="#3A332E" strokeWidth="1" />
+            <line x1="200" y1="0" x2="200" y2="240" stroke="#3A332E" strokeWidth="1" />
+            <line x1="300" y1="0" x2="300" y2="240" stroke="#3A332E" strokeWidth="1" />
+          </g>
 
           <m.path
             d="M120,180 Q100,120 160,90 T240,60"
@@ -150,8 +159,10 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
             transition={lineTransition(0.2)}
           />
 
-          <polygon points="120,195 105,165 125,130 145,155 160,115 175,170 155,195" fill="#E47B43" />
-          <polygon points="125,195 115,175 130,150 145,165 155,140 162,175 150,195" fill="#F7C844" />
+          <g className="cover-orbit-circle">
+            <polygon points="120,195 105,165 125,130 145,155 160,115 175,170 155,195" fill="#E47B43" />
+            <polygon points="125,195 115,175 130,150 145,165 155,140 162,175 150,195" fill="#F7C844" />
+          </g>
 
           <rect x="95" y="105" width="85" height="95" rx="3" fill="none" stroke="#C94F17" strokeWidth="1.5" />
           <rect x="95" y="93" width="52" height="13" rx="2" fill="#C94F17" />
@@ -173,6 +184,7 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
             cy="80"
             r="45"
             fill="#C94F17"
+            className="cover-orbit-circle"
             initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 0.1, scale: 1 }}
             viewport={DEFAULT_VIEWPORT}
@@ -180,7 +192,9 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
           />
 
           <rect x="40" y="40" width="320" height="155" rx="6" fill="#FFFFFF" stroke="#DDD4C8" strokeWidth="1.5" />
-          <line x1="40" y1="75" x2="360" y2="75" stroke="#DDD4C8" strokeWidth="1" />
+          <g className="cover-grid-pulse">
+            <line x1="40" y1="75" x2="360" y2="75" stroke="#DDD4C8" strokeWidth="1" />
+          </g>
           <m.circle
             cx="58"
             cy="58"
@@ -315,33 +329,36 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
           <rect x="186" y="149" width="48" height="6" rx="2" fill="#191919" />
           <rect x="186" y="158" width="32" height="4" rx="2" fill="#77716B" />
 
-          <m.path
-            d="M70,120 C100,80 120,95 145,95"
-            fill="none"
-            stroke="#C94F17"
-            strokeWidth="1.5"
-            strokeDasharray="3 3"
-            initial={prefersReducedMotion ? false : { pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            viewport={DEFAULT_VIEWPORT}
-            transition={lineTransition(0.1)}
-          />
-          <m.path
-            d="M255,125 C280,125 300,150 330,130"
-            fill="none"
-            stroke="#C94F17"
-            strokeWidth="1.5"
-            strokeDasharray="3 3"
-            initial={prefersReducedMotion ? false : { pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            viewport={DEFAULT_VIEWPORT}
-            transition={lineTransition(0.2)}
-          />
+          <g className="cover-grid-pulse">
+            <m.path
+              d="M70,120 C100,80 120,95 145,95"
+              fill="none"
+              stroke="#C94F17"
+              strokeWidth="1.5"
+              strokeDasharray="3 3"
+              initial={prefersReducedMotion ? false : { pathLength: 0 }}
+              whileInView={{ pathLength: 1 }}
+              viewport={DEFAULT_VIEWPORT}
+              transition={lineTransition(0.1)}
+            />
+            <m.path
+              d="M255,125 C280,125 300,150 330,130"
+              fill="none"
+              stroke="#C94F17"
+              strokeWidth="1.5"
+              strokeDasharray="3 3"
+              initial={prefersReducedMotion ? false : { pathLength: 0 }}
+              whileInView={{ pathLength: 1 }}
+              viewport={DEFAULT_VIEWPORT}
+              transition={lineTransition(0.2)}
+            />
+          </g>
           <m.circle
             cx="70"
             cy="120"
             r="5"
             fill="#C94F17"
+            className="cover-orbit-circle"
             initial={prefersReducedMotion ? false : { opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={DEFAULT_VIEWPORT}
@@ -352,6 +369,7 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
             cy="130"
             r="5"
             fill="#C94F17"
+            className="cover-orbit-circle"
             initial={prefersReducedMotion ? false : { opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={DEFAULT_VIEWPORT}
@@ -365,36 +383,38 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
       {slug === 'civic-i' && (
         <svg viewBox="0 0 400 240" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <rect width="400" height="240" fill="#EFE8DD" />
-          <m.path
-            d="M40,40 L360,200"
-            stroke="#DDD4C8"
-            strokeWidth="8"
-            strokeLinecap="round"
-            initial={prefersReducedMotion ? false : { pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            viewport={DEFAULT_VIEWPORT}
-            transition={lineTransition(0.05)}
-          />
-          <m.path
-            d="M340,30 L60,210"
-            stroke="#DDD4C8"
-            strokeWidth="6"
-            strokeLinecap="round"
-            initial={prefersReducedMotion ? false : { pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            viewport={DEFAULT_VIEWPORT}
-            transition={lineTransition(0.15)}
-          />
-          <m.path
-            d="M20,130 L380,110"
-            stroke="#E6DFD5"
-            strokeWidth="5"
-            strokeLinecap="round"
-            initial={prefersReducedMotion ? false : { pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            viewport={DEFAULT_VIEWPORT}
-            transition={lineTransition(0.25)}
-          />
+          <g className="cover-grid-pulse">
+            <m.path
+              d="M40,40 L360,200"
+              stroke="#DDD4C8"
+              strokeWidth="8"
+              strokeLinecap="round"
+              initial={prefersReducedMotion ? false : { pathLength: 0 }}
+              whileInView={{ pathLength: 1 }}
+              viewport={DEFAULT_VIEWPORT}
+              transition={lineTransition(0.05)}
+            />
+            <m.path
+              d="M340,30 L60,210"
+              stroke="#DDD4C8"
+              strokeWidth="6"
+              strokeLinecap="round"
+              initial={prefersReducedMotion ? false : { pathLength: 0 }}
+              whileInView={{ pathLength: 1 }}
+              viewport={DEFAULT_VIEWPORT}
+              transition={lineTransition(0.15)}
+            />
+            <m.path
+              d="M20,130 L380,110"
+              stroke="#E6DFD5"
+              strokeWidth="5"
+              strokeLinecap="round"
+              initial={prefersReducedMotion ? false : { pathLength: 0 }}
+              whileInView={{ pathLength: 1 }}
+              viewport={DEFAULT_VIEWPORT}
+              transition={lineTransition(0.25)}
+            />
+          </g>
 
           <m.circle
             cx="195"
@@ -421,6 +441,7 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
             cy="125"
             r="7"
             fill="#C94F17"
+            className="cover-orbit-circle"
             initial={prefersReducedMotion ? false : { opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={DEFAULT_VIEWPORT}
@@ -439,8 +460,10 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
       {slug === 'healmaps' && (
         <svg viewBox="0 0 400 240" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <rect width="400" height="240" fill="#EFE8DD" />
-          <line x1="0" y1="120" x2="400" y2="120" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="4 4" />
-          <line x1="200" y1="0" x2="200" y2="240" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="4 4" />
+          <g className="cover-grid-pulse">
+            <line x1="0" y1="120" x2="400" y2="120" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="4 4" />
+            <line x1="200" y1="0" x2="200" y2="240" stroke="#DDD4C8" strokeWidth="1" strokeDasharray="4 4" />
+          </g>
 
           <m.circle
             cx="200"
@@ -474,7 +497,7 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
           <rect x="180" y="60" width="90" height="22" rx="4" fill="#F7F3EC" stroke="#DDD4C8" strokeWidth="1" />
           <text x="190" y="75" fill="#C94F17" fontSize="9" fontFamily="'JetBrains Mono', monospace" fontWeight="bold">BEDS: 82%</text>
 
-          <circle cx="280" cy="148" r="14" fill="#EFE8DD" stroke="#DDD4C8" strokeWidth="1.5" />
+          <circle cx="280" cy="148" r="14" fill="#EFE8DD" stroke="#DDD4C8" strokeWidth="1.5" className="cover-orbit-circle" />
           <m.path
             d="M280,140 V156 M272,148 H288"
             stroke="#C94F17"

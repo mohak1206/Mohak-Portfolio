@@ -266,7 +266,7 @@ export const ProjectDetail: React.FC = () => {
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-burnt-orange font-semibold hover:text-light-orange inline-flex items-center gap-1.5 shrink-0"
+                  className="draw-underline-link text-burnt-orange font-semibold hover:text-light-orange inline-flex items-center gap-1.5 shrink-0 py-0.5"
                 >
                   <span>View on GitHub &rarr;</span>
                 </a>
@@ -279,7 +279,7 @@ export const ProjectDetail: React.FC = () => {
               <div className="pt-6 border-t border-warm-border flex justify-between items-center">
                 <Link
                   to="/#projects"
-                  className="text-sm font-semibold text-charcoal hover:text-burnt-orange"
+                  className="draw-underline-link text-sm font-semibold text-charcoal hover:text-burnt-orange py-0.5"
                 >
                   ← Back to overview
                 </Link>

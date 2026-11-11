@@ -12,6 +12,12 @@ export const profileData: ProfileData = {
   },
   heroSubheadline: "AI/ML Developer · Full Stack Engineer · Problem Solver",
   heroBio: "I turn real-world problems into intelligent, scalable and user-focused solutions using AI, full-stack development and modern technologies.",
+  nowBuilding: [
+    "Civic-I, an AI-assisted civic issue reporting prototype",
+    "Healmaps, a hospital resource mapping project",
+    "computer-vision models with YOLOv8",
+    "full-stack and cross-platform apps",
+  ],
   location: "Maharashtra, India",
   currentStatus: "Software Intern at RigAI Tech",
   email: "agrawalmohak06@gmail.com",

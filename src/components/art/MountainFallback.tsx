@@ -49,7 +49,7 @@ export const MountainFallback: React.FC<MountainFallbackProps> = ({ type, classN
             </defs>
 
             <rect width="600" height="900" fill="url(#skyGrad)" />
-            <circle cx="240" cy="380" r="160" fill="url(#sunGlow)" opacity="0.8" />
+            <circle cx="240" cy="380" r="160" fill="url(#sunGlow)" className="arch-sun-breathe" />
 
             <polygon points="40,680 180,480 320,680" fill="#58453A" opacity="0.35" />
             <polygon points="260,680 420,440 580,680" fill="#4B3B32" opacity="0.4" />
@@ -62,15 +62,17 @@ export const MountainFallback: React.FC<MountainFallbackProps> = ({ type, classN
             <polygon points="-50,900 150,620 400,900" fill="#24201D" />
             <polygon points="220,900 450,590 650,900" fill="#1C1816" />
 
-            <path
-              d="M-20,680 Q100,650 250,670 T550,660 T700,680 L700,900 L-20,900 Z"
-              fill="url(#fog)"
-            />
-            <path
-              d="M-20,740 Q150,710 320,730 T650,720 L650,900 L-20,900 Z"
-              fill="#F7F3EC"
-              opacity="0.9"
-            />
+            <g className="arch-clouds-drift">
+              <path
+                d="M-20,680 Q100,650 250,670 T550,660 T700,680 L700,900 L-20,900 Z"
+                fill="url(#fog)"
+              />
+              <path
+                d="M-20,740 Q150,710 320,730 T650,720 L650,900 L-20,900 Z"
+                fill="#F7F3EC"
+                opacity="0.9"
+              />
+            </g>
           </svg>
         </div>
       );
