@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, Suspense } from 'react';
 import { m, AnimatePresence, type Variants } from 'framer-motion';
 import { Sparkles, ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -11,6 +11,10 @@ import { Reveal } from '../ui/Reveal';
 import { SplitLines } from '../ui/SplitLines';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
+
+const SkillsConstellation = React.lazy(
+  () => import('../ui/SkillsConstellation').then((m) => ({ default: m.SkillsConstellation }))
+);
 
 const SKILL_ALIASES: Record<string, string[]> = {
   'python': ['python'],
@@ -62,6 +66,7 @@ const getProjectsForSkill = (skillName: string) => {
 
 export const Expertise: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
+  const [viewMode, setViewMode] = useState<'grid' | 'graph'>('grid');
   const [activeSkills, setActiveSkills] = useState<Record<string, string>>({});
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -147,142 +152,208 @@ export const Expertise: React.FC = () => {
           </div>
         </Reveal>
 
-        {/* Hands-on Skills Grid */}
-        <div className="space-y-4">
+        {/* Hands-on Skills Section with Grid | Graph View Toggle */}
+        <div className="space-y-6">
           <Reveal delay={0.1}>
-            <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-charcoal/80 font-semibold">
-              <span className="w-2 h-2 rounded-full bg-burnt-orange inline-block" />
-              <span>Hands-on & Applied Competencies</span>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-charcoal/80 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-burnt-orange inline-block" />
+                <span>Hands-on & Applied Competencies</span>
+              </div>
+
+              {/* View Toggle: Grid | Graph (Hidden on mobile below 768px: hidden md:inline-flex) */}
+              <div
+                role="group"
+                aria-label="Skills view mode"
+                className="hidden md:inline-flex items-center p-1 bg-cream border border-warm-border rounded-[6px] gap-1 text-xs font-mono select-none"
+              >
+                <button
+                  type="button"
+                  aria-pressed={viewMode === 'grid'}
+                  onClick={() => setViewMode('grid')}
+                  className={`px-3 py-1 rounded-[4px] transition-all font-medium cursor-pointer ${
+                    viewMode === 'grid'
+                      ? 'bg-card-surface text-charcoal shadow-2xs font-semibold border border-warm-border'
+                      : 'text-muted-grey hover:text-charcoal'
+                  }`}
+                >
+                  Grid
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={viewMode === 'graph'}
+                  onClick={() => setViewMode('graph')}
+                  className={`px-3 py-1 rounded-[4px] transition-all font-medium cursor-pointer ${
+                    viewMode === 'graph'
+                      ? 'bg-card-surface text-charcoal shadow-2xs font-semibold border border-warm-border'
+                      : 'text-muted-grey hover:text-charcoal'
+                  }`}
+                >
+                  Graph
+                </button>
+              </div>
             </div>
           </Reveal>
 
-          {/* Category blocks stagger up */}
-          <m.div
-            variants={blocksContainerVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={DEFAULT_VIEWPORT}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"
-          >
-            {handsOnSkills.map((group, idx) => {
-              const currentSkill = activeSkills[group.category];
-              const matchedProjects = currentSkill ? getProjectsForSkill(currentSkill) : [];
+          {/* Crossfade between Grid and Graph views */}
+          <AnimatePresence mode="wait">
+            {viewMode === 'grid' ? (
+              <m.div
+                key="grid-view"
+                initial={prefersReducedMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+                transition={{ duration: 0.25, ease: EASING }}
+              >
+                {/* Category blocks stagger up */}
+                <m.div
+                  variants={blocksContainerVariants}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={DEFAULT_VIEWPORT}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"
+                >
+                  {handsOnSkills.map((group, idx) => {
+                    const currentSkill = activeSkills[group.category];
+                    const matchedProjects = currentSkill ? getProjectsForSkill(currentSkill) : [];
 
-              return (
-                <m.div key={idx} variants={blockItemVariants} className="h-full">
-                  <Card className="p-5 flex flex-col justify-between h-full space-y-3">
-                    <div>
-                      <h3 className="font-mono text-xs uppercase tracking-wider text-burnt-orange font-semibold pb-2">
-                        {group.category}
-                      </h3>
+                    return (
+                      <m.div key={idx} variants={blockItemVariants} className="h-full">
+                        <Card className="p-5 flex flex-col justify-between h-full space-y-3">
+                          <div>
+                            <h3 className="font-mono text-xs uppercase tracking-wider text-burnt-orange font-semibold pb-2">
+                              {group.category}
+                            </h3>
 
-                      {/* Thin separator lines grow from left to right */}
-                      <m.div
-                        className="h-[1px] bg-warm-border origin-left w-full mb-3"
-                        initial={prefersReducedMotion ? false : { scaleX: 0 }}
-                        whileInView={{ scaleX: 1 }}
-                        viewport={DEFAULT_VIEWPORT}
-                        transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.15, ease: EASING }}
-                      />
+                            {/* Thin separator lines grow from left to right */}
+                            <m.div
+                              className="h-[1px] bg-warm-border origin-left w-full mb-3"
+                              initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                              whileInView={{ scaleX: 1 }}
+                              viewport={DEFAULT_VIEWPORT}
+                              transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.15, ease: EASING }}
+                            />
 
-                      {/* Interactive skill chip buttons */}
-                      <m.div
-                        variants={chipsContainerVariants}
-                        initial="hidden"
-                        whileInView="show"
-                        viewport={DEFAULT_VIEWPORT}
-                        className="flex flex-wrap gap-1.5"
-                      >
-                        {group.skills.map((skill) => {
-                          const isSelected = currentSkill === skill;
-
-                          return (
-                            <m.button
-                              key={skill}
-                              type="button"
-                              variants={chipItemVariants}
-                              onClick={() => {
-                                setActiveSkills((prev) => ({
-                                  ...prev,
-                                  [group.category]: prev[group.category] === skill ? '' : skill,
-                                }));
-                              }}
-                              onMouseEnter={() => {
-                                setActiveSkills((prev) => ({ ...prev, [group.category]: skill }));
-                              }}
-                              onFocus={() => {
-                                setActiveSkills((prev) => ({ ...prev, [group.category]: skill }));
-                              }}
-                              className={`group/chip relative inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-[3px] border transition-all duration-200 select-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-burnt-orange ${
-                                isSelected
-                                  ? 'border-burnt-orange bg-cream text-charcoal font-semibold ring-1 ring-burnt-orange'
-                                  : 'bg-ivory text-charcoal/90 border-warm-border hover:border-burnt-orange hover:bg-cream'
-                              }`}
-                              aria-pressed={isSelected}
+                            {/* Interactive skill chip buttons */}
+                            <m.div
+                              variants={chipsContainerVariants}
+                              initial="hidden"
+                              whileInView="show"
+                              viewport={DEFAULT_VIEWPORT}
+                              className="flex flex-wrap gap-1.5"
                             >
-                              <span
-                                className={`w-1.5 h-1.5 rounded-full bg-burnt-orange transition-transform duration-200 shrink-0 ${
-                                  isSelected ? 'scale-100' : 'scale-0 group-hover/chip:scale-100'
-                                }`}
-                                aria-hidden="true"
-                              />
-                              <span>{skill}</span>
-                            </m.button>
-                          );
-                        })}
-                      </m.div>
-                    </div>
+                              {group.skills.map((skill) => {
+                                const isSelected = currentSkill === skill;
 
-                    {/* "Used in" line under this skill group */}
-                    <div className="pt-3 mt-3 border-t border-warm-border min-h-[46px] flex items-center">
-                      <AnimatePresence mode="wait">
-                        {currentSkill ? (
-                          <m.div
-                            key={currentSkill}
-                            initial={{ opacity: 0, y: 4 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -4 }}
-                            transition={{ duration: 0.2 }}
-                            className="w-full flex flex-wrap items-center gap-1.5 text-xs font-mono"
-                          >
-                            <span className="text-muted-grey font-medium">Used in:</span>
-                            {matchedProjects.length > 0 ? (
-                              <m.span
-                                variants={projectsStaggerVariants}
-                                initial="hidden"
-                                animate="show"
-                                className="inline-flex flex-wrap items-center gap-1.5"
-                              >
-                                {matchedProjects.map((p) => (
-                                  <m.span key={p.slug} variants={projectItemVariants}>
-                                    <Link
-                                      to={`/projects/${p.slug}`}
-                                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-cream hover:bg-burnt-orange text-charcoal hover:text-[var(--on-accent)] transition-colors duration-200 border border-warm-border hover:border-burnt-orange shadow-2xs"
+                                return (
+                                  <m.button
+                                    key={skill}
+                                    type="button"
+                                    variants={chipItemVariants}
+                                    onClick={() => {
+                                      setActiveSkills((prev) => ({
+                                        ...prev,
+                                        [group.category]: prev[group.category] === skill ? '' : skill,
+                                      }));
+                                    }}
+                                    onMouseEnter={() => {
+                                      setActiveSkills((prev) => ({ ...prev, [group.category]: skill }));
+                                    }}
+                                    onFocus={() => {
+                                      setActiveSkills((prev) => ({ ...prev, [group.category]: skill }));
+                                    }}
+                                    className={`group/chip relative inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-[3px] border transition-all duration-200 select-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-burnt-orange ${
+                                      isSelected
+                                        ? 'border-burnt-orange bg-cream text-charcoal font-semibold ring-1 ring-burnt-orange'
+                                        : 'bg-ivory text-charcoal/90 border-warm-border hover:border-burnt-orange hover:bg-cream'
+                                    }`}
+                                    aria-pressed={isSelected}
+                                  >
+                                    <span
+                                      className={`w-1.5 h-1.5 rounded-full bg-burnt-orange transition-transform duration-200 shrink-0 ${
+                                        isSelected ? 'scale-100' : 'scale-0 group-hover/chip:scale-100'
+                                      }`}
+                                      aria-hidden="true"
+                                    />
+                                    <span>{skill}</span>
+                                  </m.button>
+                                );
+                              })}
+                            </m.div>
+                          </div>
+
+                          {/* Linked projects container with fixed height */}
+                          <div className="border-t border-warm-border pt-3 min-h-[50px] flex items-center">
+                            <AnimatePresence mode="wait">
+                              {currentSkill ? (
+                                <m.div
+                                  key={currentSkill}
+                                  initial={{ opacity: 0, y: 4 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -4 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="w-full flex flex-wrap items-center gap-1.5 text-xs font-mono"
+                                >
+                                  <span className="text-muted-grey font-medium">Used in:</span>
+                                  {matchedProjects.length > 0 ? (
+                                    <m.span
+                                      variants={projectsStaggerVariants}
+                                      initial="hidden"
+                                      animate="show"
+                                      className="inline-flex flex-wrap items-center gap-1.5"
                                     >
-                                      <span className="font-sans font-medium text-[11px]">
-                                        {p.title.replace(' using YOLOv8', '').replace(': Cross-Platform College App', '').replace(': AI-Assisted Civic Issue Reporting', '')}
-                                      </span>
-                                      <ArrowUpRight className="w-3 h-3" />
-                                    </Link>
-                                  </m.span>
-                                ))}
-                              </m.span>
-                            ) : (
-                              <span className="text-muted-grey text-[11px] italic">Coursework & prototypes</span>
-                            )}
-                          </m.div>
-                        ) : (
-                          <span className="text-[11px] font-mono text-muted-grey/60">
-                            Hover or tap skill to view linked projects &rarr;
-                          </span>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </Card>
+                                      {matchedProjects.map((p) => (
+                                        <m.span key={p.slug} variants={projectItemVariants}>
+                                          <Link
+                                            to={`/projects/${p.slug}`}
+                                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-cream hover:bg-burnt-orange text-charcoal hover:text-[var(--on-accent)] transition-colors duration-200 border border-warm-border hover:border-burnt-orange shadow-2xs"
+                                          >
+                                            <span className="font-sans font-medium text-[11px]">
+                                              {p.title.replace(' using YOLOv8', '').replace(': Cross-Platform College App', '').replace(': AI-Assisted Civic Issue Reporting', '')}
+                                            </span>
+                                            <ArrowUpRight className="w-3 h-3" />
+                                          </Link>
+                                        </m.span>
+                                      ))}
+                                    </m.span>
+                                  ) : (
+                                    <span className="text-muted-grey text-[11px] italic">Coursework & prototypes</span>
+                                  )}
+                                </m.div>
+                              ) : (
+                                <span className="text-[11px] font-mono text-muted-grey/60">
+                                  Hover or tap skill to view linked projects &rarr;
+                                </span>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </Card>
+                      </m.div>
+                    );
+                  })}
                 </m.div>
-              );
-            })}
-          </m.div>
+              </m.div>
+            ) : (
+              <m.div
+                key="graph-view"
+                initial={prefersReducedMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+                transition={{ duration: 0.25, ease: EASING }}
+                className="w-full"
+              >
+                <Suspense
+                  fallback={
+                    <div className="w-full h-96 flex items-center justify-center font-mono text-xs text-muted-grey bg-card-surface/40 border border-warm-border rounded-[8px]">
+                      Loading constellation...
+                    </div>
+                  }
+                >
+                  <SkillsConstellation />
+                </Suspense>
+              </m.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Exploring Group */}
