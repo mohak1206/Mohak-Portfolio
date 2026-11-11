@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { m } from 'framer-motion';
-import { Mail, ArrowUpRight, MapPin, Github, Linkedin, Copy, Check } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { m, AnimatePresence } from 'framer-motion';
+import { Mail, ArrowUpRight, MapPin, Github, Linkedin, Copy, Check, ExternalLink, X } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { SectionLabel } from '../ui/SectionLabel';
 import { Reveal } from '../ui/Reveal';
@@ -9,10 +9,19 @@ import { Magnetic } from '../ui/Magnetic';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
 
+const EMAIL_SUBJECT = 'Hello Mohak, saw your portfolio';
+const EMAIL_BODY = 'Hi Mohak,\n\n';
+
 export const Contact: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
   const [copied, setCopied] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mailtoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const emailButtonRef = useRef<HTMLButtonElement | null>(null);
+  const popoverRef = useRef<HTMLDivElement | null>(null);
+  const hiddenMailtoRef = useRef<HTMLAnchorElement | null>(null);
 
   const [currentTime, setCurrentTime] = useState<string>(() => {
     return new Intl.DateTimeFormat('en-GB', {
@@ -39,15 +48,16 @@ export const Contact: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleCopyEmail = async () => {
+  const copyToClipboard = useCallback(async (text: string) => {
     try {
       if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(profileData.email);
+        await navigator.clipboard.writeText(text);
       } else {
-        // Fallback for non-secure / iframe environments
         const textArea = document.createElement('textarea');
-        textArea.value = profileData.email;
+        textArea.value = text;
         textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        textArea.style.top = '0';
         textArea.style.opacity = '0';
         document.body.appendChild(textArea);
         textArea.focus();
@@ -59,11 +69,128 @@ export const Contact: React.FC = () => {
       if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
       copyTimeoutRef.current = setTimeout(() => {
         setCopied(false);
-      }, 1500);
+      }, 2000);
     } catch (err) {
-      console.error('Failed to copy email:', err);
+      console.error('Failed to copy to clipboard:', err);
     }
+  }, []);
+
+  const handleCopyEmail = () => {
+    copyToClipboard(profileData.email);
   };
+
+  const mailtoUrl = `mailto:${profileData.email}?subject=${encodeURIComponent(
+    EMAIL_SUBJECT
+  )}&body=${encodeURIComponent(EMAIL_BODY)}`;
+
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+    profileData.email
+  )}&su=${encodeURIComponent(EMAIL_SUBJECT)}&body=${encodeURIComponent(EMAIL_BODY)}`;
+
+  const outlookUrl = `https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent(
+    profileData.email
+  )}&subject=${encodeURIComponent(EMAIL_SUBJECT)}&body=${encodeURIComponent(EMAIL_BODY)}`;
+
+  const handleEmailClick = () => {
+    // 1. Trigger the mailto link
+    if (hiddenMailtoRef.current) {
+      hiddenMailtoRef.current.click();
+    } else {
+      window.location.href = mailtoUrl;
+    }
+
+    // 2. Start 1200ms fallback timer
+    if (mailtoTimerRef.current) clearTimeout(mailtoTimerRef.current);
+
+    let clientHandled = false;
+
+    const onBlurOrHidden = () => {
+      clientHandled = true;
+      if (mailtoTimerRef.current) {
+        clearTimeout(mailtoTimerRef.current);
+        mailtoTimerRef.current = null;
+      }
+      cleanup();
+    };
+
+    const cleanup = () => {
+      window.removeEventListener('blur', onBlurOrHidden);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
+
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        onBlurOrHidden();
+      }
+    };
+
+    window.addEventListener('blur', onBlurOrHidden);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    mailtoTimerRef.current = setTimeout(() => {
+      cleanup();
+      if (!clientHandled && !document.hidden && document.hasFocus()) {
+        // Assume mail client didn't handle it
+        setPopoverOpen(true);
+      }
+    }, 1200);
+  };
+
+  const closePopover = useCallback(() => {
+    setPopoverOpen(false);
+    emailButtonRef.current?.focus();
+  }, []);
+
+  // Auto focus first option when popover opens
+  useEffect(() => {
+    if (popoverOpen) {
+      const firstFocusable = popoverRef.current?.querySelector<HTMLElement>(
+        'a, button[role="menuitem"]'
+      );
+      firstFocusable?.focus();
+    }
+  }, [popoverOpen]);
+
+  // Handle outside click & Esc key for Popover
+  useEffect(() => {
+    if (!popoverOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closePopover();
+      }
+    };
+
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(e.target as Node) &&
+        emailButtonRef.current &&
+        !emailButtonRef.current.contains(e.target as Node)
+      ) {
+        closePopover();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [popoverOpen, closePopover]);
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
+      if (mailtoTimerRef.current) clearTimeout(mailtoTimerRef.current);
+    };
+  }, []);
 
   return (
     <section id="contact" aria-label="Contact" className="py-20 lg:py-28 bg-ivory">
@@ -98,10 +225,26 @@ export const Contact: React.FC = () => {
 
             {/* CTA Buttons with Magnetic effect and Copy-Email micro-interaction */}
             <div className="pt-2 flex items-center justify-center gap-3 relative flex-wrap sm:flex-nowrap">
+              {/* Hidden mailto anchor for standard browser handling */}
+              <a
+                ref={hiddenMailtoRef}
+                href={mailtoUrl}
+                className="sr-only"
+                tabIndex={-1}
+                aria-hidden="true"
+              >
+                Email {profileData.name}
+              </a>
+
               <Magnetic>
-                <a
-                  href={`mailto:${profileData.email}`}
-                  className="group relative inline-flex items-center justify-center gap-2.5 px-6 py-3.5 text-base font-medium text-white bg-burnt-orange rounded-[5px] shadow-sm hover:shadow overflow-hidden transition-all duration-200 select-none focus:outline-none focus:ring-2 focus:ring-burnt-orange/50"
+                <button
+                  ref={emailButtonRef}
+                  type="button"
+                  onClick={handleEmailClick}
+                  aria-haspopup="dialog"
+                  aria-expanded={popoverOpen}
+                  aria-label="Email Mohak"
+                  className="group relative inline-flex items-center justify-center gap-2.5 px-6 py-3.5 text-base font-medium text-[var(--on-accent)] bg-burnt-orange hover:bg-light-orange rounded-[5px] shadow-sm hover:shadow overflow-hidden transition-all duration-200 select-none focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 active:scale-[0.98]"
                 >
                   {/* Orange sweep layer scaling from the left */}
                   <span
@@ -111,7 +254,7 @@ export const Contact: React.FC = () => {
                   <Mail className="relative z-10 w-5 h-5 stroke-[2]" />
                   <span className="relative z-10">Email me</span>
                   <ArrowUpRight className="relative z-10 w-4 h-4 stroke-[2.2] transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-1" />
-                </a>
+                </button>
               </Magnetic>
 
               <Magnetic>
@@ -119,7 +262,8 @@ export const Contact: React.FC = () => {
                   type="button"
                   onClick={handleCopyEmail}
                   aria-label={copied ? "Email copied to clipboard" : "Copy email address to clipboard"}
-                  className="relative inline-flex items-center justify-center p-3.5 text-charcoal bg-cream hover:bg-[#E5DDD0] border border-warm-border hover:border-burnt-orange rounded-[5px] shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 active:scale-95"
+                  title="Copy email address"
+                  className="relative inline-flex items-center justify-center p-3.5 text-charcoal bg-cream hover:bg-[var(--surface-2)] border border-warm-border hover:border-burnt-orange rounded-[5px] shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 active:scale-95"
                 >
                   {copied ? (
                     <Check className="w-5 h-5 text-emerald-600 stroke-[2.5]" />
@@ -134,12 +278,93 @@ export const Contact: React.FC = () => {
                 <div
                   role="status"
                   aria-live="polite"
-                  className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-charcoal text-white text-xs font-mono rounded shadow-lg flex items-center gap-1.5 pointer-events-none z-20"
+                  className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-charcoal text-ivory border border-warm-border text-xs font-mono rounded shadow-lg flex items-center gap-1.5 pointer-events-none z-20 whitespace-nowrap"
                 >
                   <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[2.5]" />
-                  <span>Email copied</span>
+                  <span>{profileData.email} copied</span>
                 </div>
               )}
+
+              {/* Popover Fallback Dialog */}
+              <AnimatePresence>
+                {popoverOpen && (
+                  <m.div
+                    ref={popoverRef}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Email options"
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: 8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={prefersReducedMotion ? undefined : { opacity: 0, y: 4, scale: 0.98 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.2, ease: EASING }}
+                    className="absolute top-full mt-3 left-1/2 -translate-x-1/2 w-[300px] sm:w-[320px] bg-[var(--color-card-surface)] border border-warm-border rounded-lg shadow-xl p-3 z-30 text-left"
+                  >
+                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-warm-border">
+                      <span className="text-xs font-mono text-muted-grey uppercase tracking-wider">
+                        Choose email option
+                      </span>
+                      <button
+                        type="button"
+                        onClick={closePopover}
+                        aria-label="Close email options"
+                        className="p-1 rounded text-muted-grey hover:text-charcoal hover:bg-cream transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="flex flex-col gap-1.5" role="menu">
+                      <a
+                        href={gmailUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={closePopover}
+                        role="menuitem"
+                        className="group flex items-center justify-between px-3 py-2 text-sm font-medium text-charcoal hover:bg-cream hover:text-burnt-orange rounded transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-burnt-orange" />
+                          <span>Open in Gmail</span>
+                        </span>
+                        <ExternalLink className="w-3.5 h-3.5 text-muted-grey group-hover:text-burnt-orange transition-colors" />
+                      </a>
+
+                      <a
+                        href={outlookUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={closePopover}
+                        role="menuitem"
+                        className="group flex items-center justify-between px-3 py-2 text-sm font-medium text-charcoal hover:bg-cream hover:text-burnt-orange rounded transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-burnt-orange" />
+                          <span>Open in Outlook</span>
+                        </span>
+                        <ExternalLink className="w-3.5 h-3.5 text-muted-grey group-hover:text-burnt-orange transition-colors" />
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleCopyEmail();
+                          closePopover();
+                        }}
+                        role="menuitem"
+                        className="group flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-charcoal hover:bg-cream hover:text-burnt-orange rounded transition-colors text-left"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Copy className="w-4 h-4 text-burnt-orange" />
+                          <span>Copy address</span>
+                        </span>
+                        <span className="text-xs font-mono text-muted-grey group-hover:text-burnt-orange transition-colors">
+                          {profileData.email}
+                        </span>
+                      </button>
+                    </div>
+                  </m.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Bottom info & social links */}

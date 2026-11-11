@@ -120,7 +120,7 @@ export const ProjectDetail: React.FC = () => {
                         {/* Hover/focus tooltip */}
                         <div
                           role="tooltip"
-                          className="absolute -top-7 right-0 opacity-0 group-hover/bar:opacity-100 group-focus/bar:opacity-100 group-focus-within/bar:opacity-100 transition-opacity duration-200 bg-charcoal text-white text-[11px] font-mono px-2 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-20"
+                          className="absolute -top-7 right-0 opacity-0 group-hover/bar:opacity-100 group-focus/bar:opacity-100 group-focus-within/bar:opacity-100 transition-opacity duration-200 bg-charcoal text-ivory border border-warm-border text-[11px] font-mono px-2 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-20"
                         >
                           {metricItem.label}: {metricItem.value}
                         </div>
@@ -133,7 +133,7 @@ export const ProjectDetail: React.FC = () => {
                         </div>
 
                         {/* Charcoal track on cream */}
-                        <div className="h-3 w-full bg-[#EFE8DD] rounded-full overflow-hidden p-0.5 border border-warm-border">
+                        <div className="h-3 w-full bg-[var(--surface-2)] rounded-full overflow-hidden p-0.5 border border-warm-border">
                           {isNumeric ? (
                             <m.div
                               className="h-full bg-burnt-orange rounded-full group-hover/bar:bg-light-orange transition-colors"

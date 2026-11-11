@@ -151,7 +151,7 @@ export const Navbar: React.FC = () => {
                 href="/Mohak_Agrawal_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-burnt-orange hover:bg-light-orange transition-all duration-200 rounded-[5px] shadow-sm hover:shadow"
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[var(--on-accent)] bg-burnt-orange hover:bg-light-orange transition-all duration-200 rounded-[5px] shadow-sm hover:shadow"
               >
                 <span>Resume</span>
                 <ArrowUpRight className="w-4 h-4 stroke-[2.2]" />
@@ -187,7 +187,7 @@ export const Navbar: React.FC = () => {
               href="/Mohak_Agrawal_Resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-burnt-orange hover:bg-light-orange rounded-[4px]"
+              className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[var(--on-accent)] bg-burnt-orange hover:bg-light-orange rounded-[4px]"
             >
               <span>Resume</span>
               <ArrowUpRight className="w-3.5 h-3.5" />

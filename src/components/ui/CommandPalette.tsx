@@ -282,18 +282,18 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                         onMouseEnter={() => setSelectedIndex(index)}
                         className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-[5px] cursor-pointer transition-colors duration-150 select-none ${
                           isSelected
-                            ? 'bg-burnt-orange text-white'
+                            ? 'bg-burnt-orange text-[var(--on-accent)]'
                             : 'hover:bg-cream text-charcoal'
                         }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <span className={isSelected ? 'text-white' : ''}>{item.icon}</span>
+                          <span className={isSelected ? 'text-[var(--on-accent)]' : ''}>{item.icon}</span>
                           <div className="min-w-0">
                             <div className="text-sm font-medium truncate">{item.title}</div>
                             {item.subtitle && (
                               <div
                                 className={`text-xs truncate ${
-                                  isSelected ? 'text-white/80' : 'text-muted-grey'
+                                  isSelected ? 'text-[var(--on-accent)] opacity-80' : 'text-muted-grey'
                                 }`}
                               >
                                 {item.subtitle}
@@ -303,7 +303,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                         </div>
 
                         {isSelected && (
-                          <CornerDownLeft className="w-4 h-4 text-white/80 shrink-0" />
+                          <CornerDownLeft className="w-4 h-4 text-[var(--on-accent)] opacity-80 shrink-0" />
                         )}
                       </div>
                     );

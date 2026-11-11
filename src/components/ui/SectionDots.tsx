@@ -48,7 +48,7 @@ export const SectionDots: React.FC = () => {
             {/* Hover/focus tooltip to the left */}
             <span
               role="tooltip"
-              className="absolute right-full mr-3.5 px-2.5 py-1 text-[11px] font-mono whitespace-nowrap bg-charcoal text-white rounded shadow-md pointer-events-none opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 group-focus:opacity-100 group-focus:translate-x-0 transition-all duration-200"
+              className="absolute right-full mr-3.5 px-2.5 py-1 text-[11px] font-mono whitespace-nowrap bg-charcoal text-ivory border border-warm-border rounded shadow-md pointer-events-none opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 group-focus:opacity-100 group-focus-translate-x-0 transition-all duration-200"
             >
               {label}
             </span>

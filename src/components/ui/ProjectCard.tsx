@@ -78,7 +78,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, clas
           )}
 
           {/* Top-right arrow button with diagonal swap */}
-          <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-[4px] bg-card-surface text-charcoal flex items-center justify-center shadow-md border border-warm-border group-hover:bg-burnt-orange group-hover:text-white group-hover:border-burnt-orange transition-all duration-200 overflow-hidden">
+          <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-[4px] bg-card-surface text-charcoal flex items-center justify-center shadow-md border border-warm-border group-hover:bg-burnt-orange group-hover:text-[var(--on-accent)] group-hover:border-burnt-orange transition-all duration-200 overflow-hidden">
             <ArrowUpRight className="w-4 h-4 stroke-[2.2] transition-transform duration-300 ease-out group-hover:translate-x-6 group-hover:-translate-y-6" />
             <ArrowUpRight className="w-4 h-4 stroke-[2.2] absolute transition-transform duration-300 ease-out -translate-x-6 translate-y-6 group-hover:translate-x-0 group-hover:translate-y-0" />
           </div>

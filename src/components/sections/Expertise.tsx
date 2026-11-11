@@ -247,7 +247,7 @@ export const Expertise: React.FC = () => {
                                   <m.span key={p.slug} variants={projectItemVariants}>
                                     <Link
                                       to={`/projects/${p.slug}`}
-                                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-cream hover:bg-burnt-orange text-charcoal hover:text-white transition-colors duration-200 border border-warm-border hover:border-burnt-orange shadow-2xs"
+                                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-cream hover:bg-burnt-orange text-charcoal hover:text-[var(--on-accent)] transition-colors duration-200 border border-warm-border hover:border-burnt-orange shadow-2xs"
                                     >
                                       <span className="font-sans font-medium text-[11px]">
                                         {p.title.replace(' using YOLOv8', '').replace(': Cross-Platform College App', '').replace(': AI-Assisted Civic Issue Reporting', '')}

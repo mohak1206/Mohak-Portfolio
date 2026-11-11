@@ -48,7 +48,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
             href="/Mohak_Agrawal_Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-medium text-white bg-burnt-orange hover:bg-light-orange rounded-[4px] shadow-sm"
+            className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-medium text-[var(--on-accent)] bg-burnt-orange hover:bg-light-orange rounded-[4px] shadow-sm"
           >
             <span>Download Resume</span>
             <ArrowUpRight className="w-4 h-4" />
