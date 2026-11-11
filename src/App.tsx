@@ -12,6 +12,7 @@ import { BackToTop } from './components/ui/BackToTop';
 import { ThemeProvider } from './context/ThemeContext';
 import { MotionProvider, useMotionPreference } from './context/MotionContext';
 import { SmoothScrollProvider } from './components/providers/SmoothScrollProvider';
+import { CurtainTransition } from './components/ui/CurtainTransition';
 
 // Route-level and feature code splitting
 const ProjectsPage = React.lazy(() =>
@@ -40,69 +41,96 @@ const ScrollToTop: React.FC = () => {
 };
 
 const AnimatedRoutes: React.FC = () => {
-  const location = useLocation();
   const prefersReducedMotion = useReducedMotion();
 
-  const pageVariants: Variants = {
-    initial: {
-      opacity: prefersReducedMotion ? 1 : 0,
-      y: prefersReducedMotion ? 0 : 16,
-    },
-    animate: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4, ease: EASING },
-    },
-    exit: {
-      opacity: prefersReducedMotion ? 1 : 0,
-      y: prefersReducedMotion ? 0 : -8,
-      transition: { duration: 0.2, ease: EASING },
-    },
+  const reducedMotionVariants: Variants = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1, transition: { duration: 0.15 } },
+    exit: { opacity: 0, transition: { duration: 0.15 } },
   };
 
   return (
-    <AnimatePresence mode="wait">
-      <m.div
-        key={location.pathname}
-        variants={pageVariants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-      >
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/projects"
-            element={
-              <Suspense
-                fallback={
-                  <DelayedFallback delay={150}>
-                    <ProjectsPageSkeleton />
-                  </DelayedFallback>
-                }
-              >
-                <ProjectsPage />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/projects/:slug"
-            element={
-              <Suspense
-                fallback={
-                  <DelayedFallback delay={150}>
-                    <ProjectDetailSkeleton />
-                  </DelayedFallback>
-                }
-              >
-                <ProjectDetail />
-              </Suspense>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </m.div>
-    </AnimatePresence>
+    <CurtainTransition>
+      {(renderedLocation) =>
+        prefersReducedMotion ? (
+          <AnimatePresence mode="wait">
+            <m.div
+              key={renderedLocation.pathname}
+              variants={reducedMotionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <Routes location={renderedLocation} key={renderedLocation.pathname}>
+                <Route path="/" element={<Home />} />
+                <Route
+                  path="/projects"
+                  element={
+                    <Suspense
+                      fallback={
+                        <DelayedFallback delay={150}>
+                          <ProjectsPageSkeleton />
+                        </DelayedFallback>
+                      }
+                    >
+                      <ProjectsPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="/projects/:slug"
+                  element={
+                    <Suspense
+                      fallback={
+                        <DelayedFallback delay={150}>
+                          <ProjectDetailSkeleton />
+                        </DelayedFallback>
+                      }
+                    >
+                      <ProjectDetail />
+                    </Suspense>
+                  }
+                />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </m.div>
+          </AnimatePresence>
+        ) : (
+          <Routes location={renderedLocation} key={renderedLocation.pathname}>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/projects"
+              element={
+                <Suspense
+                  fallback={
+                    <DelayedFallback delay={150}>
+                      <ProjectsPageSkeleton />
+                    </DelayedFallback>
+                  }
+                >
+                  <ProjectsPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/projects/:slug"
+              element={
+                <Suspense
+                  fallback={
+                    <DelayedFallback delay={150}>
+                      <ProjectDetailSkeleton />
+                    </DelayedFallback>
+                  }
+                >
+                  <ProjectDetail />
+                </Suspense>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        )
+      }
+    </CurtainTransition>
   );
 };
 
