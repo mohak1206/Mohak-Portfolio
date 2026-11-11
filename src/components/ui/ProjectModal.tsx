@@ -8,6 +8,7 @@ import { ProjectCover } from './ProjectCover';
 import { Card } from './Card';
 import { Tag } from './Tag';
 import { Button } from './Button';
+import { GlossaryTooltip } from './GlossaryTooltip';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING } from '../../lib/animation';
 import { lockScroll, unlockScroll } from '../../lib/scrollLock';
@@ -205,7 +206,9 @@ const ProjectModalInner: React.FC<ProjectModalInnerProps> = ({ project, onClose 
                     <div className="font-serif text-2xl sm:text-3xl text-charcoal font-semibold">
                       {m.value}
                     </div>
-                    <div className="text-xs text-muted-grey mt-0.5">{m.label}</div>
+                    <div className="text-xs text-muted-grey mt-0.5">
+                      <GlossaryTooltip term={m.label}>{m.label}</GlossaryTooltip>
+                    </div>
                   </div>
                 ))}
               </div>

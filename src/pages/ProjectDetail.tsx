@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, Github, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { m } from 'framer-motion';
@@ -12,8 +12,13 @@ import { Button } from '../components/ui/Button';
 import { SplitLines } from '../components/ui/SplitLines';
 import { CountUp } from '../components/ui/CountUp';
 import { Reveal } from '../components/ui/Reveal';
+import { GlossaryTooltip } from '../components/ui/GlossaryTooltip';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../lib/animation';
+
+const ThresholdDemo = React.lazy(
+  () => import('../components/projects/ThresholdDemo').then((m) => ({ default: m.ThresholdDemo }))
+);
 
 export const ProjectDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -132,7 +137,9 @@ export const ProjectDetail: React.FC = () => {
                         </div>
 
                         <div className="flex items-center justify-between text-xs sm:text-sm font-mono">
-                          <span className="text-charcoal font-medium">{metricItem.label}</span>
+                          <span className="text-charcoal font-medium">
+                            <GlossaryTooltip term={metricItem.label}>{metricItem.label}</GlossaryTooltip>
+                          </span>
                           <span className="text-burnt-orange font-semibold">
                             <CountUp value={metricItem.value} />
                           </span>
@@ -161,6 +168,21 @@ export const ProjectDetail: React.FC = () => {
                   })}
                 </div>
               </Card>
+            </Reveal>
+          )}
+
+          {/* Interactive Confidence Threshold Playground (Signature & Fire/Smoke Detection) */}
+          {(project.slug === 'signature-detection' || project.slug === 'fire-smoke-detection') && (
+            <Reveal delay={0.28}>
+              <Suspense
+                fallback={
+                  <div className="h-64 rounded-[8px] bg-card-surface border border-warm-border flex items-center justify-center font-mono text-xs text-muted-grey">
+                    Loading confidence threshold playground...
+                  </div>
+                }
+              >
+                <ThresholdDemo slug={project.slug} />
+              </Suspense>
             </Reveal>
           )}
 

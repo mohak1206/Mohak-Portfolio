@@ -1,5 +1,6 @@
 import { Project, LabIdea } from '../types';
 
+// Note: Threshold playground candidate detections are illustrative examples. If real prediction images are added later, this demo can be replaced by them.
 export const projectsData: Project[] = [
   {
     slug: "signature-detection",
