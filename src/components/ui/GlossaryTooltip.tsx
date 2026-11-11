@@ -98,3 +98,4 @@ export const GlossaryTooltip: React.FC<GlossaryTooltipProps> = ({ term, children
 };
 
 export default GlossaryTooltip;
+

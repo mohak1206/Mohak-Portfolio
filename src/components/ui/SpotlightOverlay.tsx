@@ -45,3 +45,4 @@ export const SpotlightOverlay: React.FC<SpotlightOverlayProps> = ({ isHovered, c
 };
 
 export default SpotlightOverlay;
+

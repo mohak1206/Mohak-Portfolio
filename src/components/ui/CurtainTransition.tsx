@@ -157,3 +157,4 @@ export const CurtainTransition: React.FC<CurtainTransitionProps> = ({ children }
 };
 
 export default CurtainTransition;
+
