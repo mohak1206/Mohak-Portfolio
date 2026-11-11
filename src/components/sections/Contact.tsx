@@ -3,6 +3,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import { Mail, ArrowUpRight, MapPin, Github, Linkedin, Copy, Check, ExternalLink, X } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { SectionLabel } from '../ui/SectionLabel';
+import { SectionNumeral } from '../ui/SectionNumeral';
 import { Reveal } from '../ui/Reveal';
 import { SplitLines } from '../ui/SplitLines';
 import { Magnetic } from '../ui/Magnetic';
@@ -16,6 +17,7 @@ export const Contact: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
   const [copied, setCopied] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mailtoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -193,8 +195,16 @@ export const Contact: React.FC = () => {
   }, []);
 
   return (
-    <section id="contact" aria-label="Contact" className="py-20 lg:py-28 bg-ivory">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      ref={sectionRef}
+      id="contact"
+      aria-label="Contact"
+      className="relative py-20 lg:py-28 bg-ivory overflow-hidden"
+    >
+      {/* Giant Outlined Section Numeral 07 */}
+      <SectionNumeral numeral="07" sectionRef={sectionRef} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <Reveal>
           <div className="max-w-3xl mx-auto text-center space-y-8">
             <SectionLabel label="CONTACT" centered twoSided />

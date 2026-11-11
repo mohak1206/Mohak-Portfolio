@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { m, AnimatePresence, type Variants } from 'framer-motion';
 import { Sparkles, ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { handsOnSkills, exploringSkills } from '../../data/skills';
 import { projectsData } from '../../data/projects';
 import { SectionLabel } from '../ui/SectionLabel';
+import { SectionNumeral } from '../ui/SectionNumeral';
 import { Card } from '../ui/Card';
 import { Reveal } from '../ui/Reveal';
 import { SplitLines } from '../ui/SplitLines';
@@ -62,6 +63,7 @@ const getProjectsForSkill = (skillName: string) => {
 export const Expertise: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
   const [activeSkills, setActiveSkills] = useState<Record<string, string>>({});
+  const sectionRef = useRef<HTMLElement>(null);
 
   const blocksContainerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -123,8 +125,16 @@ export const Expertise: React.FC = () => {
   };
 
   return (
-    <section id="expertise" aria-label="Expertise" className="py-20 lg:py-28 bg-ivory border-b border-warm-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+    <section
+      ref={sectionRef}
+      id="expertise"
+      aria-label="Expertise"
+      className="relative py-20 lg:py-28 bg-ivory border-b border-warm-border overflow-hidden"
+    >
+      {/* Giant Outlined Section Numeral 04 */}
+      <SectionNumeral numeral="04" sectionRef={sectionRef} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 relative z-10">
         <Reveal>
           <div className="space-y-3">
             <SectionLabel label="EXPERTISE & TOOLING" />

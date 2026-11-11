@@ -4,6 +4,8 @@ import { ArrowUpRight } from 'lucide-react';
 import { Project } from '../../types';
 import { ProjectCover } from './ProjectCover';
 import { Tag } from './Tag';
+import { SpotlightOverlay } from './SpotlightOverlay';
+import { useSpotlight } from '../../hooks/useSpotlight';
 import { useFinePointer } from '../../hooks/useFinePointer';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
@@ -17,6 +19,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, clas
   const cardRef = useRef<HTMLElement>(null);
   const isFine = useFinePointer();
   const prefersReduced = useReducedMotion();
+  const { isHovered, bind } = useSpotlight<HTMLElement>();
 
   const xPct = useMotionValue(0);
   const yPct = useMotionValue(0);
@@ -27,6 +30,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, clas
   const rotateY = useSpring(useTransform(xPct, [-0.5, 0.5], [-4, 4]), springConfig);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    bind.onPointerMove(e);
     if (!isFine || prefersReduced || !cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -35,7 +39,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, clas
     yPct.set(y);
   };
 
+  const handleMouseEnter = () => {
+    bind.onPointerEnter();
+  };
+
   const handleMouseLeave = () => {
+    bind.onPointerLeave();
     xPct.set(0);
     yPct.set(0);
   };
@@ -55,6 +64,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, clas
           }
         }}
         onClick={onClick}
+        onMouseEnter={handleMouseEnter}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{
@@ -62,8 +72,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, clas
           rotateY: isFine && !prefersReduced ? rotateY : 0,
           transformStyle: 'preserve-3d',
         }}
-        className="group cursor-pointer bg-card-surface rounded-[6px] border border-warm-border overflow-hidden hover:border-burnt-orange hover:-translate-y-1.5 hover:shadow-float focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 transition-all duration-300 shadow-sm flex flex-col h-full select-none"
+        className="group relative cursor-pointer bg-card-surface rounded-[6px] border border-warm-border overflow-hidden hover:border-burnt-orange hover:-translate-y-1.5 hover:shadow-float focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 transition-all duration-300 shadow-sm flex flex-col h-full select-none"
       >
+        <SpotlightOverlay isHovered={isHovered} />
+
         <div className="relative w-full aspect-[16/10] bg-cream overflow-hidden border-b border-warm-border">
           <ProjectCover slug={project.slug} title={project.title} />
 
@@ -84,7 +96,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, clas
           </div>
         </div>
 
-        <div className="p-5 flex flex-col flex-grow justify-between space-y-4">
+        <div className="p-5 flex flex-col flex-grow justify-between space-y-4 relative z-0">
           <div className="space-y-1.5">
             {project.status !== 'Completed' && (
               <div className="pb-1">
@@ -115,3 +127,4 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, clas
   );
 };
 
+export default ProjectCard;

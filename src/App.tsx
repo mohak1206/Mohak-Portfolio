@@ -8,7 +8,9 @@ import { DelayedFallback } from './components/ui/DelayedFallback';
 import { ProjectsPageSkeleton, ProjectDetailSkeleton } from './components/ui/SectionSkeletons';
 import { CursorRing } from './components/ui/CursorRing';
 import { SectionDots } from './components/ui/SectionDots';
+import { BackToTop } from './components/ui/BackToTop';
 import { ThemeProvider } from './context/ThemeContext';
+import { MotionProvider, useMotionPreference } from './context/MotionContext';
 import { SmoothScrollProvider } from './components/providers/SmoothScrollProvider';
 
 // Route-level and feature code splitting
@@ -101,24 +103,53 @@ const AnimatedRoutes: React.FC = () => {
   );
 };
 
+const AppContent: React.FC = () => {
+  const { isReducedMotion } = useMotionPreference();
+
+  // Tab Title Fun: when visitor switches tabs, display playful title, restore on return
+  useEffect(() => {
+    const originalTitle = document.title;
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        document.title = 'Come back! Mohak Agrawal';
+      } else {
+        document.title = originalTitle;
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.title = originalTitle;
+    };
+  }, []);
+
+  return (
+    <MotionConfig reducedMotion={isReducedMotion ? 'always' : 'user'}>
+      <LazyMotion features={domAnimation} strict>
+        <BrowserRouter>
+          <SmoothScrollProvider>
+            <ScrollToTop />
+            <CursorRing />
+            <SectionDots />
+            <AnimatedRoutes />
+            <BackToTop />
+            <Suspense fallback={null}>
+              <CommandPaletteModal />
+            </Suspense>
+          </SmoothScrollProvider>
+        </BrowserRouter>
+      </LazyMotion>
+    </MotionConfig>
+  );
+};
+
 export const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <MotionConfig reducedMotion="user">
-        <LazyMotion features={domAnimation} strict>
-          <BrowserRouter>
-            <SmoothScrollProvider>
-              <ScrollToTop />
-              <CursorRing />
-              <SectionDots />
-              <AnimatedRoutes />
-              <Suspense fallback={null}>
-                <CommandPaletteModal />
-              </Suspense>
-            </SmoothScrollProvider>
-          </BrowserRouter>
-        </LazyMotion>
-      </MotionConfig>
+      <MotionProvider>
+        <AppContent />
+      </MotionProvider>
     </ThemeProvider>
   );
 };

@@ -52,9 +52,9 @@ export const ProjectDetail: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-charcoal hover:text-burnt-orange transition-colors"
+              className="group draw-underline-link inline-flex items-center gap-2 text-sm font-semibold text-charcoal hover:text-burnt-orange transition-colors py-0.5"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-1" />
               <span>Back to projects</span>
             </button>
           </div>
@@ -81,14 +81,20 @@ export const ProjectDetail: React.FC = () => {
             </div>
           </Reveal>
 
-          <Reveal delay={0.1}>
-            <div className="w-full aspect-[16/9] rounded-[8px] overflow-hidden border border-warm-border shadow-float">
+          {/* Cover image with slow clip-path mask reveal and 1.04 to 1 scale settle */}
+          <div className="w-full aspect-[16/9] rounded-[8px] overflow-hidden border border-warm-border shadow-float">
+            <m.div
+              className="w-full h-full origin-center"
+              initial={prefersReducedMotion ? false : { clipPath: 'inset(0% 100% 0% 0%)', scale: 1.04 }}
+              animate={{ clipPath: 'inset(0% 0% 0% 0%)', scale: 1 }}
+              transition={{ duration: 0.9, delay: prefersReducedMotion ? 0 : 0.15, ease: EASING }}
+            >
               <ProjectCover slug={project.slug} title={project.title} />
-            </div>
-          </Reveal>
+            </m.div>
+          </div>
 
           {hasNumericMetrics && project.metrics && (
-            <Reveal delay={0.15}>
+            <Reveal delay={0.25}>
               <Card elevated className="p-6 sm:p-8 space-y-6 bg-card-surface">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-warm-border pb-4">
                   <div>
@@ -142,7 +148,7 @@ export const ProjectDetail: React.FC = () => {
                               viewport={DEFAULT_VIEWPORT}
                               transition={{
                                 duration: 0.85,
-                                delay: prefersReducedMotion ? 0 : 0.1 + idx * 0.08,
+                                delay: prefersReducedMotion ? 0 : 0.15 + idx * 0.1,
                                 ease: EASING,
                               }}
                             />

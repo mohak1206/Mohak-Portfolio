@@ -1,22 +1,103 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { m } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { journeyData } from '../../data/journey';
 import { SectionLabel } from '../ui/SectionLabel';
+import { SectionNumeral } from '../ui/SectionNumeral';
 import { SplitLines } from '../ui/SplitLines';
+import { SpotlightOverlay } from '../ui/SpotlightOverlay';
+import { useSpotlight } from '../../hooks/useSpotlight';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { DEFAULT_VIEWPORT, EASING } from '../../lib/animation';
 
+interface JourneyStepCardProps {
+  step: (typeof journeyData.steps)[0];
+  idx: number;
+  prefersReducedMotion: boolean;
+}
+
+const JourneyStepCard: React.FC<JourneyStepCardProps> = ({ step, idx, prefersReducedMotion }) => {
+  const { ref, isHovered, bind } = useSpotlight<HTMLDivElement>();
+
+  return (
+    <m.div
+      ref={ref}
+      onPointerEnter={bind.onPointerEnter}
+      onPointerMove={bind.onPointerMove}
+      onPointerLeave={bind.onPointerLeave}
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
+      whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{
+        duration: 0.6,
+        delay: prefersReducedMotion ? 0 : idx * 0.12,
+        ease: [0.25, 0.1, 0.25, 1],
+      }}
+      className="group relative overflow-hidden bg-card-surface rounded-[6px] border border-warm-border p-6 sm:p-8 flex flex-col justify-between transition-colors duration-300 hover:border-burnt-orange shadow-sm"
+    >
+      <SpotlightOverlay isHovered={isHovered} />
+
+      <div className="relative z-10 flex flex-col justify-between h-full">
+        <div>
+          {/* Step Number & Circle Marker */}
+          <div className="flex items-center justify-between mb-4">
+            <m.div
+              initial={prefersReducedMotion ? false : { scale: 0.8, opacity: 0 }}
+              whileInView={prefersReducedMotion ? undefined : { scale: 1, opacity: 1 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : idx * 0.12 + 0.1 }}
+              className="font-serif text-4xl sm:text-[56px] leading-none font-semibold text-burnt-orange transition-transform duration-300 group-hover:-translate-y-1"
+            >
+              {step.number}
+            </m.div>
+
+            <div
+              className="w-3.5 h-3.5 rounded-full bg-ivory border-2 border-burnt-orange shadow-sm"
+              aria-hidden="true"
+            />
+          </div>
+
+          {/* Uppercase Mono Label */}
+          <div className="font-mono text-xs uppercase tracking-wider text-muted-grey font-semibold">
+            {step.label}
+          </div>
+
+          {/* Serif Subtitle */}
+          <h3 className="font-serif text-xl sm:text-2xl font-medium text-charcoal mt-1.5 mb-3">
+            {step.subtitle}
+          </h3>
+
+          {/* Body Text */}
+          <p className="text-sm text-muted-grey leading-relaxed">
+            {step.body}
+          </p>
+        </div>
+
+        {/* Bottom Tag & Arrow */}
+        <div className="border-t border-warm-border/80 pt-4 mt-6 flex items-center justify-between text-xs font-mono uppercase tracking-wider text-charcoal/80">
+          <span className="font-semibold text-charcoal">{step.tag}</span>
+          <ArrowRight className="w-4 h-4 text-burnt-orange transition-transform duration-300 group-hover:translate-x-1" />
+        </div>
+      </div>
+    </m.div>
+  );
+};
+
 export const Journey: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
 
   return (
     <section
+      ref={sectionRef}
       id="journey"
       aria-label="My Journey"
       className="py-20 lg:py-28 bg-cream border-b border-warm-border relative overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+      {/* Giant Outlined Section Numeral 02 */}
+      <SectionNumeral numeral="02" sectionRef={sectionRef} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 relative z-10">
         {/* Header */}
         <div className="space-y-4">
           <SectionLabel label={journeyData.heading.label} />
@@ -78,59 +159,12 @@ export const Journey: React.FC = () => {
           {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
             {journeyData.steps.map((step, idx) => (
-              <m.div
+              <JourneyStepCard
                 key={step.number}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
-                whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{
-                  duration: 0.6,
-                  delay: prefersReducedMotion ? 0 : idx * 0.12,
-                  ease: [0.25, 0.1, 0.25, 1],
-                }}
-                className="group bg-card-surface rounded-[6px] border border-warm-border p-6 sm:p-8 flex flex-col justify-between transition-colors duration-300 hover:border-burnt-orange shadow-sm"
-              >
-                <div>
-                  {/* Step Number & Circle Marker */}
-                  <div className="flex items-center justify-between mb-4">
-                    <m.div
-                      initial={prefersReducedMotion ? false : { scale: 0.8, opacity: 0 }}
-                      whileInView={prefersReducedMotion ? undefined : { scale: 1, opacity: 1 }}
-                      viewport={{ once: true, margin: '-80px' }}
-                      transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : idx * 0.12 + 0.1 }}
-                      className="font-serif text-4xl sm:text-[56px] leading-none font-semibold text-burnt-orange transition-transform duration-300 group-hover:-translate-y-1"
-                    >
-                      {step.number}
-                    </m.div>
-
-                    <div
-                      className="w-3.5 h-3.5 rounded-full bg-ivory border-2 border-burnt-orange shadow-sm"
-                      aria-hidden="true"
-                    />
-                  </div>
-
-                  {/* Uppercase Mono Label */}
-                  <div className="font-mono text-xs uppercase tracking-wider text-muted-grey font-semibold">
-                    {step.label}
-                  </div>
-
-                  {/* Serif Subtitle */}
-                  <h3 className="font-serif text-xl sm:text-2xl font-medium text-charcoal mt-1.5 mb-3">
-                    {step.subtitle}
-                  </h3>
-
-                  {/* Body Text */}
-                  <p className="text-sm text-muted-grey leading-relaxed">
-                    {step.body}
-                  </p>
-                </div>
-
-                {/* Bottom Tag & Arrow */}
-                <div className="border-t border-warm-border/80 pt-4 mt-6 flex items-center justify-between text-xs font-mono uppercase tracking-wider text-charcoal/80">
-                  <span className="font-semibold text-charcoal">{step.tag}</span>
-                  <ArrowRight className="w-4 h-4 text-burnt-orange transition-transform duration-300 group-hover:translate-x-1" />
-                </div>
-              </m.div>
+                step={step}
+                idx={idx}
+                prefersReducedMotion={prefersReducedMotion}
+              />
             ))}
           </div>
         </div>

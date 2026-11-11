@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { m, type Variants } from 'framer-motion';
 import { Code, Layers, Users, Sparkles, ArrowRight, MapPin, GraduationCap, Calendar, Award } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { SectionLabel } from '../ui/SectionLabel';
+import { SectionNumeral } from '../ui/SectionNumeral';
 import { Tag } from '../ui/Tag';
 import { Card } from '../ui/Card';
 import { MountainFallback } from '../art/MountainFallback';
@@ -14,6 +15,7 @@ import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
 export const About: React.FC = () => {
   const { aboutIntro, education } = profileData;
   const prefersReducedMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
 
   const pillContainerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -56,8 +58,16 @@ export const About: React.FC = () => {
   };
 
   return (
-    <section id="about" aria-label="About Me" className="py-20 lg:py-28 bg-ivory border-b border-warm-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-14">
+    <section
+      ref={sectionRef}
+      id="about"
+      aria-label="About Me"
+      className="relative py-20 lg:py-28 bg-ivory border-b border-warm-border overflow-hidden"
+    >
+      {/* Giant Outlined Section Numeral 01 */}
+      <SectionNumeral numeral="01" sectionRef={sectionRef} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-14 relative z-10">
         {/* ROW 1: Signature Reference Layout (3 Columns on Desktop) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
           {/* Left Column: Landscape B&W mountain with burnt-orange sun circle behind peak */}
