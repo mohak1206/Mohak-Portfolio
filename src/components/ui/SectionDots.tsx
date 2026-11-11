@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useScrollSpy } from '../../hooks/useScrollSpy';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { scrollToTarget } from '../../lib/lenis';
 
 const sections = [
   { id: 'home', label: 'Home' },
@@ -24,10 +25,7 @@ export const SectionDots: React.FC = () => {
   if (location.pathname !== '/') return null;
 
   const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth' });
-    }
+    scrollToTarget(id, -80);
   };
 
   return (

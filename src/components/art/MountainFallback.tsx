@@ -121,7 +121,7 @@ export const MountainFallback: React.FC<MountainFallbackProps> = ({ type, classN
   return (
     <div
       aria-busy={!isLoaded && !imgError}
-      className={cn('relative w-full h-full overflow-hidden bg-[#EFE8DD]', className)}
+      className={cn('relative w-full h-full overflow-hidden bg-cream mountain-media', className)}
     >
       {!isLoaded && (
         <Skeleton className="absolute inset-0 w-full h-full rounded-[inherit] pointer-events-none z-10" />
@@ -137,7 +137,7 @@ export const MountainFallback: React.FC<MountainFallbackProps> = ({ type, classN
         onLoad={() => setIsLoaded(true)}
         onError={() => setImgError(true)}
         className={cn(
-          'w-full h-full object-cover transition-opacity duration-[400ms] ease-out',
+          'w-full h-full object-cover transition-opacity duration-[400ms] ease-out mountain-media',
           isLoaded ? 'opacity-100' : 'opacity-0'
         )}
       />

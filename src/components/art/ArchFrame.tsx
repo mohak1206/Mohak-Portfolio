@@ -37,7 +37,7 @@ export const ArchFrame: React.FC<ArchFrameProps> = ({
             <m.path
               d="M 1 50 A 49 49 0 0 1 99 50 L 99 121 A 3 3 0 0 1 96 124 L 4 124 A 3 3 0 0 1 1 121 Z"
               fill="none"
-              stroke="#C94F17"
+              stroke="var(--color-accent)"
               strokeWidth="1.2"
               strokeOpacity="0.5"
               vectorEffect="non-scaling-stroke"

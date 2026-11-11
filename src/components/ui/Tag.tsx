@@ -18,7 +18,7 @@ export const Tag: React.FC<TagProps> = ({
     return (
       <span
         className={cn(
-          'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white border border-warm-border text-charcoal shadow-sm',
+          'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-card-surface border border-warm-border text-charcoal shadow-sm',
           className
         )}
       >
@@ -29,10 +29,10 @@ export const Tag: React.FC<TagProps> = ({
 
   if (variant === 'badge' && status) {
     const statusStyles = {
-      Completed: 'bg-emerald-100/90 text-emerald-800 border-emerald-300/70',
-      'In progress': 'bg-amber-100/90 text-amber-800 border-amber-300/70',
+      Completed: 'bg-emerald-100/90 [data-theme=dark]_&:bg-emerald-950/60 text-emerald-800 [data-theme=dark]_&:text-emerald-300 border-emerald-300/70 [data-theme=dark]_&:border-emerald-700/60',
+      'In progress': 'bg-amber-100/90 [data-theme=dark]_&:bg-amber-950/60 text-amber-800 [data-theme=dark]_&:text-amber-300 border-amber-300/70 [data-theme=dark]_&:border-amber-700/60',
       Concept: 'bg-cream text-charcoal/80 border-warm-border',
-      'Early prototype': 'bg-orange-50 text-burnt-orange border-burnt-orange/30',
+      'Early prototype': 'bg-burnt-orange/15 text-burnt-orange border-burnt-orange/30',
     };
 
     return (

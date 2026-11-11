@@ -571,7 +571,7 @@ export const Hero: React.FC = () => {
                   initial={prefersReducedMotion ? false : { opacity: 0, x: 20, y: -10 }}
                   animate={{ opacity: 1, x: 0, y: 0 }}
                   transition={{ duration: 0.55, delay: prefersReducedMotion ? 0 : 0.4, ease: EASING }}
-                  className="hero-idle-float-tags bg-white/95 backdrop-blur-md rounded-[8px] py-3 px-4 shadow-float border border-warm-border min-w-[170px] sm:min-w-[190px]"
+                  className="hero-idle-float-tags bg-card-surface/95 backdrop-blur-md rounded-[8px] py-3 px-4 shadow-float border border-warm-border min-w-[170px] sm:min-w-[190px]"
                 >
                   <m.div
                     variants={tagContainerVariants}

@@ -17,7 +17,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({ className, ...props }) => {
   return (
     <div
       aria-hidden="true"
-      className={cn('skeleton-shimmer bg-[#EFE8DD] rounded-[4px]', className)}
+      className={cn('skeleton-shimmer bg-cream rounded-[4px]', className)}
       {...props}
     />
   );

@@ -88,7 +88,7 @@ export const Journey: React.FC = () => {
                   delay: prefersReducedMotion ? 0 : idx * 0.12,
                   ease: [0.25, 0.1, 0.25, 1],
                 }}
-                className="group bg-white rounded-[6px] border border-warm-border p-6 sm:p-8 flex flex-col justify-between transition-colors duration-300 hover:border-light-orange shadow-sm"
+                className="group bg-card-surface rounded-[6px] border border-warm-border p-6 sm:p-8 flex flex-col justify-between transition-colors duration-300 hover:border-burnt-orange shadow-sm"
               >
                 <div>
                   {/* Step Number & Circle Marker */}

@@ -3,26 +3,111 @@
 @tailwind utilities;
 
 :root {
-  --color-ivory: #F7F3EC;
-  --color-cream: #EFE8DD;
-  --color-charcoal: #191919;
-  --color-muted-grey: #77716B;
-  --color-burnt-orange: #C94F17;
-  --color-light-orange: #E47B43;
-  --color-warm-border: #DDD4C8;
+  --color-bg: #F7F3EC;
+  --color-surface-secondary: #EFE8DD;
+  --color-card-surface: #FFFFFF;
+  --color-text-primary: #191919;
+  --color-text-muted: #77716B;
+  --color-border: #DDD4C8;
+  --color-accent: #C94F17;
+  --color-accent-hover: #E47B43;
   --color-pure-white: #FFFFFF;
+
+  --color-ivory: var(--color-bg);
+  --color-cream: var(--color-surface-secondary);
+  --color-charcoal: var(--color-text-primary);
+  --color-muted-grey: var(--color-text-muted);
+  --color-burnt-orange: var(--color-accent);
+  --color-light-orange: var(--color-accent-hover);
+  --color-warm-border: var(--color-border);
+}
+
+[data-theme="dark"] {
+  --color-bg: #151412;
+  --color-surface-secondary: #1D1B19;
+  --color-card-surface: #211F1D;
+  --color-text-primary: #F2EEE6;
+  --color-text-muted: #A39C92;
+  --color-border: #34302B;
+  --color-accent: #E47B43;
+  --color-accent-hover: #F0956A;
+  --color-pure-white: #211F1D;
+
+  --color-ivory: #151412;
+  --color-cream: #1D1B19;
+  --color-charcoal: #F2EEE6;
+  --color-muted-grey: #A39C92;
+  --color-burnt-orange: #E47B43;
+  --color-light-orange: #F0956A;
+  --color-warm-border: #34302B;
 }
 
 html {
-  scroll-behavior: smooth;
-  background-color: #F7F3EC;
-  color: #191919;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
   overflow-x: hidden;
+  transition: background-color 250ms ease, color 250ms ease, border-color 250ms ease;
 }
 
 body {
   overflow-x: hidden;
   width: 100%;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+}
+
+/* Lenis smooth scrolling styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* View Transitions circular reveal animation */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  html {
+    transition: none !important;
+  }
+}
+
+/* Image & SVG cover brightness adjustment in dark mode */
+[data-theme="dark"] img:not(.no-dark-filter),
+[data-theme="dark"] .mountain-media,
+[data-theme="dark"] .project-cover-container {
+  filter: brightness(0.86) contrast(1.04);
 }
 
 /* Reduced motion preference */
@@ -42,20 +127,24 @@ body {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #F7F3EC;
+  background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #DDD4C8;
+  background: var(--color-border);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #C94F17;
+  background: var(--color-accent);
 }
 
 /* Selection */
 ::selection {
-  background-color: #C94F17;
+  background-color: var(--color-accent);
   color: #FFFFFF;
+}
+[data-theme="dark"] ::selection {
+  background-color: var(--color-accent);
+  color: #151412;
 }
 
 /* Arch mask utility */
@@ -208,7 +297,7 @@ body {
 .skeleton-shimmer {
   position: relative;
   overflow: hidden;
-  background-color: #EFE8DD;
+  background-color: var(--color-surface-secondary);
   border-radius: 4px;
 }
 
@@ -222,12 +311,21 @@ body {
   transform: translateX(-100%);
   background: linear-gradient(
     105deg,
-    rgba(247, 243, 236, 0) 0%,
-    rgba(247, 243, 236, 0.7) 50%,
-    rgba(247, 243, 236, 0) 100%
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
   );
   animation: skeletonShimmer 1.4s infinite;
   pointer-events: none;
+}
+
+[data-theme="dark"] .skeleton-shimmer::after {
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {

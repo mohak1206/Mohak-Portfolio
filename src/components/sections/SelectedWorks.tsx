@@ -322,7 +322,7 @@ export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false })
                       className={`relative px-4 py-1.5 text-xs sm:text-sm font-medium rounded-full transition-colors duration-200 select-none focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 ${
                         isSelected
                           ? 'text-white'
-                          : 'text-charcoal/80 bg-white hover:bg-cream border border-warm-border'
+                          : 'text-charcoal/80 bg-card-surface hover:bg-cream border border-warm-border'
                       }`}
                     >
                       {isSelected && (
@@ -385,9 +385,9 @@ export const SelectedWorks: React.FC<SelectedWorksProps> = ({ showAll = false })
               <m.div variants={cardItemVariants} className="h-full">
                 <Link
                   to="/projects"
-                  className="group flex flex-col items-center justify-center p-8 bg-[#EFE8DD] hover:bg-[#E5DDD0] rounded-[6px] border border-warm-border hover:border-[#E47B43] hover:-translate-y-1.5 hover:shadow-float transition-all duration-300 shadow-sm text-center min-h-[300px] h-full"
+                  className="group flex flex-col items-center justify-center p-8 bg-cream hover:bg-cream/80 rounded-[6px] border border-warm-border hover:border-burnt-orange hover:-translate-y-1.5 hover:shadow-float transition-all duration-300 shadow-sm text-center min-h-[300px] h-full"
                 >
-                  <div className="w-12 h-12 rounded-full bg-white border border-warm-border flex items-center justify-center text-burnt-orange mb-4 group-hover:bg-burnt-orange group-hover:text-white group-hover:border-burnt-orange transition-all duration-200">
+                  <div className="w-12 h-12 rounded-full bg-card-surface border border-warm-border flex items-center justify-center text-burnt-orange mb-4 group-hover:bg-burnt-orange group-hover:text-white group-hover:border-burnt-orange transition-all duration-200">
                     <ArrowRight className="w-5 h-5 stroke-[2.2] transition-transform duration-300 group-hover:translate-x-[6px]" />
                   </div>
                   <span className="font-serif text-2xl font-semibold text-charcoal group-hover:text-burnt-orange transition-colors">

@@ -15,7 +15,7 @@ export const Footer: React.FC = () => {
                 className="transition-opacity duration-200 hover:opacity-70"
                 aria-label="Home"
               >
-                <Logo className="h-7 w-auto text-[#191919]" />
+                <Logo className="h-7 w-auto text-charcoal" />
               </a>
               <span className="text-xs font-mono text-muted-grey ml-1">
                 © 2026 Mohak Agrawal

@@ -8,6 +8,8 @@ import { DelayedFallback } from './components/ui/DelayedFallback';
 import { ProjectsPageSkeleton, ProjectDetailSkeleton } from './components/ui/SectionSkeletons';
 import { CursorRing } from './components/ui/CursorRing';
 import { SectionDots } from './components/ui/SectionDots';
+import { ThemeProvider } from './context/ThemeContext';
+import { SmoothScrollProvider } from './components/providers/SmoothScrollProvider';
 
 // Route-level and feature code splitting
 const ProjectsPage = React.lazy(() =>
@@ -101,19 +103,23 @@ const AnimatedRoutes: React.FC = () => {
 
 export const App: React.FC = () => {
   return (
-    <MotionConfig reducedMotion="user">
-      <LazyMotion features={domAnimation} strict>
-        <BrowserRouter>
-          <ScrollToTop />
-          <CursorRing />
-          <SectionDots />
-          <AnimatedRoutes />
-          <Suspense fallback={null}>
-            <CommandPaletteModal />
-          </Suspense>
-        </BrowserRouter>
-      </LazyMotion>
-    </MotionConfig>
+    <ThemeProvider>
+      <MotionConfig reducedMotion="user">
+        <LazyMotion features={domAnimation} strict>
+          <BrowserRouter>
+            <SmoothScrollProvider>
+              <ScrollToTop />
+              <CursorRing />
+              <SectionDots />
+              <AnimatedRoutes />
+              <Suspense fallback={null}>
+                <CommandPaletteModal />
+              </Suspense>
+            </SmoothScrollProvider>
+          </BrowserRouter>
+        </LazyMotion>
+      </MotionConfig>
+    </ThemeProvider>
   );
 };
 

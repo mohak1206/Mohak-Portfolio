@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Search, X, FileText, ArrowUpRight, FolderGit2, Compass, Mail, Check, CornerDownLeft } from 'lucide-react';
 import { projectsData } from '../../data/projects';
 import { profileData } from '../../data/profile';
+import { scrollToTarget } from '../../lib/lenis';
 
 interface CommandItem {
   id: string;
@@ -57,12 +58,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
     if (location.pathname !== '/') {
       navigate('/#' + id);
       setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        scrollToTarget(id, -80);
       }, 100);
     } else {
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      scrollToTarget(id, -80);
     }
   };
 
@@ -232,7 +231,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
     >
       <div className="relative w-full max-w-2xl bg-ivory border border-warm-border rounded-[8px] shadow-2xl overflow-hidden flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-150">
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-warm-border bg-white/60">
+        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-warm-border bg-card-surface/60">
           <Search className="w-5 h-5 text-burnt-orange shrink-0" />
           <input
             ref={inputRef}

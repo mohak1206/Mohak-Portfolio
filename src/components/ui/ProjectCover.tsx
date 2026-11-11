@@ -21,7 +21,7 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
     return (
       <div
         aria-busy={!isLoaded}
-        className={cn('relative w-full h-full overflow-hidden bg-[#EFE8DD]', className)}
+        className={cn('relative w-full h-full overflow-hidden bg-cream project-cover-container', className)}
       >
         {!isLoaded && (
           <Skeleton className="absolute inset-0 w-full h-full pointer-events-none z-10" />
@@ -60,7 +60,7 @@ export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, classNa
   return (
     <div
       className={cn(
-        'w-full h-full relative overflow-hidden bg-[#EFE8DD] flex items-center justify-center transition-transform duration-[600ms] ease-out group-hover:scale-[1.06]',
+        'w-full h-full relative overflow-hidden bg-cream project-cover-container flex items-center justify-center transition-transform duration-[600ms] ease-out group-hover:scale-[1.06]',
         className
       )}
     >

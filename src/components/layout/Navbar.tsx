@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUpRight, Menu, X, Search } from 'lucide-react';
+import { ArrowUpRight, Menu, X, Search, Sun, Moon } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { m, useScroll } from 'framer-motion';
 import { useScrollSpy } from '../../hooks/useScrollSpy';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { useTheme } from '../../context/ThemeContext';
+import { scrollToTarget } from '../../lib/lenis';
 import { MobileMenu } from './MobileMenu';
 import Logo from '../ui/Logo';
 import { Magnetic } from '../ui/Magnetic';
@@ -23,6 +25,7 @@ export const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const prefersReducedMotion = useReducedMotion();
+  const { theme, toggleTheme } = useTheme();
   const { scrollYProgress } = useScroll();
 
   const activeSection = useScrollSpy(
@@ -46,16 +49,10 @@ export const Navbar: React.FC = () => {
     if (location.pathname !== '/') {
       navigate('/' + href);
       setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
+        scrollToTarget(id, -80);
       }, 100);
     } else {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      scrollToTarget(id, -80);
     }
   };
 
@@ -86,7 +83,7 @@ export const Navbar: React.FC = () => {
             className="transition-opacity duration-200 hover:opacity-70"
             aria-label="Home"
           >
-            <Logo className="h-8 w-auto text-[#191919]" />
+            <Logo className="h-8 w-auto text-charcoal" />
           </a>
 
           {/* Center: Desktop Navigation */}
@@ -120,13 +117,27 @@ export const Navbar: React.FC = () => {
             })}
           </nav>
 
-          {/* Right: Search trigger & Resume CTA Button */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Right: Theme Toggle, Search trigger & Resume CTA Button */}
+          <div className="hidden md:flex items-center gap-2.5">
+            {/* Theme Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="p-2 text-charcoal/80 hover:text-burnt-orange bg-card-surface hover:bg-cream border border-warm-border hover:border-burnt-orange rounded-[5px] transition-colors shadow-2xs select-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-burnt-orange"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-burnt-orange" />
+              ) : (
+                <Moon className="w-4 h-4 text-charcoal/80" />
+              )}
+            </button>
+
             <button
               type="button"
               onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
               aria-label="Search site and commands (Ctrl+K)"
-              className="inline-flex items-center gap-2 px-2.5 py-1.5 text-xs font-mono text-charcoal/80 bg-white hover:bg-cream border border-warm-border hover:border-burnt-orange rounded-[5px] transition-colors shadow-2xs select-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-burnt-orange"
+              className="inline-flex items-center gap-2 px-2.5 py-1.5 text-xs font-mono text-charcoal/80 bg-card-surface hover:bg-cream border border-warm-border hover:border-burnt-orange rounded-[5px] transition-colors shadow-2xs select-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-burnt-orange"
             >
               <Search className="w-3.5 h-3.5 text-burnt-orange" />
               <span className="hidden lg:inline text-muted-grey">Search</span>
@@ -148,13 +159,26 @@ export const Navbar: React.FC = () => {
             </Magnetic>
           </div>
 
-          {/* Mobile menu trigger */}
+          {/* Mobile menu trigger & Theme toggle */}
           <div className="md:hidden flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="p-1.5 text-charcoal/80 hover:text-burnt-orange rounded-[4px] border border-warm-border bg-card-surface"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-burnt-orange" />
+              ) : (
+                <Moon className="w-4 h-4 text-charcoal/80" />
+              )}
+            </button>
+
             <button
               type="button"
               onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
               aria-label="Search site and commands"
-              className="p-1.5 text-charcoal/80 hover:text-burnt-orange rounded-[4px] border border-warm-border bg-white"
+              className="p-1.5 text-charcoal/80 hover:text-burnt-orange rounded-[4px] border border-warm-border bg-card-surface"
             >
               <Search className="w-4 h-4" />
             </button>

@@ -8,14 +8,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ivory: '#F7F3EC',
-        cream: '#EFE8DD',
-        charcoal: '#191919',
-        'muted-grey': '#77716B',
-        'burnt-orange': '#C94F17',
-        'light-orange': '#E47B43',
-        'warm-border': '#DDD4C8',
-        'pure-white': '#FFFFFF',
+        ivory: 'var(--color-bg)',
+        cream: 'var(--color-surface-secondary)',
+        card: 'var(--color-card-surface)',
+        'card-surface': 'var(--color-card-surface)',
+        charcoal: 'var(--color-text-primary)',
+        'muted-grey': 'var(--color-text-muted)',
+        'burnt-orange': 'var(--color-accent)',
+        'light-orange': 'var(--color-accent-hover)',
+        'warm-border': 'var(--color-border)',
+        'pure-white': 'var(--color-pure-white)',
       },
       fontFamily: {
         serif: ['"Playfair Display Variable"', '"Playfair Display"', 'Georgia', 'serif'],

@@ -89,7 +89,7 @@ export const ProjectDetail: React.FC = () => {
 
           {hasNumericMetrics && project.metrics && (
             <Reveal delay={0.15}>
-              <Card elevated className="p-6 sm:p-8 space-y-6 bg-white">
+              <Card elevated className="p-6 sm:p-8 space-y-6 bg-card-surface">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-warm-border pb-4">
                   <div>
                     <div className="text-xs font-mono uppercase tracking-wider text-burnt-orange font-semibold">
@@ -246,7 +246,7 @@ export const ProjectDetail: React.FC = () => {
               <h2 className="font-serif text-2xl text-charcoal font-medium">Tech Stack</h2>
               <div className="flex flex-wrap gap-2">
                 {project.stack.map((tech) => (
-                  <Tag key={tech} variant="mono" className="px-3 py-1.5 text-xs bg-white">
+                  <Tag key={tech} variant="mono" className="px-3 py-1.5 text-xs bg-card-surface">
                     {tech}
                   </Tag>
                 ))}

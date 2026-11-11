@@ -48,7 +48,7 @@ export const SkeletonImage: React.FC<SkeletonImageProps> = ({
     <div
       aria-busy={!isLoaded && !hasError}
       className={cn(
-        'relative overflow-hidden bg-[#EFE8DD]',
+        'relative overflow-hidden bg-cream',
         aspectRatio,
         containerClassName
       )}
@@ -63,7 +63,7 @@ export const SkeletonImage: React.FC<SkeletonImageProps> = ({
         fallback
       ) : hasError ? (
         <div
-          className="absolute inset-0 w-full h-full bg-[#EFE8DD]"
+          className="absolute inset-0 w-full h-full bg-cream"
           aria-hidden="true"
         />
       ) : (

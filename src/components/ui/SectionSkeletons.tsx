@@ -49,7 +49,7 @@ export const AboutSkeleton: React.FC = () => {
 
         {/* Bottom Card Summary */}
         <div className="pt-10 border-t border-warm-border">
-          <div className="p-6 sm:p-8 bg-white border border-warm-border rounded-[6px]">
+          <div className="p-6 sm:p-8 bg-card-surface border border-warm-border rounded-[6px]">
             <Skeleton className="w-48 h-4 mb-6" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
               <div className="lg:col-span-7 space-y-3.5">
@@ -98,7 +98,7 @@ export const JourneySkeleton: React.FC = () => {
           {[1, 2, 3].map((idx) => (
             <div
               key={idx}
-              className="bg-white rounded-[6px] border border-warm-border p-6 sm:p-8 space-y-6"
+              className="bg-card-surface rounded-[6px] border border-warm-border p-6 sm:p-8 space-y-6"
             >
               <div className="flex items-center justify-between">
                 <Skeleton className="w-12 h-14" />
@@ -143,7 +143,7 @@ export const SelectedWorksSkeleton: React.FC<{ showAll?: boolean }> = ({ showAll
           {Array.from({ length: cardCount }).map((_, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-[6px] border border-warm-border overflow-hidden flex flex-col h-full"
+              className="bg-card-surface rounded-[6px] border border-warm-border overflow-hidden flex flex-col h-full"
             >
               <div className="w-full aspect-[16/10] bg-cream">
                 <Skeleton className="w-full h-full" />
@@ -188,7 +188,7 @@ export const LabIdeasSkeleton: React.FC = () => {
           {[1, 2].map((idx) => (
             <div
               key={idx}
-              className="bg-white rounded-[6px] border border-warm-border p-6 sm:p-8 space-y-4"
+              className="bg-card-surface rounded-[6px] border border-warm-border p-6 sm:p-8 space-y-4"
             >
               <div className="flex items-center justify-between">
                 <Skeleton className="w-24 h-5 rounded" />
@@ -231,7 +231,7 @@ export const ExpertiseSkeleton: React.FC = () => {
             {[1, 2, 3, 4].map((idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-[6px] border border-warm-border p-5 space-y-4 h-full"
+                className="bg-card-surface rounded-[6px] border border-warm-border p-5 space-y-4 h-full"
               >
                 <Skeleton className="w-28 h-4" />
                 <div className="h-[1px] bg-warm-border w-full" />
@@ -286,7 +286,7 @@ export const ExperienceSkeleton: React.FC = () => {
           {[1, 2, 3, 4].map((idx) => (
             <div key={idx} className="relative">
               <Skeleton className="absolute -left-[31px] sm:-left-[47px] top-1.5 w-3.5 h-3.5 rounded-full" />
-              <div className="bg-white rounded-[6px] border border-warm-border p-6 space-y-3">
+              <div className="bg-card-surface rounded-[6px] border border-warm-border p-6 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                   <div className="space-y-1">
                     <Skeleton className="w-48 h-6" />
@@ -324,7 +324,7 @@ export const CredentialsSkeleton: React.FC = () => {
           {[1, 2, 3].map((idx) => (
             <div
               key={idx}
-              className="bg-white rounded-[6px] border border-warm-border p-6 space-y-4 flex flex-col justify-between"
+              className="bg-card-surface rounded-[6px] border border-warm-border p-6 space-y-4 flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -395,7 +395,7 @@ export const ProjectsPageSkeleton: React.FC = () => {
             {Array.from({ length: 6 }).map((_, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-[6px] border border-warm-border overflow-hidden flex flex-col"
+                className="bg-card-surface rounded-[6px] border border-warm-border overflow-hidden flex flex-col"
               >
                 <div className="w-full aspect-[16/10] bg-cream">
                   <Skeleton className="w-full h-full" />
@@ -448,7 +448,7 @@ export const ProjectDetailSkeleton: React.FC = () => {
           </div>
 
           {/* Metrics row */}
-          <div className="p-6 bg-white border border-warm-border rounded-[6px]">
+          <div className="p-6 bg-card-surface border border-warm-border rounded-[6px]">
             <Skeleton className="w-36 h-4 mb-4" />
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
               {[1, 2, 3, 4].map((i) => (
@@ -462,11 +462,11 @@ export const ProjectDetailSkeleton: React.FC = () => {
 
           {/* Problem & Solution cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 bg-white border border-warm-border rounded-[6px] space-y-3">
+            <div className="p-6 bg-card-surface border border-warm-border rounded-[6px] space-y-3">
               <Skeleton className="w-32 h-4" />
               <SkeletonText lines={3} />
             </div>
-            <div className="p-6 bg-white border border-warm-border rounded-[6px] space-y-3">
+            <div className="p-6 bg-card-surface border border-warm-border rounded-[6px] space-y-3">
               <Skeleton className="w-32 h-4" />
               <SkeletonText lines={3} />
             </div>

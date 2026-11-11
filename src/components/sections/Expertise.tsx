@@ -292,7 +292,7 @@ export const Expertise: React.FC = () => {
               {exploringSkills.map((tech) => (
                 <div
                   key={tech}
-                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white text-charcoal border border-warm-border shadow-sm hover:border-burnt-orange transition-colors"
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-card-surface text-charcoal border border-warm-border shadow-sm hover:border-burnt-orange transition-colors"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange" />
                   <span>{tech}</span>
