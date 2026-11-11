@@ -63,7 +63,147 @@
     </script>
   </head>
   <body class="bg-ivory text-charcoal font-sans antialiased selection:bg-burnt-orange selection:text-white">
-    <div id="root"></div>
+    <div id="root">
+      <div id="app-shell" aria-busy="true" aria-label="Loading portfolio">
+        <style>
+          #app-shell {
+            background-color: #F7F3EC;
+            min-height: 100vh;
+            color: #191919;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+          }
+          .sk-block {
+            position: relative;
+            overflow: hidden;
+            background-color: #EFE8DD;
+            border-radius: 4px;
+          }
+          .sk-block::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(105deg, rgba(247,243,236,0) 0%, rgba(247,243,236,0.7) 50%, rgba(247,243,236,0) 100%);
+            animation: skShimmer 1.4s infinite;
+            pointer-events: none;
+          }
+          @keyframes skShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .sk-block::after { animation: none !important; display: none !important; }
+          }
+          .sk-nav {
+            height: 68px;
+            border-bottom: 1px solid #DDD4C8;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 16px;
+          }
+          .sk-nav-links {
+            display: none;
+            gap: 32px;
+          }
+          .sk-hero {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 112px 16px 64px 16px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 48px;
+            min-height: calc(100vh - 140px);
+            align-items: center;
+          }
+          .sk-hero-right {
+            display: none;
+          }
+          @media (min-width: 640px) {
+            .sk-nav { padding: 0 24px; }
+            .sk-hero { padding: 112px 24px 64px 24px; }
+          }
+          @media (min-width: 768px) {
+            .sk-nav-links { display: flex; }
+          }
+          @media (min-width: 1024px) {
+            .sk-nav { padding: 0 32px; }
+            .sk-hero {
+              padding: 144px 32px 96px 32px;
+              grid-template-columns: 7fr 5fr;
+              gap: 32px;
+            }
+            .sk-hero-right {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+          }
+          .sk-arch {
+            width: 100%;
+            max-width: 380px;
+            aspect-ratio: 4/5;
+            border-radius: 180px 180px 12px 12px;
+          }
+        </style>
+
+        <!-- Instant Navbar Shell -->
+        <header class="sk-nav" aria-hidden="true">
+          <div class="sk-block" style="width: 44px; height: 32px;"></div>
+          <div class="sk-nav-links">
+            <div class="sk-block" style="width: 52px; height: 14px;"></div>
+            <div class="sk-block" style="width: 52px; height: 14px;"></div>
+            <div class="sk-block" style="width: 58px; height: 14px;"></div>
+            <div class="sk-block" style="width: 68px; height: 14px;"></div>
+            <div class="sk-block" style="width: 54px; height: 14px;"></div>
+          </div>
+          <div class="sk-block" style="width: 90px; height: 36px; border-radius: 5px;"></div>
+        </header>
+
+        <!-- Instant Hero Shell -->
+        <section class="sk-hero" aria-hidden="true">
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div class="sk-block" style="width: 140px; height: 16px; margin-bottom: 24px;"></div>
+            <div class="sk-block" style="width: min(100%, 420px); height: 52px; margin-bottom: 12px;"></div>
+            <div class="sk-block" style="width: min(85%, 320px); height: 52px; margin-bottom: 24px;"></div>
+            <div class="sk-block" style="width: min(80%, 300px); height: 20px; margin-bottom: 20px;"></div>
+            <div style="margin-bottom: 28px; width: 100%; max-width: 540px;">
+              <div class="sk-block" style="width: 100%; height: 16px; margin-bottom: 10px;"></div>
+              <div class="sk-block" style="width: 92%; height: 16px; margin-bottom: 10px;"></div>
+              <div class="sk-block" style="width: 60%; height: 16px;"></div>
+            </div>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 36px;">
+              <div class="sk-block" style="width: 160px; height: 48px; border-radius: 5px;"></div>
+              <div class="sk-block" style="width: 110px; height: 48px; border-radius: 5px;"></div>
+            </div>
+            <div style="border-top: 1px solid #DDD4C8; padding-top: 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 480px;">
+              <div>
+                <div class="sk-block" style="width: 48px; height: 32px; margin-bottom: 6px;"></div>
+                <div class="sk-block" style="width: 72px; height: 12px;"></div>
+              </div>
+              <div>
+                <div class="sk-block" style="width: 36px; height: 32px; margin-bottom: 6px;"></div>
+                <div class="sk-block" style="width: 68px; height: 12px;"></div>
+              </div>
+              <div>
+                <div class="sk-block" style="width: 36px; height: 32px; margin-bottom: 6px;"></div>
+                <div class="sk-block" style="width: 64px; height: 12px;"></div>
+              </div>
+              <div>
+                <div class="sk-block" style="width: 42px; height: 32px; margin-bottom: 6px;"></div>
+                <div class="sk-block" style="width: 54px; height: 12px;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sk-hero-right">
+            <div class="sk-block sk-arch"></div>
+          </div>
+        </section>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -4,6 +4,8 @@ import { AnimatePresence, m, LazyMotion, domAnimation, MotionConfig, type Varian
 import { Home } from './pages/Home';
 import { EASING } from './lib/animation';
 import { useReducedMotion } from './hooks/useReducedMotion';
+import { DelayedFallback } from './components/ui/DelayedFallback';
+import { ProjectsPageSkeleton, ProjectDetailSkeleton } from './components/ui/SectionSkeletons';
 
 // Route-level code splitting
 const ProjectsPage = React.lazy(() =>
@@ -55,20 +57,38 @@ const AnimatedRoutes: React.FC = () => {
         animate="animate"
         exit="exit"
       >
-        <Suspense
-          fallback={
-            <div className="min-h-screen bg-ivory flex items-center justify-center">
-              <span className="w-6 h-6 border-2 border-burnt-orange border-t-transparent rounded-full animate-spin" />
-            </div>
-          }
-        >
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Home />} />
-            <Route path="/projects" element={<ProjectsPage />} />
-            <Route path="/projects/:slug" element={<ProjectDetail />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/projects"
+            element={
+              <Suspense
+                fallback={
+                  <DelayedFallback delay={150}>
+                    <ProjectsPageSkeleton />
+                  </DelayedFallback>
+                }
+              >
+                <ProjectsPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/projects/:slug"
+            element={
+              <Suspense
+                fallback={
+                  <DelayedFallback delay={150}>
+                    <ProjectDetailSkeleton />
+                  </DelayedFallback>
+                }
+              >
+                <ProjectDetail />
+              </Suspense>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </m.div>
     </AnimatePresence>
   );

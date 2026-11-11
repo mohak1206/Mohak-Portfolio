@@ -194,3 +194,45 @@ body {
     transform: none !important;
   }
 }
+
+/* Skeleton Loading Shimmer: Soft cream #EFE8DD with diagonal highlight #F7F3EC (~70% opacity) sweeping every 1.4s */
+@keyframes skeletonShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: #EFE8DD;
+  border-radius: 4px;
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    105deg,
+    rgba(247, 243, 236, 0) 0%,
+    rgba(247, 243, 236, 0.7) 50%,
+    rgba(247, 243, 236, 0) 100%
+  );
+  animation: skeletonShimmer 1.4s infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer::after {
+    animation: none !important;
+    display: none !important;
+  }
+}

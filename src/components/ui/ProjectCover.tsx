@@ -3,6 +3,7 @@ import { m } from 'framer-motion';
 import { cn } from '../../lib/utils';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
+import { Skeleton } from './Skeleton';
 
 interface ProjectCoverProps {
   slug: string;
@@ -11,25 +12,35 @@ interface ProjectCoverProps {
 }
 
 export const ProjectCover: React.FC<ProjectCoverProps> = ({ slug, title, className }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
   const localImg = `/projects/${slug}.webp`;
   const prefersReducedMotion = useReducedMotion();
 
   if (!imgError) {
     return (
-      <img
-        src={localImg}
-        alt={title}
-        width={800}
-        height={480}
-        loading="lazy"
-        decoding="async"
-        className={cn(
-          'w-full h-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.06]',
-          className
+      <div
+        aria-busy={!isLoaded}
+        className={cn('relative w-full h-full overflow-hidden bg-[#EFE8DD]', className)}
+      >
+        {!isLoaded && (
+          <Skeleton className="absolute inset-0 w-full h-full pointer-events-none z-10" />
         )}
-        onError={() => setImgError(true)}
-      />
+        <img
+          src={localImg}
+          alt={title}
+          width={800}
+          height={480}
+          loading="lazy"
+          decoding="async"
+          onLoad={() => setIsLoaded(true)}
+          onError={() => setImgError(true)}
+          className={cn(
+            'w-full h-full object-cover transition-all duration-[400ms] ease-out group-hover:scale-[1.06]',
+            isLoaded ? 'opacity-100' : 'opacity-0'
+          )}
+        />
+      </div>
     );
   }
 

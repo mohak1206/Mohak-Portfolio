@@ -3,6 +3,17 @@ import { Navbar } from '../components/layout/Navbar';
 import { Hero } from '../components/sections/Hero';
 import { TechMarquee } from '../components/ui/TechMarquee';
 import { Footer } from '../components/layout/Footer';
+import { DelayedFallback } from '../components/ui/DelayedFallback';
+import {
+  AboutSkeleton,
+  JourneySkeleton,
+  SelectedWorksSkeleton,
+  LabIdeasSkeleton,
+  ExpertiseSkeleton,
+  ExperienceSkeleton,
+  CredentialsSkeleton,
+  ContactSkeleton,
+} from '../components/ui/SectionSkeletons';
 
 // Lazy-load below-the-fold home sections so hero paints immediately
 const About = React.lazy(() =>
@@ -46,35 +57,83 @@ export const Home: React.FC = () => {
         <Hero />
         <TechMarquee />
 
-        <Suspense fallback={<section id="about" className="min-h-[300px]" />}>
+        <Suspense
+          fallback={
+            <DelayedFallback delay={150}>
+              <AboutSkeleton />
+            </DelayedFallback>
+          }
+        >
           <About />
         </Suspense>
 
-        <Suspense fallback={<section id="journey" className="min-h-[300px]" />}>
+        <Suspense
+          fallback={
+            <DelayedFallback delay={150}>
+              <JourneySkeleton />
+            </DelayedFallback>
+          }
+        >
           <Journey />
         </Suspense>
 
-        <Suspense fallback={<section id="projects" className="min-h-[400px]" />}>
+        <Suspense
+          fallback={
+            <DelayedFallback delay={150}>
+              <SelectedWorksSkeleton showAll={false} />
+            </DelayedFallback>
+          }
+        >
           <SelectedWorks showAll={false} />
         </Suspense>
 
-        <Suspense fallback={<section id="lab-ideas" className="min-h-[300px]" />}>
+        <Suspense
+          fallback={
+            <DelayedFallback delay={150}>
+              <LabIdeasSkeleton />
+            </DelayedFallback>
+          }
+        >
           <LabIdeas />
         </Suspense>
 
-        <Suspense fallback={<section id="skills" className="min-h-[300px]" />}>
+        <Suspense
+          fallback={
+            <DelayedFallback delay={150}>
+              <ExpertiseSkeleton />
+            </DelayedFallback>
+          }
+        >
           <Expertise />
         </Suspense>
 
-        <Suspense fallback={<section id="experience" className="min-h-[400px]" />}>
+        <Suspense
+          fallback={
+            <DelayedFallback delay={150}>
+              <ExperienceSkeleton />
+            </DelayedFallback>
+          }
+        >
           <Experience />
         </Suspense>
 
-        <Suspense fallback={<section id="credentials" className="min-h-[300px]" />}>
+        <Suspense
+          fallback={
+            <DelayedFallback delay={150}>
+              <CredentialsSkeleton />
+            </DelayedFallback>
+          }
+        >
           <Credentials />
         </Suspense>
 
-        <Suspense fallback={<section id="contact" className="min-h-[300px]" />}>
+        <Suspense
+          fallback={
+            <DelayedFallback delay={150}>
+              <ContactSkeleton />
+            </DelayedFallback>
+          }
+        >
           <Contact />
         </Suspense>
       </main>
