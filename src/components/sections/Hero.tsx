@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, Suspense } from 'react';
+import React, { useEffect, useState, useRef, Suspense, useCallback } from 'react';
 import { m, useScroll, useTransform, useMotionValue, useSpring, useInView, type Variants } from 'framer-motion';
 import { ArrowRight, Cpu, Layers, Eye, Zap, Play } from 'lucide-react';
 import { profileData } from '../../data/profile';
@@ -53,10 +53,6 @@ const TerminalTypewriter: React.FC<TerminalTypewriterProps> = ({
     if (prefersReducedMotion) {
       setHasStarted(true);
       setLineIdx(CODE_LINES.length);
-      if (!hasCalledFinished.current) {
-        hasCalledFinished.current = true;
-        onFinished?.();
-      }
       return;
     }
 
@@ -65,39 +61,32 @@ const TerminalTypewriter: React.FC<TerminalTypewriterProps> = ({
     }, startDelay);
 
     return () => clearTimeout(timer);
-  }, [prefersReducedMotion, startDelay, onFinished]);
+  }, [prefersReducedMotion, startDelay]);
 
+  // Safely notify parent component after commit when typing is finished
   useEffect(() => {
-    if (prefersReducedMotion || !hasStarted) return;
-    if (lineIdx >= CODE_LINES.length) {
-      if (!hasCalledFinished.current) {
-        hasCalledFinished.current = true;
-        onFinished?.();
-      }
-      return;
+    if ((prefersReducedMotion || lineIdx >= CODE_LINES.length) && !hasCalledFinished.current) {
+      hasCalledFinished.current = true;
+      onFinished?.();
     }
+  }, [prefersReducedMotion, lineIdx, onFinished]);
 
-    const interval = setInterval(() => {
-      setCharIdx((prevChar) => {
-        const currentLine = CODE_LINES[lineIdx];
-        if (prevChar < currentLine.length) {
-          return prevChar + 1;
-        } else {
-          setLineIdx((prevLine) => {
-            const nextLine = prevLine + 1;
-            if (nextLine >= CODE_LINES.length && !hasCalledFinished.current) {
-              hasCalledFinished.current = true;
-              onFinished?.();
-            }
-            return nextLine;
-          });
-          return 0;
-        }
-      });
+  // Character typing interval loop
+  useEffect(() => {
+    if (prefersReducedMotion || !hasStarted || lineIdx >= CODE_LINES.length) return;
+
+    const currentLine = CODE_LINES[lineIdx];
+    const timer = setTimeout(() => {
+      if (charIdx < currentLine.length) {
+        setCharIdx((prev) => prev + 1);
+      } else {
+        setCharIdx(0);
+        setLineIdx((prev) => prev + 1);
+      }
     }, 30); // 30ms per character typing
 
-    return () => clearInterval(interval);
-  }, [hasStarted, lineIdx, prefersReducedMotion, onFinished]);
+    return () => clearTimeout(timer);
+  }, [hasStarted, lineIdx, charIdx, prefersReducedMotion]);
 
   const renderLineContent = (text: string, idx: number, showCursor: boolean) => {
     let content: React.ReactNode;
@@ -163,6 +152,9 @@ export const Hero: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
   const isFinePointer = useFinePointer();
   const [terminalFinished, setTerminalFinished] = useState(() => Boolean(prefersReducedMotion));
+  const handleTerminalFinished = useCallback(() => {
+    setTerminalFinished(true);
+  }, []);
   const completedProjectsCount = projectsData.filter((p) => p.status === 'Completed').length.toString();
   const heroRef = useRef<HTMLElement>(null);
   const isHeroInView = useInView(heroRef, { margin: '-20px' });
@@ -568,7 +560,7 @@ export const Hero: React.FC = () => {
 
                   <TerminalTypewriter
                     startDelay={450}
-                    onFinished={() => setTerminalFinished(true)}
+                    onFinished={handleTerminalFinished}
                   />
 
                   {terminalFinished && (

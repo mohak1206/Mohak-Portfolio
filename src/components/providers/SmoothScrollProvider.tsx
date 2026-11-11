@@ -37,12 +37,6 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
     rafId = requestAnimationFrame(raf);
 
-    // Keep Framer Motion whileInView & useScroll fully updated
-    const handleLenisScroll = () => {
-      window.dispatchEvent(new Event('scroll'));
-    };
-    lenis.on('scroll', handleLenisScroll);
-
     // Intercept native in-page anchor clicks to route through lenis.scrollTo with sticky-nav offset
     const handleAnchorClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
