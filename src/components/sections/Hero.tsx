@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { m, useScroll, useTransform, type Variants } from 'framer-motion';
+import React, { useEffect, useState, useRef, Suspense } from 'react';
+import { m, useScroll, useTransform, useMotionValue, useSpring, type Variants } from 'framer-motion';
 import { ArrowRight, Cpu, Layers, Eye, Zap } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { projectsData } from '../../data/projects';
@@ -9,8 +9,15 @@ import { ArchFrame } from '../art/ArchFrame';
 import { MountainFallback } from '../art/MountainFallback';
 import { SplitLines } from '../ui/SplitLines';
 import { CountUp } from '../ui/CountUp';
+import { Magnetic } from '../ui/Magnetic';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { useFinePointer } from '../../hooks/useFinePointer';
 import { EASING } from '../../lib/animation';
+
+// Lazily load the interactive terminal logic
+const InteractiveTerminal = React.lazy(
+  () => import('../terminal/InteractiveTerminal').then((m) => ({ default: m.InteractiveTerminal }))
+);
 
 const CODE_LINES = [
   '# building...',
@@ -21,7 +28,15 @@ const CODE_LINES = [
   '    improve()',
 ];
 
-const TerminalTypewriter: React.FC<{ startDelay?: number }> = ({ startDelay = 400 }) => {
+interface TerminalTypewriterProps {
+  startDelay?: number;
+  onFinished?: () => void;
+}
+
+const TerminalTypewriter: React.FC<TerminalTypewriterProps> = ({
+  startDelay = 400,
+  onFinished,
+}) => {
   const prefersReducedMotion = useReducedMotion();
   const [lineIdx, setLineIdx] = useState<number>(() =>
     prefersReducedMotion ? CODE_LINES.length : 0
@@ -30,11 +45,16 @@ const TerminalTypewriter: React.FC<{ startDelay?: number }> = ({ startDelay = 40
     prefersReducedMotion ? CODE_LINES[CODE_LINES.length - 1].length : 0
   );
   const [hasStarted, setHasStarted] = useState<boolean>(Boolean(prefersReducedMotion));
+  const hasCalledFinished = useRef(false);
 
   useEffect(() => {
     if (prefersReducedMotion) {
       setHasStarted(true);
       setLineIdx(CODE_LINES.length);
+      if (!hasCalledFinished.current) {
+        hasCalledFinished.current = true;
+        onFinished?.();
+      }
       return;
     }
 
@@ -43,11 +63,17 @@ const TerminalTypewriter: React.FC<{ startDelay?: number }> = ({ startDelay = 40
     }, startDelay);
 
     return () => clearTimeout(timer);
-  }, [prefersReducedMotion, startDelay]);
+  }, [prefersReducedMotion, startDelay, onFinished]);
 
   useEffect(() => {
     if (prefersReducedMotion || !hasStarted) return;
-    if (lineIdx >= CODE_LINES.length) return;
+    if (lineIdx >= CODE_LINES.length) {
+      if (!hasCalledFinished.current) {
+        hasCalledFinished.current = true;
+        onFinished?.();
+      }
+      return;
+    }
 
     const interval = setInterval(() => {
       setCharIdx((prevChar) => {
@@ -55,14 +81,21 @@ const TerminalTypewriter: React.FC<{ startDelay?: number }> = ({ startDelay = 40
         if (prevChar < currentLine.length) {
           return prevChar + 1;
         } else {
-          setLineIdx((prevLine) => prevLine + 1);
+          setLineIdx((prevLine) => {
+            const nextLine = prevLine + 1;
+            if (nextLine >= CODE_LINES.length && !hasCalledFinished.current) {
+              hasCalledFinished.current = true;
+              onFinished?.();
+            }
+            return nextLine;
+          });
           return 0;
         }
       });
     }, 30); // 30ms per character typing
 
     return () => clearInterval(interval);
-  }, [hasStarted, lineIdx, prefersReducedMotion]);
+  }, [hasStarted, lineIdx, prefersReducedMotion, onFinished]);
 
   const renderLineContent = (text: string, idx: number, showCursor: boolean) => {
     let content: React.ReactNode;
@@ -114,7 +147,7 @@ const TerminalTypewriter: React.FC<{ startDelay?: number }> = ({ startDelay = 40
         }
 
         if (lineIdx >= CODE_LINES.length && idx === CODE_LINES.length - 1) {
-          return renderLineContent(line, idx, true);
+          return renderLineContent(line, idx, false);
         }
 
         return null;
@@ -126,15 +159,64 @@ const TerminalTypewriter: React.FC<{ startDelay?: number }> = ({ startDelay = 40
 export const Hero: React.FC = () => {
   const { stats } = profileData;
   const prefersReducedMotion = useReducedMotion();
+  const isFinePointer = useFinePointer();
+  const [terminalFinished, setTerminalFinished] = useState(() => Boolean(prefersReducedMotion));
   const completedProjectsCount = projectsData.filter((p) => p.status === 'Completed').length.toString();
   const heroRef = useRef<HTMLElement>(null);
 
-  // Background detail: topographic contour lines shift by at most 16px vertically as the page scrolls
+  // Background detail: topographic contour lines shift by at most 16px vertically as page scrolls
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end start'],
   });
-  const contourY = useTransform(scrollYProgress, [0, 1], [0, 16]);
+  const contourScrollY = useTransform(scrollYProgress, [0, 1], [0, 16]);
+
+  // Pointer Depth (fine pointers only, stiffness 120, damping 18)
+  const isPointerDepthActive = isFinePointer && !prefersReducedMotion;
+  const normX = useMotionValue(0);
+  const normY = useMotionValue(0);
+
+  const springNormX = useSpring(normX, { stiffness: 120, damping: 18 });
+  const springNormY = useSpring(normY, { stiffness: 120, damping: 18 });
+
+  // Layers move slightly opposite to pointer
+  // Sun circle up to 14px
+  const sunX = useTransform(springNormX, (v) => -v * 14);
+  const sunY = useTransform(springNormY, (v) => -v * 14);
+
+  // Arch image up to 6px
+  const archImgX = useTransform(springNormX, (v) => -v * 6);
+  const archImgY = useTransform(springNormY, (v) => -v * 6);
+
+  // Arch outline up to 8px
+  const archOutlineX = useTransform(springNormX, (v) => -v * 8);
+  const archOutlineY = useTransform(springNormY, (v) => -v * 8);
+
+  // Contour lines up to 4px
+  const contourPointerX = useTransform(springNormX, (v) => -v * 4);
+  const contourPointerY = useTransform(springNormY, (v) => -v * 4);
+
+  // Terminal card up to 10px
+  const terminalX = useTransform(springNormX, (v) => -v * 10);
+  const terminalY = useTransform(springNormY, (v) => -v * 10);
+
+  // Tags card up to 12px
+  const tagsX = useTransform(springNormX, (v) => -v * 12);
+  const tagsY = useTransform(springNormY, (v) => -v * 12);
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    if (!isPointerDepthActive || !heroRef.current) return;
+    const rect = heroRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1; // -1 to 1
+    const y = ((e.clientY - rect.top) / rect.height) * 2 - 1; // -1 to 1
+    normX.set(Math.max(-1, Math.min(1, x)));
+    normY.set(Math.max(-1, Math.min(1, y)));
+  };
+
+  const handlePointerLeave = () => {
+    normX.set(0);
+    normY.set(0);
+  };
 
   const scrollToProjects = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -172,9 +254,20 @@ export const Hero: React.FC = () => {
       ref={heroRef}
       id="home"
       aria-label="Hero"
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
       className="relative pt-28 pb-16 lg:pt-36 lg:pb-24 overflow-hidden border-b border-warm-border bg-ivory"
     >
-      <ContourLines style={{ y: prefersReducedMotion ? 0 : contourY }} />
+      {/* Contour lines with spring pointer depth + scroll parallax */}
+      <m.div
+        style={{
+          x: isPointerDepthActive ? contourPointerX : 0,
+          y: isPointerDepthActive ? contourPointerY : 0,
+        }}
+        className="absolute inset-0 pointer-events-none"
+      >
+        <ContourLines style={{ y: prefersReducedMotion ? 0 : contourScrollY }} />
+      </m.div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center min-h-[calc(100vh-140px)]">
@@ -257,31 +350,35 @@ export const Hero: React.FC = () => {
               {profileData.heroBio}
             </m.p>
 
-            {/* CTAs with 0.08s stagger */}
+            {/* CTAs with Magnetic Effect */}
             <m.div
               initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.5, ease: EASING }}
               className="flex flex-wrap items-center gap-4 pt-2"
             >
-              <Button asAnchor href="#projects" onClick={scrollToProjects} variant="primary" size="lg">
-                <span>Explore Projects</span>
-                <ArrowRight className="w-4 h-4 stroke-[2.2]" />
-              </Button>
+              <Magnetic>
+                <Button asAnchor href="#projects" onClick={scrollToProjects} variant="primary" size="lg">
+                  <span>Explore Projects</span>
+                  <ArrowRight className="w-4 h-4 stroke-[2.2]" />
+                </Button>
+              </Magnetic>
 
-              <Button
-                asAnchor
-                href={profileData.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="outline"
-                size="lg"
-              >
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                </svg>
-                <span>GitHub</span>
-              </Button>
+              <Magnetic>
+                <Button
+                  asAnchor
+                  href={profileData.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="outline"
+                  size="lg"
+                >
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                  </svg>
+                  <span>GitHub</span>
+                </Button>
+              </Magnetic>
             </m.div>
 
             {/* True Stats Row with CountUp and growing dividers */}
@@ -384,26 +481,44 @@ export const Hero: React.FC = () => {
                 +
               </m.div>
 
-              {/* Sun circle: rises from slightly below and scales from 0.85 to 1 with a gentle fade */}
+              {/* Sun circle: spring pointer depth wrapper (-14px) */}
               <m.div
-                initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 16 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.2, ease: EASING }}
-                className="absolute top-[28%] -left-8 sm:-left-14 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-burnt-orange shadow-lg z-0"
                 style={{
-                  background: 'radial-gradient(circle at 35% 35%, #E47B43, #C94F17)',
+                  x: isPointerDepthActive ? sunX : 0,
+                  y: isPointerDepthActive ? sunY : 0,
                 }}
-                aria-hidden="true"
-              />
+                className="absolute top-[28%] -left-8 sm:-left-14 z-0 pointer-events-none"
+              >
+                {/* Sun circle entrance animation */}
+                <m.div
+                  initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 16 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.2, ease: EASING }}
+                  className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-burnt-orange shadow-lg"
+                  style={{
+                    background: 'radial-gradient(circle at 35% 35%, #E47B43, #C94F17)',
+                  }}
+                  aria-hidden="true"
+                />
+              </m.div>
 
-              {/* Arch image: reveals with a clip-path rising from the bottom (inset(100% 0 0 0) -> inset(0)) */}
+              {/* Arch image & outline: separate spring pointer depths (outline -8px, image -6px) */}
               <m.div
                 initial={prefersReducedMotion ? false : { clipPath: 'inset(100% 0% 0% 0%)' }}
                 animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
                 transition={{ duration: 0.7, delay: prefersReducedMotion ? 0 : 0.15, ease: EASING }}
                 className="w-full h-full"
               >
-                <ArchFrame>
+                <ArchFrame
+                  outlineStyle={{
+                    x: isPointerDepthActive ? archOutlineX : 0,
+                    y: isPointerDepthActive ? archOutlineY : 0,
+                  }}
+                  imageStyle={{
+                    x: isPointerDepthActive ? archImgX : 0,
+                    y: isPointerDepthActive ? archImgY : 0,
+                  }}
+                >
                   <MountainFallback
                     type="hero-sunrise"
                     alt="Mountain peak at sunrise framed by an architectural arch"
@@ -411,32 +526,53 @@ export const Hero: React.FC = () => {
                 </ArchFrame>
               </m.div>
 
-              {/* Floating Dark Terminal Card: slides in, types code line-by-line, subtle idle float */}
+              {/* Floating Dark Terminal Card: spring pointer depth wrapper (-10px) */}
               <m.div
-                initial={prefersReducedMotion ? false : { opacity: 0, x: -20, y: 20 }}
-                animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{ duration: 0.55, delay: prefersReducedMotion ? 0 : 0.3, ease: EASING }}
-                className="absolute -bottom-5 sm:-bottom-7 -left-4 sm:-left-8 z-30"
+                style={{
+                  x: isPointerDepthActive ? terminalX : 0,
+                  y: isPointerDepthActive ? terminalY : 0,
+                }}
+                className="absolute -bottom-6 sm:-bottom-8 -left-4 sm:-left-8 z-30 pointer-events-auto"
               >
-                <div className="hero-idle-float-terminal bg-[#1E1E1E] text-white/90 rounded-[8px] p-4 sm:p-5 shadow-2xl border border-white/10 w-[240px] sm:w-[270px] backdrop-blur-md">
-                  <div className="flex items-center space-x-1.5 mb-3" aria-hidden="true">
+                <m.div
+                  initial={prefersReducedMotion ? false : { opacity: 0, x: -20, y: 20 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  transition={{ duration: 0.55, delay: prefersReducedMotion ? 0 : 0.3, ease: EASING }}
+                  className="hero-idle-float-terminal bg-[#1E1E1E] text-white/90 rounded-[8px] p-4 sm:p-5 shadow-2xl border border-white/10 w-[260px] sm:w-[320px] backdrop-blur-md"
+                >
+                  <div className="flex items-center space-x-1.5 mb-3 select-none" aria-hidden="true">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] inline-block" />
                     <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] inline-block" />
                     <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] inline-block" />
                   </div>
 
-                  <TerminalTypewriter startDelay={450} />
-                </div>
+                  <TerminalTypewriter
+                    startDelay={450}
+                    onFinished={() => setTerminalFinished(true)}
+                  />
+
+                  {terminalFinished && (
+                    <Suspense fallback={null}>
+                      <InteractiveTerminal />
+                    </Suspense>
+                  )}
+                </m.div>
               </m.div>
 
-              {/* Floating White Tags Card: slides in from right, rows stagger in, subtle idle float */}
+              {/* Floating White Tags Card: spring pointer depth wrapper (-12px) */}
               <m.div
-                initial={prefersReducedMotion ? false : { opacity: 0, x: 20, y: -10 }}
-                animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{ duration: 0.55, delay: prefersReducedMotion ? 0 : 0.4, ease: EASING }}
-                className="absolute top-12 sm:top-16 -right-4 sm:-right-10 z-30"
+                style={{
+                  x: isPointerDepthActive ? tagsX : 0,
+                  y: isPointerDepthActive ? tagsY : 0,
+                }}
+                className="absolute top-12 sm:top-16 -right-4 sm:-right-10 z-30 pointer-events-none"
               >
-                <div className="hero-idle-float-tags bg-white/95 backdrop-blur-md rounded-[8px] py-3 px-4 shadow-float border border-warm-border min-w-[170px] sm:min-w-[190px]">
+                <m.div
+                  initial={prefersReducedMotion ? false : { opacity: 0, x: 20, y: -10 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  transition={{ duration: 0.55, delay: prefersReducedMotion ? 0 : 0.4, ease: EASING }}
+                  className="hero-idle-float-tags bg-white/95 backdrop-blur-md rounded-[8px] py-3 px-4 shadow-float border border-warm-border min-w-[170px] sm:min-w-[190px]"
+                >
                   <m.div
                     variants={tagContainerVariants}
                     initial="hidden"
@@ -460,7 +596,7 @@ export const Hero: React.FC = () => {
                       <span>Product Development</span>
                     </m.div>
                   </m.div>
-                </div>
+                </m.div>
               </m.div>
             </div>
           </div>

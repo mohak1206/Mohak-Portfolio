@@ -1,15 +1,44 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { m } from 'framer-motion';
-import { Mail, ArrowUpRight, MapPin, Github, Linkedin } from 'lucide-react';
+import { Mail, ArrowUpRight, MapPin, Github, Linkedin, Copy, Check } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { SectionLabel } from '../ui/SectionLabel';
 import { Reveal } from '../ui/Reveal';
 import { SplitLines } from '../ui/SplitLines';
+import { Magnetic } from '../ui/Magnetic';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
 
 export const Contact: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
+  const [copied, setCopied] = useState(false);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleCopyEmail = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(profileData.email);
+      } else {
+        // Fallback for non-secure / iframe environments
+        const textArea = document.createElement('textarea');
+        textArea.value = profileData.email;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      setCopied(true);
+      if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
+      copyTimeoutRef.current = setTimeout(() => {
+        setCopied(false);
+      }, 1500);
+    } catch (err) {
+      console.error('Failed to copy email:', err);
+    }
+  };
 
   return (
     <section id="contact" aria-label="Contact" className="py-20 lg:py-28 bg-ivory">
@@ -42,21 +71,50 @@ export const Contact: React.FC = () => {
               I'm open to internships, full-time roles and freelance projects. If you have an idea or an opportunity, I'd love to hear about it.
             </p>
 
-            {/* CTA Button: background fill sweep on hover + arrow nudges right/up */}
-            <div className="pt-2">
-              <a
-                href={`mailto:${profileData.email}`}
-                className="group relative inline-flex items-center justify-center gap-2.5 px-6 py-3.5 text-base font-medium text-white bg-burnt-orange rounded-[5px] shadow-sm hover:shadow overflow-hidden transition-all duration-200 select-none"
-              >
-                {/* Orange sweep layer scaling from the left */}
-                <span
-                  className="absolute inset-0 bg-light-orange origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out pointer-events-none"
-                  aria-hidden="true"
-                />
-                <Mail className="relative z-10 w-5 h-5 stroke-[2]" />
-                <span className="relative z-10">Email me</span>
-                <ArrowUpRight className="relative z-10 w-4 h-4 stroke-[2.2] transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-1" />
-              </a>
+            {/* CTA Buttons with Magnetic effect and Copy-Email micro-interaction */}
+            <div className="pt-2 flex items-center justify-center gap-3 relative flex-wrap sm:flex-nowrap">
+              <Magnetic>
+                <a
+                  href={`mailto:${profileData.email}`}
+                  className="group relative inline-flex items-center justify-center gap-2.5 px-6 py-3.5 text-base font-medium text-white bg-burnt-orange rounded-[5px] shadow-sm hover:shadow overflow-hidden transition-all duration-200 select-none focus:outline-none focus:ring-2 focus:ring-burnt-orange/50"
+                >
+                  {/* Orange sweep layer scaling from the left */}
+                  <span
+                    className="absolute inset-0 bg-light-orange origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out pointer-events-none"
+                    aria-hidden="true"
+                  />
+                  <Mail className="relative z-10 w-5 h-5 stroke-[2]" />
+                  <span className="relative z-10">Email me</span>
+                  <ArrowUpRight className="relative z-10 w-4 h-4 stroke-[2.2] transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                </a>
+              </Magnetic>
+
+              <Magnetic>
+                <button
+                  type="button"
+                  onClick={handleCopyEmail}
+                  aria-label={copied ? "Email copied to clipboard" : "Copy email address to clipboard"}
+                  className="relative inline-flex items-center justify-center p-3.5 text-charcoal bg-cream hover:bg-[#E5DDD0] border border-warm-border hover:border-burnt-orange rounded-[5px] shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 active:scale-95"
+                >
+                  {copied ? (
+                    <Check className="w-5 h-5 text-emerald-600 stroke-[2.5]" />
+                  ) : (
+                    <Copy className="w-5 h-5 text-charcoal/80 stroke-[2]" />
+                  )}
+                </button>
+              </Magnetic>
+
+              {/* Toast for copy status */}
+              {copied && (
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-charcoal text-white text-xs font-mono rounded shadow-lg flex items-center gap-1.5 pointer-events-none z-20"
+                >
+                  <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[2.5]" />
+                  <span>Email copied</span>
+                </div>
+              )}
             </div>
 
             {/* Bottom info & social links */}

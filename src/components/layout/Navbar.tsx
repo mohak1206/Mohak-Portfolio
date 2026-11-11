@@ -6,6 +6,7 @@ import { useScrollSpy } from '../../hooks/useScrollSpy';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { MobileMenu } from './MobileMenu';
 import Logo from '../ui/Logo';
+import { Magnetic } from '../ui/Magnetic';
 import { EASING } from '../../lib/animation';
 
 const navItems = [
@@ -119,17 +120,19 @@ export const Navbar: React.FC = () => {
             })}
           </nav>
 
-          {/* Right: Resume CTA Button */}
+          {/* Right: Resume CTA Button with Magnetic effect */}
           <div className="hidden md:flex items-center">
-            <a
-              href="/Mohak_Agrawal_Resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-burnt-orange hover:bg-light-orange transition-all duration-200 rounded-[5px] shadow-sm hover:shadow"
-            >
-              <span>Resume</span>
-              <ArrowUpRight className="w-4 h-4 stroke-[2.2]" />
-            </a>
+            <Magnetic>
+              <a
+                href="/Mohak_Agrawal_Resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-burnt-orange hover:bg-light-orange transition-all duration-200 rounded-[5px] shadow-sm hover:shadow"
+              >
+                <span>Resume</span>
+                <ArrowUpRight className="w-4 h-4 stroke-[2.2]" />
+              </a>
+            </Magnetic>
           </div>
 
           {/* Mobile menu trigger */}
