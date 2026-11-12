@@ -14,6 +14,7 @@ import { CountUp } from '../components/ui/CountUp';
 import { Reveal } from '../components/ui/Reveal';
 import { GlossaryTooltip } from '../components/ui/GlossaryTooltip';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { usePageMeta } from '../hooks/usePageMeta';
 import { EASING, DEFAULT_VIEWPORT } from '../lib/animation';
 
 const ThresholdDemo = React.lazy(
@@ -27,6 +28,12 @@ export const ProjectDetail: React.FC = () => {
 
   const project = projectsData.find((p) => p.slug === slug);
   const hasNumericMetrics = !!(project?.metrics && project.metrics.some((m) => m.numericValue !== undefined));
+
+  usePageMeta({
+    title: project?.title || 'Project',
+    description: project?.oneLiner || '',
+    path: `/projects/${slug || ''}`,
+  });
 
   if (!project) {
     return (

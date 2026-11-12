@@ -75,6 +75,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       { id: 'sec-expertise', title: 'Technical Capabilities', subtitle: 'Languages, tooling and AI competencies', category: 'SECTIONS', icon: <Compass className="w-4 h-4 text-burnt-orange" />, action: () => scrollToSection('expertise') },
       { id: 'sec-experience', title: 'Experience', subtitle: 'Internships and engineering leadership', category: 'SECTIONS', icon: <Compass className="w-4 h-4 text-burnt-orange" />, action: () => scrollToSection('experience') },
       { id: 'sec-credentials', title: 'Credentials', subtitle: 'Certifications and honors', category: 'SECTIONS', icon: <Compass className="w-4 h-4 text-burnt-orange" />, action: () => scrollToSection('credentials') },
+      { id: 'sec-services', title: 'Services', subtitle: 'What I can build for you', category: 'SECTIONS', icon: <Compass className="w-4 h-4 text-burnt-orange" />, action: () => scrollToSection('services') },
+      { id: 'sec-faq', title: 'FAQ', subtitle: 'Working with me questions & answers', category: 'SECTIONS', icon: <Compass className="w-4 h-4 text-burnt-orange" />, action: () => scrollToSection('faq') },
       { id: 'sec-contact', title: 'Contact', subtitle: 'Email, location and direct outreach', category: 'SECTIONS', icon: <Compass className="w-4 h-4 text-burnt-orange" />, action: () => scrollToSection('contact') },
     ];
 
@@ -91,6 +93,28 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
     }));
 
     const actions: CommandItem[] = [
+      {
+        id: 'act-view-resume',
+        title: 'View Resume (Web & Printable)',
+        subtitle: 'Interactive and printable curriculum vitae',
+        category: 'ACTIONS & LINKS',
+        icon: <FileText className="w-4 h-4 text-burnt-orange" />,
+        action: () => {
+          onClose();
+          navigate('/resume');
+        },
+      },
+      {
+        id: 'act-notes',
+        title: 'Notes & Articles',
+        subtitle: 'Read write-ups and technical learnings',
+        category: 'ACTIONS & LINKS',
+        icon: <FileText className="w-4 h-4 text-burnt-orange" />,
+        action: () => {
+          onClose();
+          navigate('/notes');
+        },
+      },
       {
         id: 'act-resume',
         title: 'Open Resume (PDF)',

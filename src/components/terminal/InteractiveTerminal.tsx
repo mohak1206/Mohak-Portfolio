@@ -58,6 +58,7 @@ export const InteractiveTerminal: React.FC = () => {
               <span className="text-[#9CDCFE]">skills</span> ·{' '}
               <span className="text-[#9CDCFE]">experience</span> ·{' '}
               <span className="text-[#9CDCFE]">contact</span> ·{' '}
+              <span className="text-[#9CDCFE]">notes</span> ·{' '}
               <span className="text-[#9CDCFE]">resume</span> ·{' '}
               <span className="text-[#9CDCFE]">github</span> ·{' '}
               <span className="text-[#9CDCFE]">clear</span>
@@ -175,6 +176,17 @@ export const InteractiveTerminal: React.FC = () => {
               </a>
             </p>
           </div>
+        );
+        break;
+
+      case 'notes':
+        if (typeof window !== 'undefined') {
+          window.location.href = '/notes';
+        }
+        outputContent = (
+          <p className="text-[#D4D4D4] text-xs">
+            Navigating to Notes &amp; Technical Write-ups...
+          </p>
         );
         break;
 

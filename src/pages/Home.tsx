@@ -4,6 +4,7 @@ import { Hero } from '../components/sections/Hero';
 import { TechMarquee } from '../components/ui/TechMarquee';
 import { Footer } from '../components/layout/Footer';
 import { DelayedFallback } from '../components/ui/DelayedFallback';
+import { usePageMeta } from '../hooks/usePageMeta';
 import {
   AboutSkeleton,
   JourneySkeleton,
@@ -37,11 +38,27 @@ const Experience = React.lazy(() =>
 const Credentials = React.lazy(() =>
   import('../components/sections/Credentials').then((m) => ({ default: m.Credentials }))
 );
+const FromNotes = React.lazy(() =>
+  import('../components/sections/FromNotes').then((m) => ({ default: m.FromNotes }))
+);
+const Services = React.lazy(() =>
+  import('../components/sections/Services').then((m) => ({ default: m.Services }))
+);
+const FAQ = React.lazy(() =>
+  import('../components/sections/FAQ').then((m) => ({ default: m.FAQ }))
+);
 const Contact = React.lazy(() =>
   import('../components/sections/Contact').then((m) => ({ default: m.Contact }))
 );
 
 export const Home: React.FC = () => {
+  usePageMeta({
+    title: 'Mohak Agrawal — AI/ML & Full-Stack Developer',
+    description:
+      'Mohak Agrawal: AI/ML & Full-Stack Developer. Computer vision with YOLOv8, React, Flask and Flutter projects.',
+    path: '/',
+  });
+
   return (
     <div className="min-h-screen bg-ivory text-charcoal flex flex-col selection:bg-burnt-orange selection:text-white">
       <a
@@ -125,6 +142,18 @@ export const Home: React.FC = () => {
           }
         >
           <Credentials />
+        </Suspense>
+
+        <Suspense fallback={null}>
+          <FromNotes />
+        </Suspense>
+
+        <Suspense fallback={null}>
+          <Services />
+        </Suspense>
+
+        <Suspense fallback={null}>
+          <FAQ />
         </Suspense>
 
         <Suspense

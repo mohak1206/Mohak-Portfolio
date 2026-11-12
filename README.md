@@ -47,7 +47,10 @@ Open your browser at `http://localhost:5173`.
 ```bash
 npm run build
 ```
-Generates an optimized, tree-shaken static production bundle in the `/dist` directory.
+Generates an optimized, tree-shaken static production bundle in the `/dist` directory. The build automatically triggers `prebuild` (`node scripts/generate-seo.mjs`) to generate `sitemap.xml`, `robots.txt`, and `rss.xml`.
+
+> **Note on Analytics & Speed Insights:**
+> This project includes `@vercel/analytics` and `@vercel/speed-insights`. For visitor metrics and performance telemetry to collect, Web Analytics must be enabled in your **Vercel Project Dashboard** (under the **Analytics** and **Speed Insights** tabs).
 
 ### 5. Preview Production Build Locally
 ```bash

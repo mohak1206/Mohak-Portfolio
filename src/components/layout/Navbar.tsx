@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowUpRight, Menu, X, Search, Sun, Moon } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { m, useScroll } from 'framer-motion';
 import { useScrollSpy } from '../../hooks/useScrollSpy';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
@@ -15,6 +15,7 @@ const navItems = [
   { label: 'Home', href: '#home', id: 'home' },
   { label: 'About', href: '#about', id: 'about' },
   { label: 'Projects', href: '#projects', id: 'projects' },
+  { label: 'Notes', href: '/notes', id: 'notes' },
   { label: 'Experience', href: '#experience', id: 'experience' },
   { label: 'Contact', href: '#contact', id: 'contact' },
 ];
@@ -45,6 +46,11 @@ export const Navbar: React.FC = () => {
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, id: string) => {
     e.preventDefault();
     setMobileMenuOpen(false);
+
+    if (href.startsWith('/')) {
+      navigate(href);
+      return;
+    }
 
     if (location.pathname !== '/') {
       navigate('/' + href);
@@ -89,7 +95,9 @@ export const Navbar: React.FC = () => {
           {/* Center: Desktop Navigation */}
           <nav className="group/nav hidden md:flex items-center space-x-8" aria-label="Main Navigation">
             {navItems.map((item) => {
-              const isActive = location.pathname === '/' && activeSection === item.id;
+              const isActive = item.href.startsWith('/')
+                ? location.pathname === item.href
+                : location.pathname === '/' && activeSection === item.id;
               return (
                 <a
                   key={item.id}
@@ -147,15 +155,13 @@ export const Navbar: React.FC = () => {
             </button>
 
             <Magnetic>
-              <a
-                href="/Mohak_Agrawal_Resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/resume"
                 className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[var(--on-accent)] bg-burnt-orange hover:bg-light-orange transition-all duration-200 rounded-[5px] shadow-sm hover:shadow"
               >
                 <span>Resume</span>
                 <ArrowUpRight className="w-4 h-4 stroke-[2.2]" />
-              </a>
+              </Link>
             </Magnetic>
           </div>
 
@@ -183,15 +189,13 @@ export const Navbar: React.FC = () => {
               <Search className="w-4 h-4" />
             </button>
 
-            <a
-              href="/Mohak_Agrawal_Resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/resume"
               className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[var(--on-accent)] bg-burnt-orange hover:bg-light-orange rounded-[4px]"
             >
               <span>Resume</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
-            </a>
+            </Link>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

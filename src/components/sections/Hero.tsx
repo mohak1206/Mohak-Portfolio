@@ -8,6 +8,7 @@ import { ContourLines } from '../art/ContourLines';
 import { ArchFrame } from '../art/ArchFrame';
 import { MountainFallback } from '../art/MountainFallback';
 import { SectionLabel } from '../ui/SectionLabel';
+import { AvailabilityBadge } from '../ui/AvailabilityBadge';
 import { KineticHeadline } from '../ui/KineticHeadline';
 import { RotatingNowBuilding } from '../ui/RotatingNowBuilding';
 import { CountUp } from '../ui/CountUp';
@@ -300,6 +301,9 @@ export const Hero: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center min-h-[calc(100vh-140px)]">
           {/* Left Column */}
           <div className="lg:col-span-7 flex flex-col justify-center space-y-6 lg:pr-4">
+            {/* Availability status badge */}
+            <AvailabilityBadge className="self-start" />
+
             {/* Section label with decode effect */}
             <SectionLabel label="MOHAK AGRAWAL" twoSided />
 

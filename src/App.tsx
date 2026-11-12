@@ -27,6 +27,21 @@ const CommandPaletteModal = React.lazy(() =>
 const QuickTourModal = React.lazy(() =>
   import('./components/ui/QuickTourModal').then((module) => ({ default: module.QuickTourModal }))
 );
+const ResumePage = React.lazy(() =>
+  import('./pages/ResumePage').then((module) => ({ default: module.ResumePage }))
+);
+const NotesPage = React.lazy(() =>
+  import('./pages/NotesPage').then((module) => ({ default: module.NotesPage }))
+);
+const NoteDetailPage = React.lazy(() =>
+  import('./pages/NoteDetailPage').then((module) => ({ default: module.NoteDetailPage }))
+);
+const NotFoundPage = React.lazy(() =>
+  import('./pages/NotFoundPage').then((module) => ({ default: module.NotFoundPage }))
+);
+const VercelAnalytics = React.lazy(() =>
+  import('./components/analytics/VercelAnalytics').then((module) => ({ default: module.VercelAnalytics }))
+);
 
 const ScrollToTop: React.FC = () => {
   const { pathname, hash } = useLocation();
@@ -91,7 +106,62 @@ const AnimatedRoutes: React.FC = () => {
                     </Suspense>
                   }
                 />
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route
+                  path="/resume"
+                  element={
+                    <Suspense
+                      fallback={
+                        <DelayedFallback delay={150}>
+                          <ProjectsPageSkeleton />
+                        </DelayedFallback>
+                      }
+                    >
+                      <ResumePage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="/notes"
+                  element={
+                    <Suspense
+                      fallback={
+                        <DelayedFallback delay={150}>
+                          <ProjectsPageSkeleton />
+                        </DelayedFallback>
+                      }
+                    >
+                      <NotesPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="/notes/:slug"
+                  element={
+                    <Suspense
+                      fallback={
+                        <DelayedFallback delay={150}>
+                          <ProjectDetailSkeleton />
+                        </DelayedFallback>
+                      }
+                    >
+                      <NoteDetailPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="*"
+                  element={
+                    <Suspense
+                      fallback={
+                        <DelayedFallback delay={150}>
+                          <ProjectsPageSkeleton />
+                        </DelayedFallback>
+                      }
+                    >
+                      <NotFoundPage />
+                    </Suspense>
+                  }
+                />
               </Routes>
             </m.div>
           </AnimatePresence>
@@ -126,7 +196,62 @@ const AnimatedRoutes: React.FC = () => {
                 </Suspense>
               }
             />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route
+              path="/resume"
+              element={
+                <Suspense
+                  fallback={
+                    <DelayedFallback delay={150}>
+                      <ProjectsPageSkeleton />
+                    </DelayedFallback>
+                  }
+                >
+                  <ResumePage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/notes"
+              element={
+                <Suspense
+                  fallback={
+                    <DelayedFallback delay={150}>
+                      <ProjectsPageSkeleton />
+                    </DelayedFallback>
+                  }
+                >
+                  <NotesPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/notes/:slug"
+              element={
+                <Suspense
+                  fallback={
+                    <DelayedFallback delay={150}>
+                      <ProjectDetailSkeleton />
+                    </DelayedFallback>
+                  }
+                >
+                  <NoteDetailPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <Suspense
+                  fallback={
+                    <DelayedFallback delay={150}>
+                      <ProjectsPageSkeleton />
+                    </DelayedFallback>
+                  }
+                >
+                  <NotFoundPage />
+                </Suspense>
+              }
+            />
           </Routes>
         )
       }
@@ -175,6 +300,7 @@ const AppContent: React.FC = () => {
             <Suspense fallback={null}>
               <CommandPaletteModal />
               <QuickTourModal isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />
+              <VercelAnalytics />
             </Suspense>
           </SmoothScrollProvider>
         </BrowserRouter>

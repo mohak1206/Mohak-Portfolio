@@ -43,15 +43,26 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
           );
         })}
 
-        <div className="pt-2 border-t border-warm-border">
+        <div className="pt-2 border-t border-warm-border space-y-2">
           <a
-            href="/Mohak_Agrawal_Resume.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/resume"
+            onClick={(e) => {
+              e.preventDefault();
+              onItemClick(e, '/resume', 'resume');
+            }}
             className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-medium text-[var(--on-accent)] bg-burnt-orange hover:bg-light-orange rounded-[4px] shadow-sm"
           >
-            <span>Download Resume</span>
+            <span>View Resume</span>
             <ArrowUpRight className="w-4 h-4" />
+          </a>
+          <a
+            href="/Mohak_Agrawal_Resume.pdf"
+            download="Mohak_Agrawal_Resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-1.5 w-full py-2 text-xs font-mono text-charcoal/80 hover:text-burnt-orange border border-warm-border rounded-[4px]"
+          >
+            <span>Download PDF (85 KB)</span>
           </a>
         </div>
       </nav>

@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { Mail, ArrowUpRight, MapPin, Github, Linkedin, Copy, Check, ExternalLink, X } from 'lucide-react';
+import { Mail, ArrowUpRight, MapPin, Github, Linkedin, Copy, Check, ExternalLink, X, Calendar } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { SectionLabel } from '../ui/SectionLabel';
 import { SectionNumeral } from '../ui/SectionNumeral';
 import { Reveal } from '../ui/Reveal';
 import { SplitLines } from '../ui/SplitLines';
 import { Magnetic } from '../ui/Magnetic';
+import { AvailabilityBadge } from '../ui/AvailabilityBadge';
+import { ContactForm } from '../ui/ContactForm';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
 
@@ -14,6 +16,7 @@ const EMAIL_SUBJECT = 'Hello Mohak, saw your portfolio';
 const EMAIL_BODY = 'Hi Mohak,\n\n';
 
 export const Contact: React.FC = () => {
+  const calUrl = import.meta.env.VITE_CAL_URL;
   const prefersReducedMotion = useReducedMotion();
   const [copied, setCopied] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -207,6 +210,10 @@ export const Contact: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <Reveal>
           <div className="max-w-3xl mx-auto text-center space-y-8">
+            <div className="flex justify-center -mb-2">
+              <AvailabilityBadge inline />
+            </div>
+
             <SectionLabel label="CONTACT" centered twoSided />
 
             {/* Headline reveals with SplitLines, italic words get soft fade-in */}
@@ -376,6 +383,27 @@ export const Contact: React.FC = () => {
                 )}
               </AnimatePresence>
             </div>
+
+            {/* Book a chat button (when VITE_CAL_URL is provided) */}
+            {calUrl && (
+              <div className="pt-3 flex justify-center">
+                <Magnetic>
+                  <a
+                    href={calUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-charcoal bg-cream hover:bg-[var(--surface-2)] border border-warm-border hover:border-burnt-orange rounded-[5px] shadow-sm transition-all duration-200 select-none focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 active:scale-[0.98]"
+                  >
+                    <Calendar className="w-4 h-4 text-burnt-orange" />
+                    <span>Book a 15-minute chat</span>
+                    <ArrowUpRight className="w-3.5 h-3.5 text-muted-grey" />
+                  </a>
+                </Magnetic>
+              </div>
+            )}
+
+            {/* Contact Form Card (when VITE_FORMSPREE_ID is configured) */}
+            <ContactForm />
 
             {/* Bottom info & social links */}
             <div className="pt-8 border-t border-warm-border flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-charcoal/80">

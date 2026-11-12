@@ -28,18 +28,21 @@ export const Footer: React.FC = () => {
             </div>
 
             {/* Quick links with draw-and-retract underline */}
-            <div className="flex items-center space-x-6 text-xs font-medium text-muted-grey">
+            <div className="flex items-center space-x-5 text-xs font-medium text-muted-grey">
               <a href="/#home" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
                 Home
               </a>
               <a href="/#about" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
                 About
               </a>
-              <a href="/#projects" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
+              <a href="/projects" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
                 Projects
               </a>
-              <a href="/#experience" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
-                Experience
+              <a href="/notes" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
+                Notes
+              </a>
+              <a href="/resume" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
+                Resume
               </a>
               <a href="/#contact" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
                 Contact

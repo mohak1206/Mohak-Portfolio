@@ -5,8 +5,15 @@ import { Navbar } from '../components/layout/Navbar';
 import { SelectedWorks } from '../components/sections/SelectedWorks';
 import { LabIdeas } from '../components/sections/LabIdeas';
 import { Footer } from '../components/layout/Footer';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const ProjectsPage: React.FC = () => {
+  usePageMeta({
+    title: 'Projects',
+    description:
+      'Explore machine learning models, computer vision systems, and full-stack software built by Mohak Agrawal.',
+    path: '/projects',
+  });
   return (
     <div className="min-h-screen bg-ivory text-charcoal flex flex-col">
       <Navbar />
