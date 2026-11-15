@@ -23,11 +23,18 @@ const navItems = [
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMac, setIsMac] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const prefersReducedMotion = useReducedMotion();
   const { theme, toggleTheme } = useTheme();
   const { scrollYProgress } = useScroll();
+
+  useEffect(() => {
+    if (typeof navigator !== 'undefined') {
+      setIsMac(/(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent || navigator.platform));
+    }
+  }, []);
 
   const activeSection = useScrollSpy(
     navItems.map((n) => n.id),
@@ -144,13 +151,13 @@ export const Navbar: React.FC = () => {
             <button
               type="button"
               onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
-              aria-label="Search site and commands (Ctrl+K)"
+              aria-label={`Search site and commands (${isMac ? '⌘K' : 'Ctrl+K'})`}
               className="inline-flex items-center gap-2 px-2.5 py-1.5 text-xs font-mono text-charcoal/80 bg-card-surface hover:bg-cream border border-warm-border hover:border-burnt-orange rounded-[5px] transition-colors shadow-2xs select-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-burnt-orange"
             >
               <Search className="w-3.5 h-3.5 text-burnt-orange" />
               <span className="hidden lg:inline text-muted-grey">Search</span>
               <kbd className="text-[10px] bg-ivory px-1.5 py-0.5 rounded border border-warm-border font-sans text-muted-grey font-medium">
-                ⌘K
+                {isMac ? '⌘K' : 'Ctrl K'}
               </kbd>
             </button>
 

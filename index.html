@@ -29,6 +29,11 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="canonical" href="%VITE_SITE_URL%/" />
 
+    <!-- Preload Critical LCP Image & Self-Hosted Fonts -->
+    <link rel="preload" as="image" href="/images/hero-mountain.webp" type="image/webp" fetchpriority="high" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/inter-latin.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/playfair-display-latin.woff2" />
+
     <!-- JSON-LD Person Schema -->
     <script type="application/ld+json">
     {

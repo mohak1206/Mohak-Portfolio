@@ -363,18 +363,30 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
   );
 };
 
-export const CommandPaletteModal: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface CommandPaletteModalProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
+  isOpen: controlledIsOpen,
+  onClose: controlledOnClose,
+}) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+  const handleClose = controlledOnClose || (() => setInternalIsOpen(false));
 
   useEffect(() => {
+    if (controlledIsOpen !== undefined) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setIsOpen((prev) => !prev);
+        setInternalIsOpen((prev) => !prev);
       }
     };
 
-    const handleCustomOpen = () => setIsOpen(true);
+    const handleCustomOpen = () => setInternalIsOpen(true);
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('open-command-palette', handleCustomOpen);
@@ -383,9 +395,9 @@ export const CommandPaletteModal: React.FC = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('open-command-palette', handleCustomOpen);
     };
-  }, []);
+  }, [controlledIsOpen]);
 
-  return <CommandPalette isOpen={isOpen} onClose={() => setIsOpen(false)} />;
+  return <CommandPalette isOpen={isOpen} onClose={handleClose} />;
 };
 
 export default CommandPaletteModal;

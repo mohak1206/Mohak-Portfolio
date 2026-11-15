@@ -122,10 +122,10 @@ export const MountainFallback: React.FC<MountainFallbackProps> = ({ type, classN
 
   return (
     <div
-      aria-busy={!isLoaded && !imgError}
+      aria-busy={type !== 'hero-sunrise' && !isLoaded && !imgError}
       className={cn('relative w-full h-full overflow-hidden bg-cream mountain-media', className)}
     >
-      {!isLoaded && (
+      {type !== 'hero-sunrise' && !isLoaded && (
         <Skeleton className="absolute inset-0 w-full h-full rounded-[inherit] pointer-events-none z-10" />
       )}
       <img
@@ -135,12 +135,16 @@ export const MountainFallback: React.FC<MountainFallbackProps> = ({ type, classN
         height={type === 'hero-sunrise' ? 750 : 500}
         loading={type === 'hero-sunrise' ? 'eager' : 'lazy'}
         fetchPriority={type === 'hero-sunrise' ? 'high' : 'auto'}
-        decoding="async"
+        decoding={type === 'hero-sunrise' ? 'sync' : 'async'}
         onLoad={() => setIsLoaded(true)}
         onError={() => setImgError(true)}
         className={cn(
-          'w-full h-full object-cover transition-opacity duration-[400ms] ease-out mountain-media',
-          isLoaded ? 'opacity-100' : 'opacity-0'
+          'w-full h-full object-cover mountain-media',
+          type === 'hero-sunrise'
+            ? 'opacity-100'
+            : isLoaded
+            ? 'opacity-100 transition-opacity duration-[400ms] ease-out'
+            : 'opacity-0'
         )}
       />
     </div>

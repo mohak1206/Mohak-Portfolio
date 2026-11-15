@@ -6,7 +6,6 @@ import { EASING } from './lib/animation';
 import { useReducedMotion } from './hooks/useReducedMotion';
 import { DelayedFallback } from './components/ui/DelayedFallback';
 import { ProjectsPageSkeleton, ProjectDetailSkeleton } from './components/ui/SectionSkeletons';
-import { CursorRing } from './components/ui/CursorRing';
 import { SectionDots } from './components/ui/SectionDots';
 import { BackToTop } from './components/ui/BackToTop';
 import { ThemeProvider } from './context/ThemeContext';
@@ -41,6 +40,9 @@ const NotFoundPage = React.lazy(() =>
 );
 const VercelAnalytics = React.lazy(() =>
   import('./components/analytics/VercelAnalytics').then((module) => ({ default: module.VercelAnalytics }))
+);
+const CursorRing = React.lazy(() =>
+  import('./components/ui/CursorRing').then((module) => ({ default: module.CursorRing }))
 );
 
 const ScrollToTop: React.FC = () => {
@@ -318,11 +320,32 @@ const AnimatedRoutes: React.FC = () => {
 const AppContent: React.FC = () => {
   const { isReducedMotion } = useMotionPreference();
   const [isTourOpen, setIsTourOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [showDeferredOverlays, setShowDeferredOverlays] = useState(false);
 
   useEffect(() => {
     const handleOpenTour = () => setIsTourOpen(true);
+    const handleOpenPalette = () => setIsCommandPaletteOpen(true);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+
     window.addEventListener('open-quick-tour', handleOpenTour);
-    return () => window.removeEventListener('open-quick-tour', handleOpenTour);
+    window.addEventListener('open-command-palette', handleOpenPalette);
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Defer non-critical interactive overlays (cursor ring, analytics) until after first paint
+    const timer = setTimeout(() => setShowDeferredOverlays(true), 300);
+
+    return () => {
+      window.removeEventListener('open-quick-tour', handleOpenTour);
+      window.removeEventListener('open-command-palette', handleOpenPalette);
+      window.removeEventListener('keydown', handleKeyDown);
+      clearTimeout(timer);
+    };
   }, []);
 
   // Tab Title Fun: when visitor switches tabs, display playful title, restore on return
@@ -349,14 +372,28 @@ const AppContent: React.FC = () => {
         <BrowserRouter>
           <SmoothScrollProvider>
             <ScrollToTop />
-            <CursorRing />
+            {showDeferredOverlays && (
+              <Suspense fallback={null}>
+                <CursorRing />
+              </Suspense>
+            )}
             <SectionDots />
             <AnimatedRoutes />
             <BackToTop />
             <Suspense fallback={null}>
-              <CommandPaletteModal />
-              <QuickTourModal isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />
-              <VercelAnalytics />
+              {isCommandPaletteOpen && (
+                <CommandPaletteModal
+                  isOpen={isCommandPaletteOpen}
+                  onClose={() => setIsCommandPaletteOpen(false)}
+                />
+              )}
+              {isTourOpen && (
+                <QuickTourModal
+                  isOpen={isTourOpen}
+                  onClose={() => setIsTourOpen(false)}
+                />
+              )}
+              {showDeferredOverlays && <VercelAnalytics />}
             </Suspense>
           </SmoothScrollProvider>
         </BrowserRouter>

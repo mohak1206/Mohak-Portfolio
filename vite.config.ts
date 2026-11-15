@@ -23,6 +23,23 @@ export default defineConfig({
             if (id.includes('framer-motion')) {
               return 'framer-motion';
             }
+            if (id.includes('marked')) {
+              return 'marked';
+            }
+            if (id.includes('lenis')) {
+              return 'lenis';
+            }
+            if (
+              id.includes('react') ||
+              id.includes('scheduler') ||
+              id.includes('react-dom') ||
+              id.includes('react-router')
+            ) {
+              return 'react-vendor';
+            }
+            if (id.includes('lucide-react')) {
+              return 'lucide';
+            }
             return 'vendor';
           }
         },

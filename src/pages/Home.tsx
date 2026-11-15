@@ -3,6 +3,7 @@ import { Navbar } from '../components/layout/Navbar';
 import { Hero } from '../components/sections/Hero';
 import { TechMarquee } from '../components/ui/TechMarquee';
 import { Footer } from '../components/layout/Footer';
+import { InViewSection } from '../components/ui/InViewSection';
 import { DelayedFallback } from '../components/ui/DelayedFallback';
 import { usePageMeta } from '../hooks/usePageMeta';
 import {
@@ -74,97 +75,71 @@ export const Home: React.FC = () => {
         <Hero />
         <TechMarquee />
 
-        <Suspense
-          fallback={
-            <DelayedFallback delay={150}>
-              <AboutSkeleton />
-            </DelayedFallback>
-          }
-        >
-          <About />
-        </Suspense>
+        <InViewSection id="about" fallback={<AboutSkeleton />}>
+          <Suspense fallback={<AboutSkeleton />}>
+            <About />
+          </Suspense>
+        </InViewSection>
 
-        <Suspense
-          fallback={
-            <DelayedFallback delay={150}>
-              <JourneySkeleton />
-            </DelayedFallback>
-          }
-        >
-          <Journey />
-        </Suspense>
+        <InViewSection id="journey" fallback={<JourneySkeleton />}>
+          <Suspense fallback={<JourneySkeleton />}>
+            <Journey />
+          </Suspense>
+        </InViewSection>
 
-        <Suspense
-          fallback={
-            <DelayedFallback delay={150}>
-              <SelectedWorksSkeleton showAll={false} />
-            </DelayedFallback>
-          }
-        >
-          <SelectedWorks showAll={false} />
-        </Suspense>
+        <InViewSection id="projects" fallback={<SelectedWorksSkeleton showAll={false} />}>
+          <Suspense fallback={<SelectedWorksSkeleton showAll={false} />}>
+            <SelectedWorks showAll={false} />
+          </Suspense>
+        </InViewSection>
 
-        <Suspense
-          fallback={
-            <DelayedFallback delay={150}>
-              <LabIdeasSkeleton />
-            </DelayedFallback>
-          }
-        >
-          <LabIdeas />
-        </Suspense>
+        <InViewSection id="lab" fallback={<LabIdeasSkeleton />}>
+          <Suspense fallback={<LabIdeasSkeleton />}>
+            <LabIdeas />
+          </Suspense>
+        </InViewSection>
 
-        <Suspense
-          fallback={
-            <DelayedFallback delay={150}>
-              <ExpertiseSkeleton />
-            </DelayedFallback>
-          }
-        >
-          <Expertise />
-        </Suspense>
+        <InViewSection id="skills" fallback={<ExpertiseSkeleton />}>
+          <Suspense fallback={<ExpertiseSkeleton />}>
+            <Expertise />
+          </Suspense>
+        </InViewSection>
 
-        <Suspense
-          fallback={
-            <DelayedFallback delay={150}>
-              <ExperienceSkeleton />
-            </DelayedFallback>
-          }
-        >
-          <Experience />
-        </Suspense>
+        <InViewSection id="experience" fallback={<ExperienceSkeleton />}>
+          <Suspense fallback={<ExperienceSkeleton />}>
+            <Experience />
+          </Suspense>
+        </InViewSection>
 
-        <Suspense
-          fallback={
-            <DelayedFallback delay={150}>
-              <CredentialsSkeleton />
-            </DelayedFallback>
-          }
-        >
-          <Credentials />
-        </Suspense>
+        <InViewSection id="credentials" fallback={<CredentialsSkeleton />}>
+          <Suspense fallback={<CredentialsSkeleton />}>
+            <Credentials />
+          </Suspense>
+        </InViewSection>
 
-        <Suspense fallback={null}>
-          <FromNotes />
-        </Suspense>
+        <InViewSection id="blogs" fallback={<div className="h-48" />}>
+          <Suspense fallback={null}>
+            <FromNotes />
+          </Suspense>
+        </InViewSection>
 
-        <Suspense fallback={null}>
-          <Services />
-        </Suspense>
+        <InViewSection id="services" fallback={<div className="h-48" />}>
+          <Suspense fallback={null}>
+            <Services />
+          </Suspense>
+        </InViewSection>
 
-        <Suspense fallback={null}>
-          <FAQ />
-        </Suspense>
+        <InViewSection id="faq" fallback={<div className="h-48" />}>
+          <Suspense fallback={null}>
+            <FAQ />
+          </Suspense>
+        </InViewSection>
 
-        <Suspense
-          fallback={
-            <DelayedFallback delay={150}>
-              <ContactSkeleton />
-            </DelayedFallback>
-          }
-        >
-          <Contact />
-        </Suspense>
+        <InViewSection id="contact" fallback={<ContactSkeleton />}>
+          <Suspense fallback={<ContactSkeleton />}>
+            <Contact />
+          </Suspense>
+        </InViewSection>
       </main>
 
       <Footer />
