@@ -73,6 +73,8 @@ const routes = [
   '/projects',
   ...projectSlugs.map((slug) => `/projects/${slug}`),
   '/resume',
+  '/blogs',
+  ...publishedNotes.map((note) => `/blogs/${note.slug}`),
   '/notes',
   ...publishedNotes.map((note) => `/notes/${note.slug}`),
 ];
@@ -104,8 +106,8 @@ Sitemap: ${siteUrl}/sitemap.xml
 const rssXml = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-  <title>Mohak Agrawal — Notes</title>
-  <link>${siteUrl}/notes</link>
+  <title>Mohak Agrawal — Blogs</title>
+  <link>${siteUrl}/blogs</link>
   <description>Short write-ups about AI/ML models, computer vision with YOLOv8, and full-stack software.</description>
   <language>en-us</language>
   <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" />
@@ -113,10 +115,10 @@ ${publishedNotes
   .map(
     (n) => `  <item>
     <title><![CDATA[${n.title}]]></title>
-    <link>${siteUrl}/notes/${n.slug}</link>
+    <link>${siteUrl}/blogs/${n.slug}</link>
     <description><![CDATA[${n.summary}]]></description>
     <pubDate>${new Date(n.date).toUTCString()}</pubDate>
-    <guid isPermaLink="true">${siteUrl}/notes/${n.slug}</guid>
+    <guid isPermaLink="true">${siteUrl}/blogs/${n.slug}</guid>
   </item>`
   )
   .join('\n')}

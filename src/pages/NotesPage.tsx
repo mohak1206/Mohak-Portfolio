@@ -12,10 +12,10 @@ import { EASING } from '../lib/animation';
 
 export const NotesPage: React.FC = () => {
   usePageMeta({
-    title: 'Notes',
+    title: 'Blogs',
     description:
-      'Short write-ups about the projects I build and what went wrong on the way.',
-    path: '/notes',
+      'Short write-ups and deep-dives about the AI/ML and software projects I build and lessons learned.',
+    path: '/blogs',
   });
 
   const prefersReduced = useReducedMotion();
@@ -46,7 +46,7 @@ export const NotesPage: React.FC = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-12 space-y-4">
-            <SectionLabel label="— NOTES" />
+            <SectionLabel label="— BLOGS" />
             <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal leading-tight text-charcoal tracking-tight">
               Things I’ve{' '}
               <span className="italic text-burnt-orange font-normal">
@@ -55,7 +55,7 @@ export const NotesPage: React.FC = () => {
               building.
             </h1>
             <p className="text-muted-grey text-base sm:text-lg max-w-2xl leading-relaxed">
-              Short write-ups about the projects I build and what went wrong on the way.
+              Technical articles and write-ups about the projects I build and what went wrong on the way.
             </p>
           </div>
 
@@ -64,7 +64,7 @@ export const NotesPage: React.FC = () => {
             <div
               className="flex items-center gap-2 mb-10 overflow-x-auto pb-2 scrollbar-none select-none"
               role="tablist"
-              aria-label="Filter notes by tag"
+              aria-label="Filter blogs by tag"
             >
               {tags.map((tag) => {
                 const isActive = selectedTag === tag;
@@ -102,7 +102,7 @@ export const NotesPage: React.FC = () => {
           {filteredNotes.length === 0 ? (
             <div className="py-20 text-center space-y-4 border border-dashed border-warm-border rounded-lg bg-card-surface/40">
               <p className="font-serif text-xl sm:text-2xl text-charcoal">
-                First notes coming soon.
+                First blogs coming soon.
               </p>
               <p className="text-muted-grey text-sm max-w-md mx-auto">
                 I’m currently writing up deep dives on YOLOv8 computer vision models and full-stack architecture.
@@ -146,7 +146,7 @@ export const NotesPage: React.FC = () => {
 
                       {/* Title */}
                       <h2 className="font-serif text-xl sm:text-2xl font-normal text-charcoal group-hover:text-burnt-orange transition-colors">
-                        <Link to={`/notes/${note.slug}`} className="focus:outline-none">
+                        <Link to={`/blogs/${note.slug}`} className="focus:outline-none">
                           <span className="absolute inset-0" aria-hidden="true" />
                           {note.title}
                         </Link>

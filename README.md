@@ -26,6 +26,27 @@ Engineered with React 19, TypeScript, Vite, Tailwind CSS, Framer Motion, and Luc
 
 ---
 
+## ⚙️ Environment Variables
+
+Copy `.env.example` to `.env.local` for local development:
+```bash
+cp .env.example .env.local
+```
+
+| Variable | Description | Example / Default |
+| :--- | :--- | :--- |
+| `VITE_FORMSPREE_ID` | Formspree endpoint ID for the contact form | `mppdzyda` |
+| `VITE_CAL_15_URL` | Cal.com booking link for 15-minute quick chats | `https://cal.com/mohak-agrawal/15min` |
+| `VITE_CAL_30_URL` | Cal.com booking link for 30-minute project discussions | `https://cal.com/mohak-agrawal/30min` |
+| `VITE_SITE_URL` | Canonical production domain without trailing slash (set on Vercel) | `https://mohakagrawal.dev` |
+
+> **Important Notes on Environment Variables:**
+> 1. Vite embeds `VITE_*` variables at **build time**. After creating or editing `.env.local`, you must **restart the dev server** (`npm run dev`) for changes to take effect.
+> 2. When variables are left empty, their respective components (e.g. the Formspree contact form or Cal booking buttons) automatically hide with no broken UI or console errors.
+> 3. In production, configure the same variables under **Vercel Project Settings → Environment Variables**, then trigger a redeploy.
+
+---
+
 ## 🚀 Quick Start & Development
 
 ### 1. Prerequisites
@@ -63,136 +84,127 @@ npm run preview
 
 ```
 mohak-portfolio/
-├── index.html                  # SEO meta tags, fonts, favicon link
+├── .env.local                  # Local environment overrides (git-ignored)
+├── .env.example                # Example environment variables template
+├── index.html                  # SEO meta tags, fonts, favicon, JSON-LD
 ├── package.json
 ├── vite.config.ts
 ├── tsconfig.json
-├── tailwind.config.ts          # colour and font tokens
-├── postcss.config.js
-├── vercel.json                 # SPA rewrite so /projects/:slug works on refresh
+├── tailwind.config.ts          # Colour and font tokens
+├── vercel.json                 # Static rewrites, caching, and PDF headers
 ├── README.md
+├── scripts/
+│   └── generate-seo.mjs        # Builds sitemap.xml, robots.txt, and rss.xml
 ├── public/
 │   ├── favicon.svg             # MA monogram
-│   ├── robots.txt
-│   ├── sitemap.xml
-│   ├── og-image.png            # social share preview
-│   ├── Mohak_Agrawal_Resume.pdf
-│   ├── profile.jpg             # headshot (optional)
-│   ├── README-ASSETS.md        # list of files you still need to add
-│   ├── images/
-│   │   ├── hero-mountain.jpg
-│   │   └── about-mountain-bw.jpg
-│   ├── projects/               # screenshots, named by project slug
-│   │   ├── signature-detection.jpg
-│   │   ├── fire-smoke-detection.jpg
-│   │   ├── inventory-management.jpg
-│   │   ├── alumni-connect.jpg
-│   │   └── civic-i.jpg
-│   └── certificates/
-│       ├── google-ai-essentials.jpg
-│       └── meta-llm.jpg
+│   ├── apple-touch-icon.png    # 180x180 app icon
+│   ├── og-image.png            # Social share preview (1200x630)
+│   ├── Mohak_Agrawal_Resume.pdf# Authentic resume PDF
+│   ├── Resume.pdf              # PDF alias
+│   ├── images/                 # Atmospheric mountains & photos
+│   └── projects/               # Project screenshots
 └── src/
     ├── main.tsx
-    ├── App.tsx                 # routes: "/", "/projects", "/projects/:slug"
-    ├── index.css               # CSS variables, base styles, font imports
-    ├── data/                   # ALL content lives here
-    │   ├── profile.ts          # name, tagline, about text, stats, contact links
-    │   ├── skills.ts
-    │   ├── projects.ts         # five projects plus the Lab & Ideas list
-    │   ├── experience.ts
-    │   └── credentials.ts
-    ├── types/
-    │   └── index.ts            # TypeScript types for the data
+    ├── App.tsx                 # Routes: "/", "/projects", "/resume", "/blogs" (and "/notes"), "*"
+    ├── index.css               # CSS variables, prose-editorial, print styles
+    ├── content/
+    │   └── notes/              # Markdown articles with frontmatter
+    │       ├── signature-detector-92-mAP.md
+    │       └── why-smoke-is-harder-than-fire.md
+    ├── data/                   # Structured data
+    │   ├── profile.ts          # Bio, contact, education, stats
+    │   ├── availability.ts     # Real-time availability status pill
+    │   ├── services.ts         # Freelance service offerings & process
+    │   ├── faq.ts              # Working with me accordion Q&As
+    │   ├── projects.ts         # Case studies & metrics
+    │   ├── skills.ts           # Hands-on skills by category
+    │   ├── experience.ts       # Work experience & leadership
+    │   └── credentials.ts      # Certifications
     ├── hooks/
-    │   ├── useScrollSpy.ts     # highlights the active nav link
-    │   └── useReducedMotion.ts
+    │   ├── usePageMeta.ts      # Dynamic SEO document & OG tags per route
+    │   ├── useScrollSpy.ts     # Active section tracking
+    │   ├── useFinePointer.ts   # Pointer device detection
+    │   └── useReducedMotion.ts # Motion preferences
     ├── lib/
-    │   └── utils.ts
+    │   ├── notes.ts            # Markdown loader, parser, and reading time
+    │   └── lenis.ts            # Smooth scrolling controller
     ├── components/
     │   ├── layout/
     │   │   ├── Navbar.tsx
     │   │   ├── MobileMenu.tsx
     │   │   └── Footer.tsx
-    │   ├── ui/                 # reusable pieces
+    │   ├── ui/                 # Reusable primitives
+    │   │   ├── AvailabilityBadge.tsx
+    │   │   ├── ContactForm.tsx # Formspree form with validation & honeypot
+    │   │   ├── Skeleton.tsx
     │   │   ├── Button.tsx
-    │   │   ├── SectionLabel.tsx
-    │   │   ├── Tag.tsx
-    │   │   ├── Card.tsx
-    │   │   ├── Reveal.tsx      # scroll fade-up wrapper
-    │   │   └── ProjectCover.tsx # real image or generated SVG fallback
-    │   ├── art/                # decorative SVGs
-    │   │   ├── ContourLines.tsx
-    │   │   ├── ArchFrame.tsx
-    │   │   └── MountainFallback.tsx
+    │   │   └── CommandPalette.tsx
     │   └── sections/
-    │       ├── Hero.tsx        # arch, sun, terminal card, tags card, stats
+    │       ├── Hero.tsx
     │       ├── About.tsx
     │       ├── Expertise.tsx
     │       ├── SelectedWorks.tsx
     │       ├── LabIdeas.tsx
     │       ├── Experience.tsx
     │       ├── Credentials.tsx
+    │       ├── FromNotes.tsx   # Recent 2 blog articles home preview
+    │       ├── Services.tsx    # Freelance services cards & workflow
+    │       ├── FAQ.tsx         # Accessible accordion
     │       └── Contact.tsx
     └── pages/
-        ├── Home.tsx
-        ├── ProjectsPage.tsx    # "View all projects"
-        └── ProjectDetail.tsx   # case-study page
+        ├── Home.tsx            # Main portfolio
+        ├── ProjectsPage.tsx    # Filterable project catalog
+        ├── ProjectDetail.tsx   # Detailed case study
+        ├── ResumePage.tsx      # Printable A4 web resume
+        ├── NotesPage.tsx       # Filterable technical blogs list (/blogs and /notes)
+        ├── NoteDetailPage.tsx  # Editorial reading layout with TOC & code copy
+        └── NotFoundPage.tsx    # Themed interactive 404 terminal
 ```
 
 ---
 
 ## ✏️ How to Update Content
 
-All content is decoupled from presentation and stored as structured TypeScript files in `src/data/`:
+All content is decoupled from presentation and stored as structured TypeScript files in `src/data/` or Markdown files in `src/content/`:
 
+- **Change Availability Status:**  
+  Edit [`src/data/availability.ts`](file:///src/data/availability.ts) (`status: "open" | "limited" | "closed"`).
+- **Edit Services & Workflow:**  
+  Edit [`src/data/services.ts`](file:///src/data/services.ts).
+- **Update "Working with Me" FAQ:**  
+  Edit [`src/data/faq.ts`](file:///src/data/faq.ts). Entries containing `TODO` are automatically hidden in production.
+- **Write or Publish Notes (Blog):**  
+  Add `.md` files in [`src/content/notes/`](file:///src/content/notes/). Set `draft: false` to publish.
 - **Change Bio, Contact, or Stats:**  
-  Edit [`src/data/profile.ts`](file:///src/data/profile.ts)
+  Edit [`src/data/profile.ts`](file:///src/data/profile.ts).
 - **Add or Modify Projects:**  
-  Edit [`src/data/projects.ts`](file:///src/data/projects.ts)
+  Edit [`src/data/projects.ts`](file:///src/data/projects.ts).
 - **Update Skills & Tooling:**  
-  Edit [`src/data/skills.ts`](file:///src/data/skills.ts)
-- **Add Work History or Milestones:**  
-  Edit [`src/data/experience.ts`](file:///src/data/experience.ts)
+  Edit [`src/data/skills.ts`](file:///src/data/skills.ts).
+- **Add Work History:**  
+  Edit [`src/data/experience.ts`](file:///src/data/experience.ts).
 - **Update Certifications:**  
-  Edit [`src/data/credentials.ts`](file:///src/data/credentials.ts)
-
----
-
-## 🖼️ Adding Custom Media & Photos
-
-The application includes high-fidelity SVG fallbacks for every image. To replace them with real photography:
-
-1. **Hero Mountain Arch:** Drop a warm sunrise mountain photo in `public/images/hero-mountain.jpg`.
-2. **About Section Mountain:** Drop a monochrome mountain photo in `public/images/about-mountain-bw.jpg`.
-3. **Project Screenshots:** Drop `<slug>.jpg` (e.g. `signature-detection.jpg`) into `public/projects/`.
-4. **Certificates:** Drop credentials in `public/certificates/`.
-5. **Resume:** Replace `public/Mohak_Agrawal_Resume.pdf` with your updated PDF.
-
-Refer to [`public/README-ASSETS.md`](file:///public/README-ASSETS.md) for detailed image dimensions and search terms.
+  Edit [`src/data/credentials.ts`](file:///src/data/credentials.ts).
 
 ---
 
 ## ☁️ Deploying to Vercel
 
-The repository is pre-configured with `vercel.json` ensuring client-side routes (like `/projects/signature-detection`) work seamlessly on page refresh.
+The repository includes `vercel.json` ensuring client-side routes (e.g. `/projects/signature-detection`, `/resume`, `/blogs`, `/notes`) work smoothly on refresh, with optimized caching and PDF serving headers.
 
-### Method A: Connect via GitHub (Recommended)
 1. Push your repository to your GitHub account (`https://github.com/mohak1206/...`).
-2. Log in to [Vercel](https://vercel.com/) and click **"Add New"** → **"Project"**.
-3. Select your repository and click **"Import"**.
-4. Framework Preset will auto-detect as **Vite**.
+2. In the [Vercel Dashboard](https://vercel.com/), click **"Add New"** → **"Project"**.
+3. Import your repository (Vite is detected automatically).
+4. In **Settings → Environment Variables**, add:
+   - `VITE_FORMSPREE_ID`: `mppdzyda`
+   - `VITE_CAL_15_URL`: `https://cal.com/mohak-agrawal/15min`
+   - `VITE_CAL_30_URL`: `https://cal.com/mohak-agrawal/30min`
+   - `VITE_SITE_URL`: `https://your-domain.vercel.app`
 5. Click **"Deploy"**.
-
-### Method B: Deploy using Vercel CLI
-```bash
-npm i -g vercel
-vercel
-vercel --prod
-```
 
 ---
 
 ## ♿ Accessibility & Performance
-- **Reduced Motion:** Fully complies with `prefers-reduced-motion` settings.
-- **Keyboard Navigation:** Focus states, Skip-to-content anchor, and Escape-to-close modals.
-- **SEO & Social:** Open Graph, Twitter Summary Cards, and structured JSON-LD Person schema.
+- **Reduced Motion:** Fully complies with `prefers-reduced-motion` settings and in-app motion toggle.
+- **Keyboard Navigation:** ARIA attributes, Skip-to-content anchor, roving focus on FAQ accordion, and command palette (`⌘K`).
+- **SEO & Social:** Open Graph, Twitter Summary Cards, structured JSON-LD (Person, FAQPage, BlogPosting), sitemap, and RSS feed.

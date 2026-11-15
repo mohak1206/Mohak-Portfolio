@@ -320,24 +320,21 @@ export const CredentialsSkeleton: React.FC = () => {
           <SkeletonText lines={2} className="max-w-xl" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((idx) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((idx) => (
             <div
               key={idx}
-              className="bg-card-surface rounded-[6px] border border-warm-border p-6 space-y-4 flex flex-col justify-between"
+              className="bg-card-surface rounded-[6px] border border-warm-border p-5 space-y-4 flex flex-col justify-between"
             >
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Skeleton className="w-10 h-10 rounded-[4px]" />
-                  <Skeleton className="w-20 h-5 rounded" />
-                </div>
-                <Skeleton className="w-4/5 h-6" />
+                <Skeleton className="w-full aspect-[4/3] rounded" />
+                <Skeleton className="w-4/5 h-5" />
                 <Skeleton className="w-1/2 h-3" />
-                <SkeletonText lines={3} />
+                <Skeleton className="w-1/3 h-3" />
               </div>
               <div className="pt-3 border-t border-warm-border/60 flex justify-between">
-                <Skeleton className="w-28 h-3" />
-                <Skeleton className="w-16 h-3" />
+                <Skeleton className="w-24 h-4" />
+                <Skeleton className="w-16 h-4" />
               </div>
             </div>
           ))}

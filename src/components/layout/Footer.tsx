@@ -38,8 +38,8 @@ export const Footer: React.FC = () => {
               <a href="/projects" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
                 Projects
               </a>
-              <a href="/notes" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
-                Notes
+              <a href="/blogs" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
+                Blogs
               </a>
               <a href="/resume" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
                 Resume

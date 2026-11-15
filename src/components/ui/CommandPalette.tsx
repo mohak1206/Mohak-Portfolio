@@ -105,14 +105,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
         },
       },
       {
-        id: 'act-notes',
-        title: 'Notes & Articles',
+        id: 'act-blogs',
+        title: 'Blogs & Articles',
         subtitle: 'Read write-ups and technical learnings',
         category: 'ACTIONS & LINKS',
         icon: <FileText className="w-4 h-4 text-burnt-orange" />,
         action: () => {
           onClose();
-          navigate('/notes');
+          navigate('/blogs');
         },
       },
       {

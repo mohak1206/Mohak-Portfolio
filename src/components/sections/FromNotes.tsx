@@ -20,14 +20,14 @@ export const FromNotes: React.FC = () => {
   return (
     <section
       id="from-notes"
-      aria-label="Recent Notes"
+      aria-label="Recent Blogs"
       className="relative py-20 lg:py-24 bg-ivory border-t border-warm-border/60 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <Reveal>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
-              <SectionLabel label="— FROM THE NOTES" />
+              <SectionLabel label="— FROM THE BLOG" />
               <h2 className="font-serif text-3xl sm:text-5xl font-normal leading-tight text-charcoal tracking-tight mt-2">
                 Recent{' '}
                 <span className="italic text-burnt-orange font-normal">
@@ -36,10 +36,10 @@ export const FromNotes: React.FC = () => {
               </h2>
             </div>
             <Link
-              to="/notes"
+              to="/blogs"
               className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-burnt-orange hover:text-light-orange transition-colors"
             >
-              <span>All notes</span>
+              <span>All blogs</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -66,7 +66,7 @@ export const FromNotes: React.FC = () => {
                 </div>
 
                 <h3 className="font-serif text-xl sm:text-2xl font-normal text-charcoal group-hover:text-burnt-orange transition-colors">
-                  <Link to={`/notes/${note.slug}`} className="focus:outline-none">
+                  <Link to={`/blogs/${note.slug}`} className="focus:outline-none">
                     <span className="absolute inset-0" aria-hidden="true" />
                     {note.title}
                   </Link>

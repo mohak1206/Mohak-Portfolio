@@ -13,7 +13,7 @@ import {
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
 import { experienceData } from '../data/experience';
-import { credentialsData } from '../data/credentials';
+import { credentials, type Credential } from '../data/credentials';
 import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
 import { usePageMeta } from '../hooks/usePageMeta';
@@ -28,9 +28,27 @@ export const ResumePage: React.FC = () => {
 
   const featuredProjects = projectsData.filter((p) => p.isFeatured);
   const relevantExperience = experienceData.filter((e) => e.id !== 'btech-aiml');
-  const certifications = credentialsData.filter(
-    (c) => c.title.includes('Google') || c.title.includes('LLM')
+  
+  // 4 featured certificates + IBM Data Fundamentals + Cisco Introduction to Data Science
+  const certifications = credentials.filter(
+    (c) => c.tier === 'featured' || c.id === 'ibm-data-fundamentals' || c.id === 'cisco-intro-data-science'
   );
+
+  const formatCertDate = (dateStr?: string) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length >= 2) {
+      const year = parts[0];
+      const monthIdx = parseInt(parts[1], 10) - 1;
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      if (monthIdx >= 0 && monthIdx < 12) {
+        return `${months[monthIdx]} ${year}`;
+      }
+    }
+    return dateStr;
+  };
+
+  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://mohakagrawal.dev';
 
   const handlePrint = () => {
     window.print();
@@ -262,17 +280,23 @@ export const ResumePage: React.FC = () => {
               <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-3">
                 Certifications
               </h2>
-              <div className="space-y-2 text-xs sm:text-sm">
-                {certifications.map((cert) => (
-                  <div key={cert.id} className="flex justify-between items-baseline">
-                    <span className="font-semibold text-charcoal">
-                      {cert.title}
-                    </span>
-                    <span className="font-mono text-xs text-muted-grey">
-                      {cert.issuer}
-                    </span>
-                  </div>
-                ))}
+              <div className="space-y-1.5 text-xs sm:text-sm">
+                {certifications.map((cert) => {
+                  const dateStr = formatCertDate(cert.date);
+                  return (
+                    <div key={cert.id} className="text-charcoal/90 leading-snug">
+                      <span className="font-semibold text-charcoal">{cert.title}</span>,{' '}
+                      <span className="text-charcoal/80">{cert.issuer}</span>
+                      {dateStr && <span className="font-mono text-xs text-muted-grey"> ({dateStr})</span>}
+                    </div>
+                  );
+                })}
+                <p className="text-xs font-mono text-muted-grey pt-1">
+                  More certificates at{' '}
+                  <a href={`${siteUrl}/#credentials`} className="text-burnt-orange hover:underline">
+                    {siteUrl}
+                  </a>
+                </p>
               </div>
             </section>
           </div>

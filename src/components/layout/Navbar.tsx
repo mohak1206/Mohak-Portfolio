@@ -15,7 +15,7 @@ const navItems = [
   { label: 'Home', href: '#home', id: 'home' },
   { label: 'About', href: '#about', id: 'about' },
   { label: 'Projects', href: '#projects', id: 'projects' },
-  { label: 'Notes', href: '/notes', id: 'notes' },
+  { label: 'Blogs', href: '/blogs', id: 'blogs' },
   { label: 'Experience', href: '#experience', id: 'experience' },
   { label: 'Contact', href: '#contact', id: 'contact' },
 ];
@@ -96,7 +96,7 @@ export const Navbar: React.FC = () => {
           <nav className="group/nav hidden md:flex items-center space-x-8" aria-label="Main Navigation">
             {navItems.map((item) => {
               const isActive = item.href.startsWith('/')
-                ? location.pathname === item.href
+                ? location.pathname === item.href || (item.href === '/blogs' && (location.pathname.startsWith('/blogs') || location.pathname.startsWith('/notes')))
                 : location.pathname === '/' && activeSection === item.id;
               return (
                 <a

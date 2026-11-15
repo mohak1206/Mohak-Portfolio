@@ -44,9 +44,9 @@ export const NoteDetailPage: React.FC = () => {
 
   // Page meta & SEO
   usePageMeta({
-    title: note?.title || 'Note',
+    title: note?.title || 'Blog Post',
     description: note?.summary || '',
-    path: `/notes/${slug || ''}`,
+    path: `/blogs/${slug || ''}`,
   });
 
   // Reading progress bar
@@ -201,16 +201,16 @@ export const NoteDetailPage: React.FC = () => {
         <Navbar />
         <main className="flex-grow flex items-center justify-center py-20 px-4">
           <div className="text-center space-y-4">
-            <h1 className="font-serif text-3xl text-charcoal">Note not found</h1>
+            <h1 className="font-serif text-3xl text-charcoal">Blog post not found</h1>
             <p className="text-muted-grey text-sm">
               The article you are looking for doesn't exist or is still being written.
             </p>
             <Link
-              to="/notes"
+              to="/blogs"
               className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-burnt-orange hover:text-light-orange"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to all notes</span>
+              <span>Back to all blogs</span>
             </Link>
           </div>
         </main>
@@ -232,7 +232,7 @@ export const NoteDetailPage: React.FC = () => {
       name: 'Mohak Agrawal',
       url: siteUrl,
     },
-    url: `${siteUrl}/notes/${note.slug}`,
+    url: `${siteUrl}/blogs/${note.slug}`,
   };
 
   return (
@@ -256,11 +256,11 @@ export const NoteDetailPage: React.FC = () => {
           {/* Back link */}
           <div className="mb-8 max-w-[68ch] mx-auto">
             <Link
-              to="/notes"
+              to="/blogs"
               className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-grey hover:text-burnt-orange transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>All notes</span>
+              <span>All blogs</span>
             </Link>
           </div>
 
@@ -352,10 +352,10 @@ export const NoteDetailPage: React.FC = () => {
                 </div>
 
                 <Link
-                  to="/notes"
+                  to="/blogs"
                   className="text-xs font-mono font-medium text-burnt-orange hover:text-light-orange underline underline-offset-4"
                 >
-                  Back to all notes
+                  Back to all blogs
                 </Link>
               </div>
 
@@ -363,7 +363,7 @@ export const NoteDetailPage: React.FC = () => {
               <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {prevNote ? (
                   <Link
-                    to={`/notes/${prevNote.slug}`}
+                    to={`/blogs/${prevNote.slug}`}
                     className="p-4 rounded-lg border border-warm-border hover:border-burnt-orange/60 bg-card-surface transition-all group flex flex-col justify-between"
                   >
                     <span className="text-[10px] font-mono text-muted-grey uppercase tracking-wider flex items-center gap-1 mb-1">
@@ -380,7 +380,7 @@ export const NoteDetailPage: React.FC = () => {
 
                 {nextNote && (
                   <Link
-                    to={`/notes/${nextNote.slug}`}
+                    to={`/blogs/${nextNote.slug}`}
                     className="p-4 rounded-lg border border-warm-border hover:border-burnt-orange/60 bg-card-surface transition-all group flex flex-col justify-between text-right"
                   >
                     <span className="text-[10px] font-mono text-muted-grey uppercase tracking-wider flex items-center justify-end gap-1 mb-1">

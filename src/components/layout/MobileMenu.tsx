@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 
 interface NavItem {
@@ -21,13 +22,17 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   activeSection,
   onItemClick,
 }) => {
+  const location = useLocation();
+
   if (!isOpen) return null;
 
   return (
     <div className="md:hidden bg-ivory border-b border-warm-border px-6 py-6 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
       <nav className="flex flex-col space-y-4" aria-label="Mobile Navigation">
         {navItems.map((item) => {
-          const isActive = activeSection === item.id;
+          const isActive = item.href.startsWith('/')
+            ? location.pathname === item.href || (item.href === '/blogs' && (location.pathname.startsWith('/blogs') || location.pathname.startsWith('/notes')))
+            : location.pathname === '/' && activeSection === item.id;
           return (
             <a
               key={item.id}

@@ -121,6 +121,34 @@ const AnimatedRoutes: React.FC = () => {
                   }
                 />
                 <Route
+                  path="/blogs"
+                  element={
+                    <Suspense
+                      fallback={
+                        <DelayedFallback delay={150}>
+                          <ProjectsPageSkeleton />
+                        </DelayedFallback>
+                      }
+                    >
+                      <NotesPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="/blogs/:slug"
+                  element={
+                    <Suspense
+                      fallback={
+                        <DelayedFallback delay={150}>
+                          <ProjectDetailSkeleton />
+                        </DelayedFallback>
+                      }
+                    >
+                      <NoteDetailPage />
+                    </Suspense>
+                  }
+                />
+                <Route
                   path="/notes"
                   element={
                     <Suspense
@@ -207,6 +235,34 @@ const AnimatedRoutes: React.FC = () => {
                   }
                 >
                   <ResumePage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/blogs"
+              element={
+                <Suspense
+                  fallback={
+                    <DelayedFallback delay={150}>
+                      <ProjectsPageSkeleton />
+                    </DelayedFallback>
+                  }
+                >
+                  <NotesPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/blogs/:slug"
+              element={
+                <Suspense
+                  fallback={
+                    <DelayedFallback delay={150}>
+                      <ProjectDetailSkeleton />
+                    </DelayedFallback>
+                  }
+                >
+                  <NoteDetailPage />
                 </Suspense>
               }
             />

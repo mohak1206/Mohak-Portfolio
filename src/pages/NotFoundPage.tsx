@@ -16,10 +16,10 @@ export const NotFoundPage: React.FC = () => {
   const [typedLines, setTypedLines] = useState<string[]>(() =>
     prefersReduced
       ? [
-          `$ cd ${missingPath}`,
-          `bash: cd: ${missingPath}: No such file or directory`,
-          'Type a command to continue: home · projects · resume · contact · notes',
-        ]
+        `$ cd ${missingPath}`,
+        `bash: cd: ${missingPath}: No such file or directory`,
+        'Type a command to continue: home · projects · resume · contact · blogs',
+      ]
       : []
   );
   const [currentLineText, setCurrentLineText] = useState('');
@@ -61,7 +61,7 @@ export const NotFoundPage: React.FC = () => {
     const fullLines = [
       `$ cd ${missingPath}`,
       `bash: cd: ${missingPath}: No such file or directory`,
-      'Type a command to continue: home · projects · resume · contact · notes',
+      'Type a command to continue: home · projects · resume · contact · blogs',
     ];
 
     let lineIdx = 0;
@@ -110,13 +110,13 @@ export const NotFoundPage: React.FC = () => {
       navigate('/resume');
     } else if (cleaned === 'contact') {
       navigate('/#contact');
-    } else if (cleaned === 'notes') {
-      navigate('/notes');
+    } else if (cleaned === 'blogs' || cleaned === 'notes') {
+      navigate('/blogs');
     } else if (cleaned === 'help') {
       setOutputHistory((prev) => [
         ...prev,
         `$ ${cleaned}`,
-        'Available commands: home · projects · resume · contact · notes · help · clear',
+        'Available commands: home · projects · resume · contact · blogs · help · clear',
       ]);
     } else if (cleaned === 'clear') {
       setOutputHistory([]);
@@ -187,8 +187,8 @@ export const NotFoundPage: React.FC = () => {
                     idx === 1
                       ? 'text-rose-400 font-semibold'
                       : idx === 2
-                      ? 'text-burnt-orange'
-                      : 'text-emerald-400'
+                        ? 'text-burnt-orange'
+                        : 'text-emerald-400'
                   }
                 >
                   {line}
@@ -237,16 +237,16 @@ export const NotFoundPage: React.FC = () => {
             {/* Tappable Touch Chips */}
             <div className="mt-4 pt-3 border-t border-white/10 flex items-center gap-2 flex-wrap text-xs">
               <span className="text-white/40 text-[11px] select-none">Quick jump:</span>
-              {(['home', 'projects', 'resume', 'contact', 'notes'] as const).map((cmd) => (
-                <button
-                  key={cmd}
-                  type="button"
-                  onClick={() => runCommand(cmd)}
-                  className="px-2 py-1 rounded bg-white/10 hover:bg-burnt-orange hover:text-white text-white/80 transition-colors font-mono cursor-pointer active:scale-95"
-                >
-                  {cmd}
-                </button>
-              ))}
+                {(['home', 'projects', 'resume', 'contact', 'blogs'] as const).map((cmd) => (
+                  <button
+                    key={cmd}
+                    type="button"
+                    onClick={() => runCommand(cmd)}
+                    className="px-2 py-1 rounded bg-white/10 hover:bg-burnt-orange hover:text-white text-white/80 transition-colors font-mono cursor-pointer active:scale-95"
+                  >
+                    {cmd}
+                  </button>
+                ))}
             </div>
           </m.div>
         </div>
