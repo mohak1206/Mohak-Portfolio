@@ -10,6 +10,7 @@ interface ArchFrameProps {
   outlineOffset?: boolean;
   outlineStyle?: any;
   imageStyle?: any;
+  clipContent?: boolean;
 }
 
 export const ArchFrame: React.FC<ArchFrameProps> = ({
@@ -18,6 +19,7 @@ export const ArchFrame: React.FC<ArchFrameProps> = ({
   outlineOffset = true,
   outlineStyle,
   imageStyle,
+  clipContent = true,
 }) => {
   const prefersReducedMotion = useReducedMotion();
 
@@ -26,7 +28,7 @@ export const ArchFrame: React.FC<ArchFrameProps> = ({
       {outlineOffset && (
         <m.div
           style={outlineStyle}
-          className="absolute -inset-2.5 sm:-inset-3 w-[calc(100%+20px)] sm:w-[calc(100%+24px)] h-[calc(100%+20px)] sm:h-[calc(100%+24px)] pointer-events-none z-10"
+          className="absolute -inset-2.5 sm:-inset-3 w-[calc(100%+20px)] sm:w-[calc(100%+24px)] h-[calc(100%+20px)] sm:h-[calc(100%+24px)] pointer-events-none z-20"
         >
           <svg
             className="w-full h-full pointer-events-none"
@@ -54,7 +56,10 @@ export const ArchFrame: React.FC<ArchFrameProps> = ({
       )}
       <m.div
         style={imageStyle}
-        className="relative w-full h-full overflow-hidden arch-mask shadow-float z-10 bg-cream"
+        className={cn(
+          'relative w-full h-full z-10',
+          clipContent ? 'overflow-hidden arch-mask shadow-float bg-cream' : ''
+        )}
       >
         {children}
       </m.div>

@@ -4,8 +4,8 @@ import { m, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, ArrowUpRight, Award, ExternalLink } from 'lucide-react';
 import type { Credential } from '../../data/credentials';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { useScrollLock } from '../../hooks/useScrollLock';
 import { EASING } from '../../lib/animation';
-import { lockScroll, unlockScroll } from '../../lib/scrollLock';
 
 export interface CertificateViewerProps {
   isOpen: boolean;
@@ -65,13 +65,7 @@ export const CertificateViewer: React.FC<CertificateViewerProps> = ({
   }, [isOpen, nextCredential]);
 
   // Scroll lock & Lenis pause
-  useEffect(() => {
-    if (!isOpen) return;
-    lockScroll();
-    return () => {
-      unlockScroll();
-    };
-  }, [isOpen]);
+  useScrollLock(isOpen);
 
   // #root inert and aria-hidden management
   useEffect(() => {

@@ -19,7 +19,7 @@ import { projectsData } from '../../data/projects';
 import { CountUp } from './CountUp';
 import { Button } from './Button';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { lockScroll, unlockScroll } from '../../lib/scrollLock';
+import { useScrollLock } from '../../hooks/useScrollLock';
 import { EASING } from '../../lib/animation';
 
 const SLIDE_DURATION = 7000; // 7 seconds per slide
@@ -56,12 +56,13 @@ export const QuickTourModal: React.FC<QuickTourModalProps> = ({ isOpen, onClose 
     setSlideIndex(idx);
   };
 
-  // Scroll lock & accessibility attributes on #root
+  useScrollLock(isOpen);
+
+  // Focus management & accessibility attributes on #root
   useEffect(() => {
     if (!isOpen) return;
 
     previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
-    lockScroll();
 
     const rootEl = document.getElementById('root');
     if (rootEl) {
@@ -74,7 +75,6 @@ export const QuickTourModal: React.FC<QuickTourModalProps> = ({ isOpen, onClose 
     setProgress(0);
 
     return () => {
-      unlockScroll();
       if (rootEl) {
         rootEl.removeAttribute('aria-hidden');
         rootEl.removeAttribute('inert');

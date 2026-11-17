@@ -26,11 +26,22 @@ export const InViewSection: React.FC<InViewSectionProps> = ({
   useEffect(() => {
     if (shouldRender) return;
 
-    // If an anchor links directly to this section (e.g. #projects or #contact), mount immediately
-    if (id && typeof window !== 'undefined' && window.location.hash === `#${id}`) {
-      setShouldRender(true);
-      return;
-    }
+    const checkHash = () => {
+      if (id && typeof window !== 'undefined' && window.location.hash === `#${id}`) {
+        setShouldRender(true);
+      }
+    };
+
+    const handleRenderSection = (e: Event) => {
+      const custom = e as CustomEvent<{ id: string }>;
+      if (custom.detail && custom.detail.id === id) {
+        setShouldRender(true);
+      }
+    };
+
+    checkHash();
+    window.addEventListener('hashchange', checkHash);
+    window.addEventListener('render-section', handleRenderSection);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -57,6 +68,8 @@ export const InViewSection: React.FC<InViewSectionProps> = ({
     }
 
     return () => {
+      window.removeEventListener('hashchange', checkHash);
+      window.removeEventListener('render-section', handleRenderSection);
       observer.disconnect();
       if (idleId && typeof window !== 'undefined' && 'cancelIdleCallback' in window) {
         (window as unknown as { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleId);
@@ -66,7 +79,7 @@ export const InViewSection: React.FC<InViewSectionProps> = ({
   }, [shouldRender, rootMargin, id]);
 
   return (
-    <div ref={containerRef} style={{ minHeight }} className="relative">
+    <div ref={containerRef} data-section-fallback={!shouldRender ? id : undefined} style={{ minHeight }} className="relative">
       {shouldRender ? children : fallback}
     </div>
   );

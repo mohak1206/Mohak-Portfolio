@@ -93,13 +93,13 @@ export const Home: React.FC = () => {
           </Suspense>
         </InViewSection>
 
-        <InViewSection id="lab" fallback={<LabIdeasSkeleton />}>
+        <InViewSection id="lab-ideas" fallback={<LabIdeasSkeleton />}>
           <Suspense fallback={<LabIdeasSkeleton />}>
             <LabIdeas />
           </Suspense>
         </InViewSection>
 
-        <InViewSection id="skills" fallback={<ExpertiseSkeleton />}>
+        <InViewSection id="expertise" fallback={<ExpertiseSkeleton />}>
           <Suspense fallback={<ExpertiseSkeleton />}>
             <Expertise />
           </Suspense>

@@ -1,30 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useActiveSection } from './useActiveSection';
 
-export function useScrollSpy(sectionIds: string[], offset = 160): string {
-  const [activeSection, setActiveSection] = useState<string>(sectionIds[0] || '');
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + offset;
-
-      for (let i = sectionIds.length - 1; i >= 0; i--) {
-        const id = sectionIds[i];
-        const el = document.getElementById(id);
-        if (el) {
-          if (scrollPosition >= el.offsetTop) {
-            setActiveSection(id);
-            break;
-          }
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [sectionIds, offset]);
-
-  return activeSection;
+/**
+ * useScrollSpy:
+ * Delegated to useActiveSection for unified active-section tracking across the site.
+ */
+export function useScrollSpy(sectionIds: string[], _offset = 160): string {
+  return useActiveSection(sectionIds);
 }
 
+export default useScrollSpy;

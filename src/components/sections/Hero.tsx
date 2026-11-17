@@ -1,162 +1,16 @@
-import React, { useEffect, useState, useRef, Suspense, useCallback } from 'react';
-import { m, useScroll, useTransform, useMotionValue, useSpring, useInView, type Variants } from 'framer-motion';
-import { ArrowRight, Cpu, Layers, Eye, Zap, Play } from 'lucide-react';
-import { profileData } from '../../data/profile';
-import { projectsData } from '../../data/projects';
-import { Button } from '../ui/Button';
+import React, { useState, useRef } from 'react';
+import { m, useScroll, useTransform, useMotionValue, useSpring, useInView } from 'framer-motion';
 import { ContourLines } from '../art/ContourLines';
-import { ArchFrame } from '../art/ArchFrame';
 import { MountainFallback } from '../art/MountainFallback';
-import { SectionLabel } from '../ui/SectionLabel';
-import { AvailabilityBadge } from '../ui/AvailabilityBadge';
-import { KineticHeadline } from '../ui/KineticHeadline';
-import { RotatingNowBuilding } from '../ui/RotatingNowBuilding';
-import { CountUp } from '../ui/CountUp';
-import { Magnetic } from '../ui/Magnetic';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useFinePointer } from '../../hooks/useFinePointer';
 import { EASING } from '../../lib/animation';
 
-// Lazily load the interactive terminal logic
-const InteractiveTerminal = React.lazy(
-  () => import('../terminal/InteractiveTerminal').then((m) => ({ default: m.InteractiveTerminal }))
-);
-
-const CODE_LINES = [
-  '# building...',
-  'from ideas import impact',
-  'while True:',
-  '    build()',
-  '    learn()',
-  '    improve()',
-];
-
-interface TerminalTypewriterProps {
-  startDelay?: number;
-  onFinished?: () => void;
-}
-
-const TerminalTypewriter: React.FC<TerminalTypewriterProps> = ({
-  startDelay = 400,
-  onFinished,
-}) => {
-  const prefersReducedMotion = useReducedMotion();
-  const [lineIdx, setLineIdx] = useState<number>(() =>
-    prefersReducedMotion ? CODE_LINES.length : 0
-  );
-  const [charIdx, setCharIdx] = useState<number>(() =>
-    prefersReducedMotion ? CODE_LINES[CODE_LINES.length - 1].length : 0
-  );
-  const [hasStarted, setHasStarted] = useState<boolean>(Boolean(prefersReducedMotion));
-  const hasCalledFinished = useRef(false);
-
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      setHasStarted(true);
-      setLineIdx(CODE_LINES.length);
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      setHasStarted(true);
-    }, startDelay);
-
-    return () => clearTimeout(timer);
-  }, [prefersReducedMotion, startDelay]);
-
-  // Safely notify parent component after commit when typing is finished
-  useEffect(() => {
-    if ((prefersReducedMotion || lineIdx >= CODE_LINES.length) && !hasCalledFinished.current) {
-      hasCalledFinished.current = true;
-      onFinished?.();
-    }
-  }, [prefersReducedMotion, lineIdx, onFinished]);
-
-  // Character typing interval loop
-  useEffect(() => {
-    if (prefersReducedMotion || !hasStarted || lineIdx >= CODE_LINES.length) return;
-
-    const currentLine = CODE_LINES[lineIdx];
-    const timer = setTimeout(() => {
-      if (charIdx < currentLine.length) {
-        setCharIdx((prev) => prev + 1);
-      } else {
-        setCharIdx(0);
-        setLineIdx((prev) => prev + 1);
-      }
-    }, 30); // 30ms per character typing
-
-    return () => clearTimeout(timer);
-  }, [hasStarted, lineIdx, charIdx, prefersReducedMotion]);
-
-  const renderLineContent = (text: string, idx: number, showCursor: boolean) => {
-    let content: React.ReactNode;
-    if (idx === 0) {
-      content = <span className="text-[#6A9955] italic">{text}</span>;
-    } else if (idx === 1) {
-      content = (
-        <span>
-          <span className="text-burnt-orange font-semibold">{text.slice(0, 5)}</span>
-          <span>{text.slice(5, 11)}</span>
-          <span className="text-burnt-orange font-semibold">{text.slice(11, 18)}</span>
-          <span>{text.slice(18)}</span>
-        </span>
-      );
-    } else if (idx === 2) {
-      content = (
-        <span className="pt-1.5 block">
-          <span className="text-burnt-orange font-semibold">{text.slice(0, 6)}</span>
-          <span>{text.slice(6)}</span>
-        </span>
-      );
-    } else {
-      content = <span className="text-[#9CDCFE]">{text}</span>;
-    }
-
-    return (
-      <div key={idx} className={idx >= 3 ? 'pl-4' : ''}>
-        {content}
-        {showCursor && <span className="terminal-blinking-cursor" aria-hidden="true" />}
-      </div>
-    );
-  };
-
-  return (
-    <div className="font-mono text-xs sm:text-[13px] leading-relaxed text-[#D4D4D4] space-y-0.5">
-      {CODE_LINES.map((line, idx) => {
-        if (prefersReducedMotion) {
-          const isLast = idx === CODE_LINES.length - 1;
-          return renderLineContent(line, idx, isLast);
-        }
-
-        if (idx < lineIdx) {
-          return renderLineContent(line, idx, false);
-        }
-
-        if (idx === lineIdx) {
-          const visiblePart = line.slice(0, charIdx);
-          return renderLineContent(visiblePart, idx, true);
-        }
-
-        if (lineIdx >= CODE_LINES.length && idx === CODE_LINES.length - 1) {
-          return renderLineContent(line, idx, false);
-        }
-
-        return null;
-      })}
-    </div>
-  );
-};
-
 export const Hero: React.FC = () => {
-  const { stats } = profileData;
   const prefersReducedMotion = useReducedMotion();
   const isFinePointer = useFinePointer();
-  const [terminalFinished, setTerminalFinished] = useState(() => Boolean(prefersReducedMotion));
-  const handleTerminalFinished = useCallback(() => {
-    setTerminalFinished(true);
-  }, []);
-  const completedProjectsCount = projectsData.filter((p) => p.status === 'Completed').length.toString();
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const isHeroInView = useInView(heroRef, { margin: '-20px' });
   const rafPointerRef = useRef<number | null>(null);
@@ -168,7 +22,7 @@ export const Hero: React.FC = () => {
   });
   const contourScrollY = useTransform(scrollYProgress, [0, 1], [0, 16]);
 
-  // Pointer Depth (fine pointers only, stiffness 120, damping 18)
+  // 4px Pointer Depth on sun circle and contour lines only (fine pointers only)
   const isPointerDepthActive = isFinePointer && !prefersReducedMotion;
   const normX = useMotionValue(0);
   const normY = useMotionValue(0);
@@ -176,30 +30,10 @@ export const Hero: React.FC = () => {
   const springNormX = useSpring(normX, { stiffness: 120, damping: 18 });
   const springNormY = useSpring(normY, { stiffness: 120, damping: 18 });
 
-  // Layers move slightly opposite to pointer
-  // Sun circle up to 14px
-  const sunX = useTransform(springNormX, (v) => -v * 14);
-  const sunY = useTransform(springNormY, (v) => -v * 14);
-
-  // Arch image up to 6px
-  const archImgX = useTransform(springNormX, (v) => -v * 6);
-  const archImgY = useTransform(springNormY, (v) => -v * 6);
-
-  // Arch outline up to 8px
-  const archOutlineX = useTransform(springNormX, (v) => -v * 8);
-  const archOutlineY = useTransform(springNormY, (v) => -v * 8);
-
-  // Contour lines up to 4px
+  const sunX = useTransform(springNormX, (v) => -v * 4);
+  const sunY = useTransform(springNormY, (v) => -v * 4);
   const contourPointerX = useTransform(springNormX, (v) => -v * 4);
   const contourPointerY = useTransform(springNormY, (v) => -v * 4);
-
-  // Terminal card up to 10px
-  const terminalX = useTransform(springNormX, (v) => -v * 10);
-  const terminalY = useTransform(springNormY, (v) => -v * 10);
-
-  // Tags card up to 12px
-  const tagsX = useTransform(springNormX, (v) => -v * 12);
-  const tagsY = useTransform(springNormY, (v) => -v * 12);
 
   const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
     if (!isPointerDepthActive || !heroRef.current) return;
@@ -214,12 +48,11 @@ export const Hero: React.FC = () => {
         const px = clientX - rect.left;
         const py = clientY - rect.top;
 
-        // Set CSS variables for spotlight & dot grid
         heroRef.current.style.setProperty('--mx', `${px.toFixed(1)}px`);
         heroRef.current.style.setProperty('--my', `${py.toFixed(1)}px`);
 
-        const x = (px / rect.width) * 2 - 1; // -1 to 1
-        const y = (py / rect.height) * 2 - 1; // -1 to 1
+        const x = (px / rect.width) * 2 - 1;
+        const y = (py / rect.height) * 2 - 1;
         normX.set(Math.max(-1, Math.min(1, x)));
         normY.set(Math.max(-1, Math.min(1, y)));
       });
@@ -235,36 +68,132 @@ export const Hero: React.FC = () => {
     }
   };
 
-  const scrollToProjects = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const element = document.getElementById('projects');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  // Reusable Arch Frame Component
+  const renderArchFrame = (isDesktop: boolean) => (
+    <div
+      className={`frame relative aspect-[5/7] ${
+        isDesktop
+          ? 'h-[clamp(440px,64vh,660px)] w-auto max-w-full'
+          : 'w-[72vw] max-w-[340px] h-auto'
+      } mx-auto overflow-visible select-none`}
+    >
+      {/* Orange sun circle: partly hidden behind LEFT side of arch at shoulder level */}
+      <m.div
+        style={{
+          x: isPointerDepthActive ? sunX : 0,
+          y: isPointerDepthActive ? sunY : 0,
+        }}
+        className={`absolute top-[32%] ${
+          isDesktop ? '-left-12 lg:-left-16 w-44 h-44 lg:w-56 lg:h-56' : '-left-8 sm:-left-10 w-32 h-32 sm:w-40 sm:h-40'
+        } z-0 pointer-events-none`}
+      >
+        <m.div
+          initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.2, ease: EASING }}
+          className="w-full h-full rounded-full shadow-md"
+          style={{
+            background: 'radial-gradient(circle at 35% 35%, #E47B43, #C94F17)',
+          }}
+          aria-hidden="true"
+        />
+      </m.div>
 
-  const tagContainerVariants: Variants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.06,
-        delayChildren: prefersReducedMotion ? 0 : 0.45,
-      },
-    },
-  };
+      {/* Arch Frame Body (Layer 1 + Layer 3) clipped strictly to arch shape */}
+      <div
+        className="absolute inset-0 z-10 overflow-hidden border border-transparent dark:border-[var(--color-border)] shadow-sm"
+        style={{
+          borderRadius: '9999px 9999px 0 0',
+        }}
+      >
+        {/* Layer 1: Arch background: light soft vertical gradient #F6E8DA -> #F0C4A0 */}
+        <m.div
+          initial={prefersReducedMotion ? false : { clipPath: 'inset(100% 0% 0% 0%)' }}
+          animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
+          transition={{ duration: 0.65, delay: prefersReducedMotion ? 0 : 0.15, ease: EASING }}
+          className="absolute inset-0 z-0"
+          style={{
+            background: 'linear-gradient(180deg, #F6E8DA 0%, #F0C4A0 100%)',
+          }}
+          aria-hidden="true"
+        >
+          {/* Mountain fallback if portrait fails to load */}
+          {imgError && (
+            <MountainFallback
+              type="hero-sunrise"
+              alt="Mountain peak at sunrise framed by an architectural arch"
+            />
+          )}
 
-  const tagRowVariants: Variants = {
-    hidden: { opacity: 0, x: 12 },
-    show: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.35,
-        ease: EASING,
-      },
-    },
-  };
+          {/* Shimmer pulse while loading */}
+          {!imgLoaded && !imgError && (
+            <div className="absolute inset-0 bg-cream/40 animate-pulse pointer-events-none" />
+          )}
+        </m.div>
+
+        {/* Layer 3: Portrait cutout: centered inside the frame, anchored flush at bottom */}
+        {!imgError && (
+          <m.div
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.65,
+              delay: prefersReducedMotion ? 0 : 0.45,
+              ease: EASING,
+            }}
+            className="absolute bottom-0 left-0 right-0 mx-auto w-[88%] sm:w-[90%] z-10 flex items-end justify-center pointer-events-none select-none"
+          >
+            <img
+              src="/profile-cutout.webp"
+              width={482}
+              height={667}
+              alt="Portrait of Mohak Agrawal"
+              fetchPriority="high"
+              decoding="async"
+              onLoad={() => setImgLoaded(true)}
+              onError={() => setImgError(true)}
+              className={`w-full h-auto object-contain transition-opacity duration-300 block ${
+                imgLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{
+                filter: 'drop-shadow(0 12px 28px rgba(0, 0, 0, 0.08))',
+              }}
+            />
+          </m.div>
+        )}
+      </div>
+
+      {/* Layer 2: Orange outline arch, perfectly concentric with the arch body */}
+      {/* Inset: -14px on top, left and right, and 0 at the bottom */}
+      <div
+        className="absolute pointer-events-none z-20"
+        style={{ top: -14, left: -14, right: -14, bottom: 0 }}
+      >
+        <svg
+          className="w-full h-full pointer-events-none"
+          viewBox="0 0 100 140"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <m.path
+            d="M 1 140 L 1 50 A 49 49 0 0 1 99 50 L 99 140"
+            fill="none"
+            stroke="var(--color-accent, #C94F17)"
+            strokeWidth="1.4"
+            strokeOpacity="0.75"
+            vectorEffect="non-scaling-stroke"
+            initial={prefersReducedMotion ? false : { pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{
+              duration: 0.9,
+              delay: prefersReducedMotion ? 0 : 0.3,
+              ease: EASING,
+            }}
+          />
+        </svg>
+      </div>
+    </div>
+  );
 
   return (
     <section
@@ -274,7 +203,7 @@ export const Hero: React.FC = () => {
       data-in-view={isHeroInView}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      className="relative pt-28 pb-16 lg:pt-36 lg:pb-24 overflow-hidden border-b border-warm-border bg-ivory"
+      className="relative min-h-[calc(100dvh-76px)] flex flex-col justify-center items-center py-8 lg:py-0 bg-ivory overflow-hidden border-b border-warm-border"
     >
       {/* Living background: Soft spotlight follows pointer (fine pointers only) */}
       {isFinePointer && !prefersReducedMotion && (
@@ -286,7 +215,7 @@ export const Hero: React.FC = () => {
         <div className="hero-dot-grid absolute inset-0 pointer-events-none z-0" aria-hidden="true" />
       )}
 
-      {/* Contour lines with spring pointer depth + scroll parallax */}
+      {/* Contour lines with spring pointer depth (4px) + scroll parallax */}
       <m.div
         style={{
           x: isPointerDepthActive ? contourPointerX : 0,
@@ -297,326 +226,155 @@ export const Hero: React.FC = () => {
         <ContourLines style={{ y: prefersReducedMotion ? 0 : contourScrollY }} />
       </m.div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center min-h-[calc(100vh-140px)]">
-          {/* Left Column */}
-          <div className="lg:col-span-7 flex flex-col justify-center space-y-6 lg:pr-4">
-            {/* Availability status badge */}
-            <AvailabilityBadge className="self-start" />
-
-            {/* Section label with decode effect */}
-            <SectionLabel label="MOHAK AGRAWAL" twoSided />
-
-            {/* Kinetic Headline with character-level pointer lifting and tilting */}
-            <KineticHeadline />
-
-            {/* Subline with 0.08s stagger */}
+      {/* DESKTOP LAYOUT (from 1024px width): 12-column grid, three zones */}
+      <div className="hidden lg:grid grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-center w-full max-w-7xl mx-auto px-6 lg:px-8 relative z-10 py-8 min-h-[calc(100dvh-76px)]">
+        
+        {/* LEFT COLUMN: Name at top, headline at BOTTOM LEFT */}
+        <div className="col-span-4 flex flex-col justify-between self-stretch pt-2 lg:pt-4 pb-6 text-left select-none">
+          <div>
+            {/* Short orange line */}
             <m.div
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+              initial={prefersReducedMotion ? false : { scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.6, ease: EASING }}
+              className="w-8 h-[2px] bg-burnt-orange rounded-full origin-left mb-4 lg:mb-5"
+              aria-hidden="true"
+            />
+
+            {/* 1) NAME: clean charcoal text (ivory in dark mode), Mohak on line 1, Agrawal on line 2 */}
+            <m.h1
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.35, ease: EASING }}
-              className="flex flex-wrap items-center gap-2 text-sm sm:text-base font-medium text-charcoal/90"
+              transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.65, ease: EASING }}
+              className="font-serif font-medium text-charcoal tracking-tight text-[clamp(36px,3.8vw,60px)] leading-[1.04]"
             >
-              <span>AI/ML Developer</span>
-              <span className="text-burnt-orange font-bold">·</span>
-              <span>Full Stack Engineer</span>
-              <span className="text-burnt-orange font-bold">·</span>
-              <span>Problem Solver</span>
-            </m.div>
+              <span className="block">Mohak</span>
+              <span className="block">Agrawal</span>
+            </m.h1>
+          </div>
 
-            {/* Paragraph with 0.08s stagger */}
-            <m.p
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.42, ease: EASING }}
-              className="text-muted-grey text-base sm:text-lg max-w-xl font-normal leading-relaxed"
-            >
-              {profileData.heroBio}
-            </m.p>
-
-            {/* Rotating "Now Building" Line */}
-            <m.div
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.46, ease: EASING }}
-            >
-              <RotatingNowBuilding
-                phrases={profileData.nowBuilding}
-                isHeroInView={isHeroInView}
-              />
-            </m.div>
-
-            {/* CTAs with Magnetic Effect */}
-            <m.div
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.5, ease: EASING }}
-              className="flex flex-wrap items-center gap-4 pt-2"
-            >
-              <Magnetic>
-                <Button asAnchor href="#projects" onClick={scrollToProjects} variant="primary" size="lg">
-                  <span>Explore Projects</span>
-                  <ArrowRight className="w-4 h-4 stroke-[2.2]" />
-                </Button>
-              </Magnetic>
-
-              <Magnetic>
-                <Button
-                  asAnchor
-                  href={profileData.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variant="outline"
-                  size="lg"
-                >
-                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                  </svg>
-                  <span>GitHub</span>
-                </Button>
-              </Magnetic>
-            </m.div>
-
-            {/* 60-second tour entry point */}
-            <m.div
-              initial={prefersReducedMotion ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.55, ease: EASING }}
-              className="pt-1"
-            >
-              <button
-                type="button"
-                onClick={() => window.dispatchEvent(new CustomEvent('open-quick-tour'))}
-                className="inline-flex items-center gap-2 text-xs font-mono font-medium text-muted-grey hover:text-burnt-orange transition-colors cursor-pointer select-none group focus:outline-none focus-visible:ring-1 focus-visible:ring-burnt-orange rounded py-0.5 px-1"
-                aria-label="Start 60-second portfolio tour"
-              >
-                <span className="w-5 h-5 rounded-full bg-cream border border-warm-border group-hover:border-burnt-orange flex items-center justify-center transition-colors shadow-2xs">
-                  <Play className="w-2.5 h-2.5 fill-current text-burnt-orange ml-0.5" />
-                </span>
-                <span className="draw-underline-link py-0.5">60-second tour</span>
-              </button>
-            </m.div>
-
-            {/* True Stats Row with CountUp and growing dividers */}
-            <m.div
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.58, ease: EASING }}
-              className="pt-6 sm:pt-8"
-            >
-              <div className="relative pt-4">
-                {/* Horizontal top border growing from 0 */}
-                <m.div
-                  className="absolute top-0 left-0 right-0 h-[1px] bg-warm-border origin-left"
+          {/* 2) HEADLINE: at bottom left, left-aligned, exactly two lines nowrap */}
+          <m.h2
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: prefersReducedMotion ? 0 : 0.75, ease: EASING }}
+            className="font-serif font-normal text-charcoal/90 tracking-tight text-[clamp(36px,3.6vw,54px)] leading-[1.15] mt-8"
+          >
+            <span className="block whitespace-nowrap">Ideas deserve</span>
+            <span className="block whitespace-nowrap">
+              to be{' '}
+              <span className="relative inline-block text-burnt-orange italic font-normal">
+                built.
+                <m.span
+                  className="absolute left-0 -bottom-1 sm:-bottom-1.5 w-full h-[3px] sm:h-[3.5px] bg-burnt-orange rounded-full origin-left"
                   initial={prefersReducedMotion ? false : { scaleX: 0 }}
                   animate={{ scaleX: 1 }}
-                  transition={{ duration: 0.5, delay: prefersReducedMotion ? 0 : 0.6, ease: EASING }}
+                  transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.95, ease: EASING }}
                   aria-hidden="true"
                 />
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-0 relative">
-                  {/* Stat 1 */}
-                  <div className="sm:pr-6 pb-2 sm:pb-0 relative">
-                    <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
-                      <CountUp value={completedProjectsCount} />
-                    </div>
-                    <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
-                      {stats.projectsLabel}
-                    </div>
-                    {/* Divider 1 growing in height */}
-                    <m.div
-                      className="hidden sm:block absolute top-1 bottom-1 right-0 w-[1px] bg-warm-border origin-top"
-                      initial={prefersReducedMotion ? false : { scaleY: 0 }}
-                      animate={{ scaleY: 1 }}
-                      transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.68, ease: EASING }}
-                      aria-hidden="true"
-                    />
-                  </div>
-
-                  {/* Stat 2 */}
-                  <div className="sm:px-6 pt-2 sm:pt-0 pb-2 sm:pb-0 relative">
-                    <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
-                      <CountUp value={stats.internshipsCount} />
-                    </div>
-                    <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
-                      {stats.internshipsLabel}
-                    </div>
-                    {/* Divider 2 growing in height */}
-                    <m.div
-                      className="hidden sm:block absolute top-1 bottom-1 right-0 w-[1px] bg-warm-border origin-top"
-                      initial={prefersReducedMotion ? false : { scaleY: 0 }}
-                      animate={{ scaleY: 1 }}
-                      transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.72, ease: EASING }}
-                      aria-hidden="true"
-                    />
-                  </div>
-
-                  {/* Stat 3 */}
-                  <div className="sm:px-6 pt-2 sm:pt-0 pb-2 sm:pb-0 relative">
-                    <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
-                      <CountUp value={stats.eventsCount} />
-                    </div>
-                    <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
-                      {stats.eventsLabel}
-                    </div>
-                    {/* Divider 3 growing in height */}
-                    <m.div
-                      className="hidden sm:block absolute top-1 bottom-1 right-0 w-[1px] bg-warm-border origin-top"
-                      initial={prefersReducedMotion ? false : { scaleY: 0 }}
-                      animate={{ scaleY: 1 }}
-                      transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.76, ease: EASING }}
-                      aria-hidden="true"
-                    />
-                  </div>
-
-                  {/* Stat 4 */}
-                  <div className="sm:pl-6 pt-2 sm:pt-0">
-                    <div className="font-serif text-3xl sm:text-4xl text-charcoal font-semibold">
-                      <CountUp value={stats.cgpaScore} decimals={1} />
-                    </div>
-                    <div className="text-xs sm:text-sm text-muted-grey font-medium mt-1">
-                      {stats.cgpaLabel}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </m.div>
-          </div>
-
-          {/* Right Column: Signature Visual Composition */}
-          <div className="lg:col-span-5 relative flex items-center justify-center pt-8 lg:pt-0">
-            <div className="relative w-full max-w-[380px] sm:max-w-[420px] aspect-[4/5] mx-auto">
-              {/* Plus (+) Crosshair marker fades in */}
-              <m.div
-                initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.4, ease: EASING }}
-                className="absolute -top-3 right-4 sm:-right-2 z-20 text-charcoal/60 font-mono text-2xl select-none"
-                aria-hidden="true"
-              >
-                +
-              </m.div>
-
-              {/* Sun circle: spring pointer depth wrapper (-14px) */}
-              <m.div
-                style={{
-                  x: isPointerDepthActive ? sunX : 0,
-                  y: isPointerDepthActive ? sunY : 0,
-                }}
-                className="absolute top-[28%] -left-8 sm:-left-14 z-0 pointer-events-none"
-              >
-                {/* Sun circle entrance animation */}
-                <m.div
-                  initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 16 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.2, ease: EASING }}
-                  className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-burnt-orange shadow-lg arch-sun-breathe"
-                  style={{
-                    background: 'radial-gradient(circle at 35% 35%, #E47B43, #C94F17)',
-                  }}
-                  aria-hidden="true"
-                />
-              </m.div>
-
-              {/* Arch image & outline: separate spring pointer depths (outline -8px, image -6px) */}
-              <m.div
-                initial={prefersReducedMotion ? false : { clipPath: 'inset(100% 0% 0% 0%)' }}
-                animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
-                transition={{ duration: 0.7, delay: prefersReducedMotion ? 0 : 0.15, ease: EASING }}
-                className="w-full h-full"
-              >
-                <ArchFrame
-                  outlineStyle={{
-                    x: isPointerDepthActive ? archOutlineX : 0,
-                    y: isPointerDepthActive ? archOutlineY : 0,
-                  }}
-                  imageStyle={{
-                    x: isPointerDepthActive ? archImgX : 0,
-                    y: isPointerDepthActive ? archImgY : 0,
-                  }}
-                >
-                  <MountainFallback
-                    type="hero-sunrise"
-                    alt="Mountain peak at sunrise framed by an architectural arch"
-                  />
-                </ArchFrame>
-              </m.div>
-
-              {/* Floating Dark Terminal Card: spring pointer depth wrapper (-10px) */}
-              <m.div
-                style={{
-                  x: isPointerDepthActive ? terminalX : 0,
-                  y: isPointerDepthActive ? terminalY : 0,
-                }}
-                className="absolute -bottom-6 sm:-bottom-8 -left-4 sm:-left-8 z-30 pointer-events-auto"
-              >
-                <m.div
-                  initial={prefersReducedMotion ? false : { opacity: 0, x: -20, y: 20 }}
-                  animate={{ opacity: 1, x: 0, y: 0 }}
-                  transition={{ duration: 0.55, delay: prefersReducedMotion ? 0 : 0.3, ease: EASING }}
-                  className="hero-idle-float-terminal bg-[#1E1E1E] text-white/90 rounded-[8px] p-4 sm:p-5 shadow-2xl border border-white/10 w-[260px] sm:w-[320px] backdrop-blur-md"
-                >
-                  <div className="flex items-center space-x-1.5 mb-3 select-none" aria-hidden="true">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] inline-block" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] inline-block" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] inline-block" />
-                  </div>
-
-                  <TerminalTypewriter
-                    startDelay={450}
-                    onFinished={handleTerminalFinished}
-                  />
-
-                  {terminalFinished && (
-                    <Suspense fallback={null}>
-                      <InteractiveTerminal />
-                    </Suspense>
-                  )}
-                </m.div>
-              </m.div>
-
-              {/* Floating White Tags Card: spring pointer depth wrapper (-12px) */}
-              <m.div
-                style={{
-                  x: isPointerDepthActive ? tagsX : 0,
-                  y: isPointerDepthActive ? tagsY : 0,
-                }}
-                className="absolute top-12 sm:top-16 -right-4 sm:-right-10 z-30 pointer-events-none"
-              >
-                <m.div
-                  initial={prefersReducedMotion ? false : { opacity: 0, x: 20, y: -10 }}
-                  animate={{ opacity: 1, x: 0, y: 0 }}
-                  transition={{ duration: 0.55, delay: prefersReducedMotion ? 0 : 0.4, ease: EASING }}
-                  className="hero-idle-float-tags bg-card-surface/95 backdrop-blur-md rounded-[8px] py-3 px-4 shadow-float border border-warm-border min-w-[170px] sm:min-w-[190px]"
-                >
-                  <m.div
-                    variants={tagContainerVariants}
-                    initial="hidden"
-                    animate="show"
-                    className="divide-y divide-warm-border/70 text-xs sm:text-sm font-medium text-charcoal"
-                  >
-                    <m.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
-                      <Cpu className="w-4 h-4 text-burnt-orange stroke-[2]" />
-                      <span>AI / ML</span>
-                    </m.div>
-                    <m.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
-                      <Layers className="w-4 h-4 text-burnt-orange stroke-[2]" />
-                      <span>Full Stack</span>
-                    </m.div>
-                    <m.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
-                      <Eye className="w-4 h-4 text-burnt-orange stroke-[2]" />
-                      <span>Computer Vision</span>
-                    </m.div>
-                    <m.div variants={tagRowVariants} className="flex items-center gap-2.5 py-2">
-                      <Zap className="w-4 h-4 text-burnt-orange stroke-[2]" />
-                      <span>Product Development</span>
-                    </m.div>
-                  </m.div>
-                </m.div>
-              </m.div>
-            </div>
-          </div>
+              </span>
+            </span>
+          </m.h2>
         </div>
+
+        {/* CENTRE: the arch frame, centred horizontally and vertically in the hero */}
+        <div className="col-span-4 flex justify-center items-center relative">
+          {renderArchFrame(true)}
+        </div>
+
+        {/* RIGHT COLUMN: top stays empty, roles at BOTTOM RIGHT aligned to frame bottom */}
+        <div className="col-span-4 flex flex-col justify-end self-stretch pb-6 select-none text-left">
+          <m.div
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: prefersReducedMotion ? 0 : 0.9, ease: EASING }}
+            className="flex flex-col gap-[10px] text-charcoal font-medium font-sans"
+            style={{ fontSize: 'clamp(16px, 1.3vw, 20px)' }}
+          >
+            <div className="flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-burnt-orange shrink-0" aria-hidden="true" />
+              <span>AI/ML Developer</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-burnt-orange shrink-0" aria-hidden="true" />
+              <span>Full Stack Engineer</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-burnt-orange shrink-0" aria-hidden="true" />
+              <span>Problem Solver</span>
+            </div>
+          </m.div>
+        </div>
+
+      </div>
+
+      {/* TABLET AND MOBILE LAYOUT (below 1024px): centred stack */}
+      {/* Sequence: frame, then name, then headline on two lines, then three roles one below other (centred with dots on left) */}
+      <div className="lg:hidden w-full max-w-md mx-auto px-4 relative z-10 flex flex-col items-center justify-center text-center space-y-4 sm:space-y-5">
+        
+        {/* Frame */}
+        <div className="w-full flex justify-center pt-2">
+          {renderArchFrame(false)}
+        </div>
+
+        {/* Name: Mohak / Agrawal */}
+        <m.div
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.6, ease: EASING }}
+          className="flex flex-col items-center justify-center gap-1 pt-1"
+        >
+          <span className="w-7 h-[1.5px] bg-burnt-orange rounded-full opacity-80 mb-0.5" aria-hidden="true" />
+          <h1 className="font-serif font-medium text-charcoal tracking-tight text-[clamp(28px,6.5vw,38px)] leading-[1.08] text-center">
+            <span className="block">Mohak</span>
+            <span className="block">Agrawal</span>
+          </h1>
+        </m.div>
+
+        {/* Headline on two lines */}
+        <m.h2
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.75, ease: EASING }}
+          className="font-serif font-normal text-charcoal/90 tracking-tight text-center text-[clamp(26px,5.8vw,34px)] leading-[1.2] mt-4 sm:mt-5"
+        >
+          <span className="block whitespace-nowrap">Ideas deserve</span>
+          <span className="block whitespace-nowrap">
+            to be{' '}
+            <span className="relative inline-block text-burnt-orange italic font-normal">
+              built.
+              <m.span
+                className="absolute left-0 -bottom-1 w-full h-[2.5px] bg-burnt-orange rounded-full origin-left"
+                initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.6, delay: prefersReducedMotion ? 0 : 0.95, ease: EASING }}
+                aria-hidden="true"
+              />
+            </span>
+          </span>
+        </m.h2>
+
+        {/* Three roles one below the other: centred, dots on the left of each line */}
+        <m.div
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.9, ease: EASING }}
+          className="flex flex-col items-center gap-2 text-xs sm:text-sm font-medium text-charcoal/85 text-center font-sans pt-1"
+        >
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange shrink-0" aria-hidden="true" />
+            <span>AI/ML Developer</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange shrink-0" aria-hidden="true" />
+            <span>Full Stack Engineer</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange shrink-0" aria-hidden="true" />
+            <span>Problem Solver</span>
+          </div>
+        </m.div>
+
       </div>
     </section>
   );

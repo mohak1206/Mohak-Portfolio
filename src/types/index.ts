@@ -7,6 +7,7 @@ export interface Metric {
 export interface Project {
   slug: string;
   title: string;
+  shortName?: string;
   oneLiner: string;
   category: string;
   categories: string[];
@@ -84,6 +85,7 @@ export interface ProfileData {
   };
   heroSubheadline: string;
   heroBio: string;
+  intro?: string;
   nowBuilding?: string[];
   location: string;
   currentStatus: string;

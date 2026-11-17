@@ -52,13 +52,23 @@ export function usePageMeta({ title, description, path = '' }: PageMetaOptions =
     setMeta('name', 'description', fullDesc);
     setLink('canonical', fullUrl);
 
-    setMeta('property', 'og:title', fullTitle);
-    setMeta('property', 'og:description', fullDesc);
-    setMeta('property', 'og:url', fullUrl);
+    const isHomePage = path === '' || path === '/';
+    const shareTitle = isHomePage
+      ? 'Mohak Agrawal - Portfolio'
+      : `${title ? title.replace(/\s*[—|]\s*Mohak Agrawal.*$/i, '').trim() : 'Page'} | Mohak Agrawal - Portfolio`;
+    const shareDesc = isHomePage
+      ? 'Mohak Agrawal : AI/ML & Full Stack Developer'
+      : fullDesc;
 
-    setMeta('property', 'twitter:title', fullTitle);
-    setMeta('property', 'twitter:description', fullDesc);
+    setMeta('property', 'og:title', shareTitle);
+    setMeta('property', 'og:description', shareDesc);
+    setMeta('property', 'og:url', fullUrl);
+    setMeta('property', 'og:image:alt', 'Mohak Agrawal - Portfolio');
+
+    setMeta('property', 'twitter:title', shareTitle);
+    setMeta('property', 'twitter:description', shareDesc);
     setMeta('property', 'twitter:url', fullUrl);
+    setMeta('property', 'twitter:image:alt', 'Mohak Agrawal - Portfolio');
   }, [title, description, path]);
 }
 

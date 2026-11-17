@@ -5,7 +5,6 @@ import { Skeleton, SkeletonText } from './Skeleton';
 export const AboutSkeleton: React.FC = () => {
   return (
     <section
-      id="about"
       aria-busy="true"
       aria-label="Loading About section"
       className="py-20 lg:py-28 bg-ivory border-b border-warm-border"
@@ -82,7 +81,6 @@ export const AboutSkeleton: React.FC = () => {
 export const JourneySkeleton: React.FC = () => {
   return (
     <section
-      id="journey"
       aria-busy="true"
       aria-label="Loading Journey section"
       className="py-20 lg:py-28 bg-cream border-b border-warm-border relative overflow-hidden"
@@ -125,7 +123,6 @@ export const SelectedWorksSkeleton: React.FC<{ showAll?: boolean }> = ({ showAll
 
   return (
     <section
-      id="projects"
       aria-busy="true"
       aria-label="Loading Projects section"
       className="py-20 lg:py-28 bg-ivory border-b border-warm-border"
@@ -172,7 +169,6 @@ export const SelectedWorksSkeleton: React.FC<{ showAll?: boolean }> = ({ showAll
 export const LabIdeasSkeleton: React.FC = () => {
   return (
     <section
-      id="lab-ideas"
       aria-busy="true"
       aria-label="Loading Lab & Ideas section"
       className="py-20 lg:py-28 bg-ivory border-b border-warm-border"
@@ -213,7 +209,6 @@ export const LabIdeasSkeleton: React.FC = () => {
 export const ExpertiseSkeleton: React.FC = () => {
   return (
     <section
-      id="skills"
       aria-busy="true"
       aria-label="Loading Expertise section"
       className="py-20 lg:py-28 bg-ivory border-b border-warm-border"
@@ -270,7 +265,6 @@ export const ExpertiseSkeleton: React.FC = () => {
 export const ExperienceSkeleton: React.FC = () => {
   return (
     <section
-      id="experience"
       aria-busy="true"
       aria-label="Loading Experience section"
       className="py-20 lg:py-28 bg-ivory border-b border-warm-border"
@@ -308,7 +302,6 @@ export const ExperienceSkeleton: React.FC = () => {
 export const CredentialsSkeleton: React.FC = () => {
   return (
     <section
-      id="credentials"
       aria-busy="true"
       aria-label="Loading Credentials section"
       className="py-20 lg:py-28 bg-ivory border-b border-warm-border"
@@ -348,7 +341,6 @@ export const CredentialsSkeleton: React.FC = () => {
 export const ContactSkeleton: React.FC = () => {
   return (
     <section
-      id="contact"
       aria-busy="true"
       aria-label="Loading Contact section"
       className="py-20 lg:py-28 bg-ivory"

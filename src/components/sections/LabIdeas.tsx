@@ -7,7 +7,7 @@ import { Reveal } from '../ui/Reveal';
 
 export const LabIdeas: React.FC = () => {
   return (
-    <section aria-label="Lab & Ideas" className="py-16 lg:py-24 bg-ivory border-b border-warm-border">
+    <section id="lab-ideas" aria-label="Lab & Ideas" className="py-16 lg:py-24 bg-ivory border-b border-warm-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <Reveal>
           <div className="space-y-3">

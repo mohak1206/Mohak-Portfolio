@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import ReactDOM from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Search, X, FileText, ArrowUpRight, FolderGit2, Compass, Mail, Check, CornerDownLeft, Play } from 'lucide-react';
 import { projectsData } from '../../data/projects';
 import { profileData } from '../../data/profile';
 import { scrollToTarget } from '../../lib/lenis';
+import { useScrollLock } from '../../hooks/useScrollLock';
 
 interface CommandItem {
   id: string;
@@ -204,19 +206,36 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
     return groups;
   }, [filteredItems]);
 
+  useScrollLock(isOpen);
+
   useEffect(() => {
     setSelectedIndex(0);
   }, [query]);
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
       setTimeout(() => inputRef.current?.focus(), 50);
     } else {
-      document.body.style.overflow = 'unset';
       setQuery('');
       setSelectedIndex(0);
     }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const rootEl = document.getElementById('root');
+    if (rootEl) {
+      rootEl.setAttribute('aria-hidden', 'true');
+      rootEl.setAttribute('inert', '');
+    }
+
+    return () => {
+      if (rootEl) {
+        rootEl.removeAttribute('aria-hidden');
+        rootEl.removeAttribute('inert');
+      }
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -252,9 +271,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
     }
   }, [selectedIndex]);
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === 'undefined') return null;
 
-  return (
+  return ReactDOM.createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -264,9 +283,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-2xl bg-ivory border border-warm-border rounded-[8px] shadow-2xl overflow-hidden flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-150">
-        {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-warm-border bg-card-surface/60">
+      <div
+        data-lenis-prevent
+        className="relative w-full max-w-2xl bg-ivory border border-warm-border rounded-[8px] shadow-2xl overflow-hidden flex flex-col max-h-[80dvh] animate-in zoom-in-95 duration-150"
+      >
+        {/* Search Input Bar (non-scrolling) */}
+        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-warm-border bg-card-surface/60 shrink-0">
           <Search className="w-5 h-5 text-burnt-orange shrink-0" />
           <input
             ref={inputRef}
@@ -292,8 +314,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
           )}
         </div>
 
-        {/* Results List */}
-        <div ref={listRef} className="overflow-y-auto p-2 space-y-4 flex-grow divide-y divide-warm-border/40">
+        {/* Results List: ONLY scroller with overscroll contain */}
+        <div
+          ref={listRef}
+          tabIndex={-1}
+          data-lenis-prevent
+          className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-2 space-y-4 divide-y divide-warm-border/40 focus:outline-none"
+        >
           {filteredItems.length === 0 ? (
             <div className="py-12 text-center text-sm font-mono text-muted-grey">
               No results found for "{query}".
@@ -350,7 +377,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
         </div>
 
         {/* Footer shortcuts hint */}
-        <div className="px-4 py-2 border-t border-warm-border bg-cream/50 flex items-center justify-between text-[11px] font-mono text-muted-grey">
+        <div className="px-4 py-2 border-t border-warm-border bg-cream/50 flex items-center justify-between text-[11px] font-mono text-muted-grey shrink-0">
           <div className="flex items-center gap-3">
             <span>↑↓ Navigate</span>
             <span>↵ Select</span>
@@ -359,7 +386,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
           <span>{filteredItems.length} results</span>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

@@ -25,7 +25,7 @@ export const profileData: ProfileData = {
   linkedin: "https://www.linkedin.com/in/mohak-agrawal7025",
   resumeUrl: "/Mohak_Agrawal_Resume.pdf",
   stats: {
-    projectsCount: "4",
+    projectsCount: "5",
     projectsLabel: "Completed Projects",
     internshipsCount: "2",
     internshipsLabel: "Internships",

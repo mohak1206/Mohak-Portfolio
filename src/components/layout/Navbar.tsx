@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowUpRight, Menu, X, Search, Sun, Moon } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { m, useScroll } from 'framer-motion';
-import { useScrollSpy } from '../../hooks/useScrollSpy';
+import { useActiveSection } from '../../hooks/useActiveSection';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useTheme } from '../../context/ThemeContext';
 import { scrollToTarget } from '../../lib/lenis';
@@ -17,6 +17,7 @@ const navItems = [
   { label: 'Projects', href: '#projects', id: 'projects' },
   { label: 'Blogs', href: '/blogs', id: 'blogs' },
   { label: 'Experience', href: '#experience', id: 'experience' },
+  { label: 'Services', href: '#services', id: 'services' },
   { label: 'Contact', href: '#contact', id: 'contact' },
 ];
 
@@ -36,10 +37,8 @@ export const Navbar: React.FC = () => {
     }
   }, []);
 
-  const activeSection = useScrollSpy(
-    navItems.map((n) => n.id),
-    160
-  );
+  const navSectionIds = ['home', 'about', 'projects', 'experience', 'services', 'contact'];
+  const activeSection = useActiveSection(navSectionIds);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -100,7 +99,7 @@ export const Navbar: React.FC = () => {
           </a>
 
           {/* Center: Desktop Navigation */}
-          <nav className="group/nav hidden md:flex items-center space-x-8" aria-label="Main Navigation">
+          <nav className="group/nav hidden md:flex items-center space-x-5 lg:space-x-7 xl:space-x-8" aria-label="Main Navigation">
             {navItems.map((item) => {
               const isActive = item.href.startsWith('/')
                 ? location.pathname === item.href || (item.href === '/blogs' && (location.pathname.startsWith('/blogs') || location.pathname.startsWith('/notes')))

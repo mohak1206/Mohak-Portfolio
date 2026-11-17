@@ -41,6 +41,9 @@ export const Footer: React.FC = () => {
               <a href="/blogs" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
                 Blogs
               </a>
+              <a href="/#services" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
+                Services
+              </a>
               <a href="/resume" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
                 Resume
               </a>

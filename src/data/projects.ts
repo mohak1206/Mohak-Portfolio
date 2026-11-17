@@ -5,6 +5,7 @@ export const projectsData: Project[] = [
   {
     slug: "signature-detection",
     title: "Signature Detection using YOLOv8",
+    shortName: "Signature Detection",
     oneLiner: "YOLOv8 model that finds signatures in document images (92.4% mAP@50).",
     category: "AI / Computer Vision",
     categories: ["AI / ML"],
@@ -30,6 +31,7 @@ export const projectsData: Project[] = [
   {
     slug: "fire-smoke-detection",
     title: "Fire & Smoke Detection using YOLOv8",
+    shortName: "Fire & Smoke",
     oneLiner: "Real-time fire and smoke detection using YOLOv8n.",
     category: "AI / Computer Vision",
     categories: ["AI / ML"],
@@ -58,6 +60,7 @@ export const projectsData: Project[] = [
   {
     slug: "inventory-management",
     title: "Inventory Management System",
+    shortName: "Inventory",
     oneLiner: "Full-stack inventory system for stock, transactions and real-time alerts.",
     category: "Full-stack Web Application",
     categories: ["Full-Stack"],
@@ -100,6 +103,7 @@ export const projectsData: Project[] = [
   {
     slug: "alumni-connect",
     title: "Alumni Connect: Cross-Platform College App",
+    shortName: "Alumni Connect",
     oneLiner: "Cross-platform app connecting students and alumni.",
     category: "Cross-platform Application",
     categories: ["Mobile"],
@@ -133,6 +137,7 @@ export const projectsData: Project[] = [
   {
     slug: "healmaps",
     title: "Healmaps / Arogya-Map",
+    shortName: "Healmaps",
     oneLiner: "Hospital resource dashboard concept showing real-time bed and ICU availability, specialists, and classification.",
     category: "Healthcare Platform Concept",
     categories: ["Full-Stack"],
@@ -159,6 +164,7 @@ export const projectsData: Project[] = [
   {
     slug: "civic-i",
     title: "Civic-I: AI-Assisted Civic Issue Reporting",
+    shortName: "Civic-I",
     oneLiner: "Prototype platform for reporting and monitoring local civic problems in Palghar.",
     category: "AI + Full-Stack (Team Project)",
     categories: ["AI / ML", "Full-Stack"],
@@ -194,6 +200,7 @@ export const projectsData: Project[] = [
   {
     slug: "student-helper",
     title: "Student Helper / Micro-Help Network",
+    shortName: "Student Helper",
     oneLiner: "Peer-to-peer student micro-help network for coursework, notes, and peer assistance.",
     category: "Full-stack Web Application",
     categories: ["Full-Stack"],

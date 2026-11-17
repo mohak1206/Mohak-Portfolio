@@ -10,8 +10,8 @@ import { Tag } from './Tag';
 import { Button } from './Button';
 import { GlossaryTooltip } from './GlossaryTooltip';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { useScrollLock } from '../../hooks/useScrollLock';
 import { EASING } from '../../lib/animation';
-import { lockScroll, unlockScroll } from '../../lib/scrollLock';
 
 interface ProjectModalProps {
   project: Project | null;
@@ -31,12 +31,7 @@ const ProjectModalInner: React.FC<ProjectModalInnerProps> = ({ project, onClose 
   const prefersReduced = useReducedMotion();
 
   // Scroll locking & Lenis stop
-  useEffect(() => {
-    lockScroll();
-    return () => {
-      unlockScroll();
-    };
-  }, []);
+  useScrollLock(true);
 
   // Background inert & aria-hidden on #root
   useEffect(() => {

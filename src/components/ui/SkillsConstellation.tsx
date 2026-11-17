@@ -61,7 +61,7 @@ const SKILL_MATCH_MAP: Record<string, string[]> = {
   mysql: ['mysql', 'mysql-connector-python'],
   firebase: ['firebase', 'firestore', 'firebase firestore'],
   postgres: ['postgresql', 'postgres'],
-  yolov8: ['yolov8', 'yolov8n', 'ultralytics'],
+  yolov8: ['yolov8', 'yolov8n', 'ultralytics', 'yolo'],
   pytorch: ['pytorch'],
   opencv: ['opencv', 'cv'],
   roboflow: ['roboflow'],
@@ -81,73 +81,211 @@ export const SkillsConstellation: React.FC = () => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // SVG dimensions & centers
-  const width = 800;
-  const height = 620;
-  const cx = width / 2;
-  const cy = height / 2 - 15;
-  const rInner = 145; // Project nodes radius
-  const rOuter = 250; // Skill nodes radius
+  // SVG viewBox 1100 x 820 with center (550, 410)
+  const width = 1100;
+  const height = 820;
+  const cx = 550;
+  const cy = 410;
+  const rInner = 150; // Inner ring: Projects
+  const rOuter = 330; // Outer ring: Skills
+  const rGroupArc = 365; // Group arc line radius
+  const rGroupLabel = 400; // Group label radius
 
-  // Map project nodes on inner ring
+  // 1) Project nodes on inner ring (radius 150)
   const projectNodes = useMemo(() => {
     const list = projectsData.slice(0, 7);
     const count = list.length;
     return list.map((proj, idx) => {
+      // Space evenly starting at top
       const angle = (idx / count) * 2 * Math.PI - Math.PI / 2;
       const x = cx + rInner * Math.cos(angle);
       const y = cy + rInner * Math.sin(angle);
+
+      // Short name for label
+      const shortTitle = proj.shortName || proj.title;
+
+      // Project label drawn INSIDE the ring, facing the center
+      const labelDistInward = 24;
+      const labelX = cx + (rInner - labelDistInward) * Math.cos(angle);
+      const labelY = cy + (rInner - labelDistInward) * Math.sin(angle);
+
+      // textAnchor start for nodes on left half, end for right half
+      const cos = Math.cos(angle);
+      let textAnchor: 'start' | 'end' | 'middle' = 'middle';
+      if (cos > 0.15) {
+        textAnchor = 'end';
+      } else if (cos < -0.15) {
+        textAnchor = 'start';
+      }
+
       return {
         id: proj.slug,
-        title: proj.title.replace(' using YOLOv8', '').replace(': Cross-Platform College App', ''),
+        title: shortTitle,
         fullTitle: proj.title,
         slug: proj.slug,
         stack: proj.stack,
         x,
         y,
         angle,
+        labelX,
+        labelY,
+        textAnchor,
       };
     });
   }, [cx, cy, rInner]);
 
-  // Map skill nodes on outer ring, grouped into arcs by category
-  const { skillNodes, categoryLabels } = useMemo(() => {
-    const nodes: Array<SkillNodeDef & { x: number; y: number; angle: number }> = [];
-    const catLabels: Array<{ category: string; x: number; y: number; angle: number }> = [];
+  // 2) Skill nodes on outer ring (radius 330) and Group arcs & labels (radius 400)
+  const { skillNodes, groupArcs, groupLabels } = useMemo(() => {
+    const totalSkills = SKILL_NODES.length;
+    const totalCategories = CATEGORIES.length;
 
-    // Group skills by category
+    // 12 degree gap between groups in radians
+    const gapRad = 12 * (Math.PI / 180);
+    const totalGap = totalCategories * gapRad;
+    const availableArc = 2 * Math.PI - totalGap;
+
     const grouped = CATEGORIES.map((cat) => ({
       category: cat,
       items: SKILL_NODES.filter((s) => s.category === cat),
     }));
 
-    const totalCategories = CATEGORIES.length;
-    grouped.forEach((group, catIdx) => {
-      const arcStart = (catIdx / totalCategories) * 2 * Math.PI - Math.PI / 2 + 0.12;
-      const arcEnd = ((catIdx + 1) / totalCategories) * 2 * Math.PI - Math.PI / 2 - 0.12;
-      const count = group.items.length;
+    let currentAngle = -Math.PI / 2 + gapRad / 2;
+    const rawSkillNodes: Array<{
+      id: string;
+      label: string;
+      category: string;
+      x: number;
+      y: number;
+      angle: number;
+      labelRadius: number;
+      labelX: number;
+      labelY: number;
+      textAnchor: 'start' | 'end';
+    }> = [];
 
-      // Category label at midpoint of arc
+    const arcs: Array<{
+      category: string;
+      path: string;
+    }> = [];
+
+    const labels: Array<{
+      category: string;
+      x: number;
+      y: number;
+      angle: number;
+    }> = [];
+
+    grouped.forEach((group) => {
+      const count = group.items.length;
+      // Span proportional to item count
+      const groupSpan = (count / totalSkills) * availableArc;
+      const arcStart = currentAngle;
+      const arcEnd = currentAngle + groupSpan;
       const midAngle = (arcStart + arcEnd) / 2;
-      const catX = cx + (rOuter + 38) * Math.cos(midAngle);
-      const catY = cy + (rOuter + 38) * Math.sin(midAngle);
-      catLabels.push({
+
+      // Group arc line under group's arc
+      const arcX1 = cx + rGroupArc * Math.cos(arcStart);
+      const arcY1 = cy + rGroupArc * Math.sin(arcStart);
+      const arcX2 = cx + rGroupArc * Math.cos(arcEnd);
+      const arcY2 = cy + rGroupArc * Math.sin(arcEnd);
+      const arcPath = `M ${arcX1} ${arcY1} A ${rGroupArc} ${rGroupArc} 0 0 1 ${arcX2} ${arcY2}`;
+      arcs.push({ category: group.category, path: arcPath });
+
+      // Group label on third radius (400)
+      const groupLabelX = cx + rGroupLabel * Math.cos(midAngle);
+      const groupLabelY = cy + rGroupLabel * Math.sin(midAngle);
+      labels.push({
         category: group.category,
-        x: catX,
-        y: catY,
+        x: groupLabelX,
+        y: groupLabelY,
         angle: midAngle,
       });
 
+      // Individual skill nodes inside the arc
       group.items.forEach((item, itemIdx) => {
-        const angle = count === 1 ? midAngle : arcStart + (itemIdx / (count - 1)) * (arcEnd - arcStart);
+        const angle =
+          count === 1
+            ? midAngle
+            : arcStart + ((itemIdx + 0.5) / count) * groupSpan;
+
         const x = cx + rOuter * Math.cos(angle);
         const y = cy + rOuter * Math.sin(angle);
-        nodes.push({ ...item, x, y, angle });
+
+        // Put each skill label OUTSIDE its node along radius (text-anchor start on right, end on left)
+        const initLabelRadius = rOuter + 18;
+        const labelX = cx + initLabelRadius * Math.cos(angle);
+        const labelY = cy + initLabelRadius * Math.sin(angle);
+        const textAnchor: 'start' | 'end' = Math.cos(angle) >= 0 ? 'start' : 'end';
+
+        rawSkillNodes.push({
+          ...item,
+          x,
+          y,
+          angle,
+          labelRadius: initLabelRadius,
+          labelX,
+          labelY,
+          textAnchor,
+        });
       });
+
+      currentAngle = arcEnd + gapRad;
     });
 
-    return { skillNodes: nodes, categoryLabels: catLabels };
-  }, [cx, cy, rOuter]);
+    // 3) Collision Avoidance Relaxation for skill labels:
+    // Approximate bounding box: (characters * 0.6 * fontSize) by fontSize (11px)
+    const relaxedNodes = rawSkillNodes.map((n) => ({ ...n }));
+    const maxIterations = 40;
+    const nudgeStep = 4;
+
+    for (let iter = 0; iter < maxIterations; iter++) {
+      let hadOverlap = false;
+
+      for (let i = 0; i < relaxedNodes.length; i++) {
+        for (let j = i + 1; j < relaxedNodes.length; j++) {
+          const a = relaxedNodes[i];
+          const b = relaxedNodes[j];
+
+          const aWidth = a.label.length * 0.6 * 11;
+          const aHeight = 14;
+          const aLeft = a.textAnchor === 'start' ? a.labelX : a.labelX - aWidth;
+          const aRight = aLeft + aWidth;
+          const aTop = a.labelY - aHeight / 2;
+          const aBottom = aTop + aHeight;
+
+          const bWidth = b.label.length * 0.6 * 11;
+          const bHeight = 14;
+          const bLeft = b.textAnchor === 'start' ? b.labelX : b.labelX - bWidth;
+          const bRight = bLeft + bWidth;
+          const bTop = b.labelY - bHeight / 2;
+          const bBottom = bTop + bHeight;
+
+          // Check AABB overlap with 3px buffer
+          const overlapX = aLeft - 3 < bRight && aRight + 3 > bLeft;
+          const overlapY = aTop - 3 < bBottom && aBottom + 3 > bTop;
+
+          if (overlapX && overlapY) {
+            hadOverlap = true;
+            // Nudge the outer one further outwards along its radius
+            const target = a.labelRadius >= b.labelRadius ? a : b;
+            if (target.labelRadius < 470) {
+              target.labelRadius += nudgeStep;
+              target.labelX = cx + target.labelRadius * Math.cos(target.angle);
+              target.labelY = cy + target.labelRadius * Math.sin(target.angle);
+            }
+          }
+        }
+      }
+
+      if (!hadOverlap) break;
+    }
+
+    return {
+      skillNodes: relaxedNodes,
+      groupArcs: arcs,
+      groupLabels: labels,
+    };
+  }, [cx, cy, rOuter, rGroupArc, rGroupLabel]);
 
   // Compute connections between projects and skills
   const connections: Connection[] = useMemo(() => {
@@ -215,11 +353,11 @@ export const SkillsConstellation: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Caption text
+  // Caption text below SVG
   const caption = useMemo(() => {
     if (!selectedNode) {
       return (
-        <span className="text-muted-grey">
+        <span className="text-muted-grey text-xs sm:text-sm">
           Hover or tap any project or skill to explore technology connections. Click a project node to view details.
         </span>
       );
@@ -234,14 +372,14 @@ export const SkillsConstellation: React.FC = () => {
 
       if (!skill || connectedProjects.length === 0) {
         return (
-          <span>
-            <strong className="text-burnt-orange">{skill?.label}</strong>: Foundational skill across architectures.
+          <span className="text-xs sm:text-sm">
+            <strong className="text-burnt-orange font-semibold">{skill?.label}</strong>: Foundational skill across architectures.
           </span>
         );
       }
 
       return (
-        <span className="flex flex-wrap items-center justify-center gap-1.5">
+        <span className="flex flex-wrap items-center justify-center gap-1.5 text-xs sm:text-sm">
           <span className="font-semibold text-charcoal">{skill.label}</span>
           <span className="text-muted-grey">is used in:</span>
           {connectedProjects.map((p, idx) => (
@@ -269,12 +407,12 @@ export const SkillsConstellation: React.FC = () => {
       if (!proj) return null;
 
       return (
-        <span className="flex flex-wrap items-center justify-center gap-1.5">
+        <span className="flex flex-wrap items-center justify-center gap-1.5 text-xs sm:text-sm">
           <Link
             to={`/projects/${proj.slug}`}
             className="font-semibold text-burnt-orange hover:text-light-orange draw-underline-link"
           >
-            {proj.title}
+            {proj.fullTitle}
           </Link>
           <span className="text-muted-grey">connects:</span>
           <span className="text-charcoal font-mono text-xs">
@@ -290,9 +428,9 @@ export const SkillsConstellation: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full max-w-4xl mx-auto flex flex-col items-center select-none"
+      className="relative w-full max-w-5xl mx-auto flex flex-col items-center select-none"
     >
-      {/* Accessible screen-reader text list */}
+      {/* Accessible screen-reader list */}
       <div className="sr-only">
         <h4>Technology Constellation List</h4>
         <ul>
@@ -310,11 +448,11 @@ export const SkillsConstellation: React.FC = () => {
         </ul>
       </div>
 
-      {/* SVG Constellation Graphic */}
-      <div className="w-full aspect-[4/3] sm:aspect-[16/11] max-h-[640px] relative">
+      {/* SVG Constellation Graphic: viewBox 1100 x 820, width 100%, min-height 560px on desktop */}
+      <div className="w-full min-h-[560px] relative flex items-center justify-center">
         <svg
           viewBox={`0 0 ${width} ${height}`}
-          className="w-full h-full overflow-visible"
+          className="w-full h-auto max-h-[820px] overflow-visible"
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* Subtle guide circles */}
@@ -326,7 +464,7 @@ export const SkillsConstellation: React.FC = () => {
             stroke="var(--color-border)"
             strokeWidth="1"
             strokeDasharray="3 3"
-            opacity="0.4"
+            opacity="0.35"
           />
           <circle
             cx={cx}
@@ -336,24 +474,43 @@ export const SkillsConstellation: React.FC = () => {
             stroke="var(--color-border)"
             strokeWidth="1"
             strokeDasharray="4 4"
-            opacity="0.4"
+            opacity="0.35"
           />
 
-          {/* Category arc labels */}
-          {categoryLabels.map((cat) => (
+          {/* Group arc lines under each group */}
+          {groupArcs.map((arc) => (
+            <path
+              key={arc.category}
+              d={arc.path}
+              fill="none"
+              stroke="var(--color-border)"
+              strokeWidth="1.2"
+              strokeDasharray="3 3"
+              opacity="0.45"
+            />
+          ))}
+
+          {/* Group labels on third radius (400) */}
+          {groupLabels.map((cat) => (
             <text
               key={cat.category}
               x={cat.x}
               y={cat.y}
               textAnchor="middle"
-              dominantBaseline="middle"
-              className="fill-muted-grey text-[10px] font-mono uppercase tracking-widest font-semibold pointer-events-none"
+              dominantBaseline="central"
+              style={{
+                paintOrder: 'stroke',
+                stroke: 'var(--color-bg)',
+                strokeWidth: '4px',
+                strokeLinejoin: 'round',
+              }}
+              className="fill-muted-grey text-[11px] font-mono uppercase tracking-widest font-bold pointer-events-none select-none"
             >
               {cat.category}
             </text>
           ))}
 
-          {/* Connection Lines */}
+          {/* Connection Lines (thin curves, opacity 0.12 by default; highlighted: orange 0.9) */}
           <g className="connections-group">
             {connections.map((c) => {
               const p = projectMap.get(c.projectId);
@@ -363,40 +520,35 @@ export const SkillsConstellation: React.FC = () => {
               const isHighlighted = activeConnectionKeys.has(`${c.projectId}-${c.skillId}`);
               const isDimmed = selectedNode !== null && !isHighlighted;
 
+              // Graceful quadratic curve bending subtly toward center
+              const ctrlX = (p.x + s.x) * 0.45 + cx * 0.1;
+              const ctrlY = (p.y + s.y) * 0.45 + cy * 0.1;
+              const pathD = `M ${p.x} ${p.y} Q ${ctrlX} ${ctrlY} ${s.x} ${s.y}`;
+
               return (
-                <m.line
+                <m.path
                   key={`${c.projectId}-${c.skillId}`}
-                  x1={p.x}
-                  y1={p.y}
-                  x2={s.x}
-                  y2={s.y}
+                  d={pathD}
+                  fill="none"
                   initial={prefersReduced ? false : { pathLength: 0, opacity: 0 }}
                   animate={{
                     pathLength: 1,
-                    opacity: isHighlighted ? 1 : isDimmed ? 0.15 : 0.45,
+                    opacity: isHighlighted ? 0.9 : isDimmed ? 0.04 : 0.12,
                     stroke: isHighlighted ? 'var(--color-accent)' : 'var(--color-border)',
                     strokeWidth: isHighlighted ? 2 : 1.2,
                   }}
-                  transition={{ duration: 0.6, ease: EASING }}
+                  transition={{ duration: 0.5, ease: EASING }}
                 />
               );
             })}
           </g>
 
-          {/* Skill Nodes (Outer Ring) */}
+          {/* Skill Nodes (Outer Ring, radius 330) */}
           <g className="skills-group">
             {skillNodes.map((s, idx) => {
               const isSelected = selectedNode?.type === 'skill' && selectedNode.id === s.id;
               const isHighlighted = activeSkillIds.has(s.id);
               const isDimmed = selectedNode !== null && !isHighlighted && !isSelected;
-
-              // Text position slightly outside or inside node based on angle
-              const cos = Math.cos(s.angle);
-              const sin = Math.sin(s.angle);
-              const labelDistance = 14;
-              const textAnchor = cos > 0.2 ? 'start' : cos < -0.2 ? 'end' : 'middle';
-              const labelX = s.x + labelDistance * cos;
-              const labelY = s.y + labelDistance * sin + (Math.abs(cos) <= 0.2 ? (sin > 0 ? 12 : -8) : 3);
 
               return (
                 <g
@@ -422,28 +574,35 @@ export const SkillsConstellation: React.FC = () => {
                     initial={prefersReduced ? false : { scale: 0, opacity: 0 }}
                     animate={{
                       scale: 1,
-                      opacity: isDimmed ? 0.25 : 1,
+                      opacity: isDimmed ? 0.2 : 1,
                       fill: isSelected || isHighlighted ? 'var(--color-accent)' : 'var(--color-card-surface)',
                       stroke: isSelected || isHighlighted ? 'var(--color-accent)' : 'var(--color-border)',
                       strokeWidth: isSelected || isHighlighted ? 2.5 : 1.5,
                     }}
                     transition={{
                       duration: 0.35,
-                      delay: prefersReduced ? 0 : idx * 0.02,
+                      delay: prefersReduced ? 0 : idx * 0.015,
                       ease: EASING,
                     }}
                   />
 
-                  {/* Skill Label */}
+                  {/* Skill Label outside along radius with halo */}
                   <m.text
-                    x={labelX}
-                    y={labelY}
-                    textAnchor={textAnchor}
+                    x={s.labelX}
+                    y={s.labelY}
+                    textAnchor={s.textAnchor}
+                    dominantBaseline="central"
                     initial={prefersReduced ? false : { opacity: 0 }}
                     animate={{
                       opacity: isDimmed ? 0.2 : 1,
                       fill: isSelected || isHighlighted ? 'var(--color-accent)' : 'var(--color-charcoal)',
-                      fontWeight: isSelected || isHighlighted ? 600 : 400,
+                      fontWeight: isSelected || isHighlighted ? 600 : 500,
+                    }}
+                    style={{
+                      paintOrder: 'stroke',
+                      stroke: 'var(--color-bg)',
+                      strokeWidth: '4px',
+                      strokeLinejoin: 'round',
                     }}
                     className="text-[11px] font-mono pointer-events-none select-none transition-colors"
                   >
@@ -454,19 +613,12 @@ export const SkillsConstellation: React.FC = () => {
             })}
           </g>
 
-          {/* Project Nodes (Inner Ring) */}
+          {/* Project Nodes (Inner Ring, radius 150) */}
           <g className="projects-group">
             {projectNodes.map((p, idx) => {
               const isSelected = selectedNode?.type === 'project' && selectedNode.id === p.id;
               const isHighlighted = activeProjectIds.has(p.id);
               const isDimmed = selectedNode !== null && !isHighlighted && !isSelected;
-
-              // Text label placement
-              const cos = Math.cos(p.angle);
-              const sin = Math.sin(p.angle);
-              const textAnchor = cos > 0.2 ? 'start' : cos < -0.2 ? 'end' : 'middle';
-              const labelX = p.x + (cos > 0.2 ? 18 : cos < -0.2 ? -18 : 0);
-              const labelY = p.y + (Math.abs(cos) <= 0.2 ? (sin > 0 ? 24 : -18) : 4);
 
               return (
                 <g
@@ -496,42 +648,49 @@ export const SkillsConstellation: React.FC = () => {
                       r="18"
                       fill="none"
                       stroke="var(--color-accent)"
-                      strokeWidth="1"
-                      opacity="0.3"
+                      strokeWidth="1.2"
+                      opacity="0.4"
                     />
                   )}
 
                   <m.circle
                     cx={p.x}
                     cy={p.y}
-                    r={isSelected || isHighlighted ? 12 : 9}
+                    r={isSelected || isHighlighted ? 11 : 8.5}
                     initial={prefersReduced ? false : { scale: 0, opacity: 0 }}
                     animate={{
                       scale: 1,
-                      opacity: isDimmed ? 0.25 : 1,
+                      opacity: isDimmed ? 0.2 : 1,
                       fill: isSelected || isHighlighted ? 'var(--color-accent)' : 'var(--color-card-surface)',
                       stroke: 'var(--color-accent)',
                       strokeWidth: isSelected || isHighlighted ? 3 : 2,
                     }}
                     transition={{
-                      duration: 0.4,
-                      delay: prefersReduced ? 0 : idx * 0.04,
+                      duration: 0.35,
+                      delay: prefersReduced ? 0 : idx * 0.03,
                       ease: EASING,
                     }}
                   />
 
-                  {/* Project Title Label */}
+                  {/* Project Title Label drawn INSIDE the ring facing center with halo */}
                   <m.text
-                    x={labelX}
-                    y={labelY}
-                    textAnchor={textAnchor}
+                    x={p.labelX}
+                    y={p.labelY}
+                    textAnchor={p.textAnchor}
+                    dominantBaseline="central"
                     initial={prefersReduced ? false : { opacity: 0 }}
                     animate={{
                       opacity: isDimmed ? 0.2 : 1,
                       fill: isSelected || isHighlighted ? 'var(--color-accent)' : 'var(--color-charcoal)',
                       fontWeight: isSelected || isHighlighted ? 600 : 500,
                     }}
-                    className="font-serif text-[12px] sm:text-[13px] pointer-events-none select-none transition-colors"
+                    style={{
+                      paintOrder: 'stroke',
+                      stroke: 'var(--color-bg)',
+                      strokeWidth: '4px',
+                      strokeLinejoin: 'round',
+                    }}
+                    className="font-serif text-[13px] pointer-events-none select-none transition-colors"
                   >
                     {p.title}
                   </m.text>
@@ -543,7 +702,7 @@ export const SkillsConstellation: React.FC = () => {
       </div>
 
       {/* Caption row below SVG */}
-      <div className="w-full mt-4 p-4 rounded-[6px] bg-card-surface border border-warm-border text-center text-xs sm:text-sm font-sans transition-all duration-200 min-h-[52px] flex items-center justify-center shadow-2xs">
+      <div className="w-full mt-4 p-4 rounded-lg bg-card-surface border border-warm-border text-center transition-all duration-200 min-h-[52px] flex items-center justify-center shadow-2xs">
         {caption}
       </div>
     </div>
@@ -551,4 +710,3 @@ export const SkillsConstellation: React.FC = () => {
 };
 
 export default SkillsConstellation;
-

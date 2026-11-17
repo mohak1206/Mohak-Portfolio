@@ -237,16 +237,16 @@ export const NotFoundPage: React.FC = () => {
             {/* Tappable Touch Chips */}
             <div className="mt-4 pt-3 border-t border-white/10 flex items-center gap-2 flex-wrap text-xs">
               <span className="text-white/40 text-[11px] select-none">Quick jump:</span>
-                {(['home', 'projects', 'resume', 'contact', 'blogs'] as const).map((cmd) => (
-                  <button
-                    key={cmd}
-                    type="button"
-                    onClick={() => runCommand(cmd)}
-                    className="px-2 py-1 rounded bg-white/10 hover:bg-burnt-orange hover:text-white text-white/80 transition-colors font-mono cursor-pointer active:scale-95"
-                  >
-                    {cmd}
-                  </button>
-                ))}
+              {(['home', 'projects', 'resume', 'contact', 'blogs'] as const).map((cmd) => (
+                <button
+                  key={cmd}
+                  type="button"
+                  onClick={() => runCommand(cmd)}
+                  className="px-2 py-1 rounded bg-white/10 hover:bg-burnt-orange hover:text-white text-white/80 transition-colors font-mono cursor-pointer active:scale-95"
+                >
+                  {cmd}
+                </button>
+              ))}
             </div>
           </m.div>
         </div>

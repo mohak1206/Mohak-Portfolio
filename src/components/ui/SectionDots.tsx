@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { useScrollSpy } from '../../hooks/useScrollSpy';
+import { useActiveSection } from '../../hooks/useActiveSection';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { scrollToTarget } from '../../lib/lenis';
 
@@ -13,13 +13,16 @@ const sections = [
   { id: 'expertise', label: 'Expertise' },
   { id: 'experience', label: 'Experience' },
   { id: 'credentials', label: 'Credentials' },
+  { id: 'services', label: 'Services' },
   { id: 'contact', label: 'Contact' },
 ];
+
+const sectionIds = sections.map((s) => s.id);
 
 export const SectionDots: React.FC = () => {
   const location = useLocation();
   const prefersReduced = useReducedMotion();
-  const activeSection = useScrollSpy(sections.map((s) => s.id), 200);
+  const activeSection = useActiveSection(sectionIds);
 
   // Render on desktop on home page only
   if (location.pathname !== '/') return null;
