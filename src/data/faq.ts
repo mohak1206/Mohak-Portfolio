@@ -9,7 +9,7 @@ export const faqData: FAQItem[] = [
     id: 'freelance-availability',
     question: 'Are you available for freelance work?',
     answer:
-      "Yes. I'm open to internships, full-time roles and freelance projects. TODO(Mohak): confirm freelance availability alongside your internship, e.g. weekends or about X hours per week.",
+      "Yes, I'm open to internships, full-time roles and freelance projects. Alongside my internship, I can dedicate about 12 hours per week to freelance work, and I aim to complete projects as quickly as possible.",
   },
   {
     id: 'project-types',
@@ -26,12 +26,13 @@ export const faqData: FAQItem[] = [
   {
     id: 'reply-time',
     question: 'How quickly do you reply?',
-    answer: 'TODO(Mohak): your real response time.',
+    answer: 'I usually reply within a few hours, and always within 24 hours at the most.',
   },
   {
     id: 'time-zone',
     question: 'Which time zone do you work in?',
-    answer: "I'm based in Maharashtra, India (IST). TODO(Mohak): add overlap hours if you want.",
+    answer:
+      "I'm based in Maharashtra, India (IST). I don't need fixed overlap hours. I'm flexible and can work at whatever time suits the client.",
   },
   {
     id: 'teamwork',
