@@ -6,6 +6,7 @@ import { SectionLabel } from '../ui/SectionLabel';
 import { SectionNumeral } from '../ui/SectionNumeral';
 import { Card } from '../ui/Card';
 import { Reveal } from '../ui/Reveal';
+import { SplitLines } from '../ui/SplitLines';
 import { SkeletonImage } from '../ui/SkeletonImage';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';

@@ -5,6 +5,7 @@ import { ArrowUpRight, ArrowRight } from 'lucide-react';
 import { getPublishedNotes } from '../../lib/notes';
 import { SectionLabel } from '../ui/SectionLabel';
 import { Reveal } from '../ui/Reveal';
+import { SplitLines } from '../ui/SplitLines';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
 
@@ -29,10 +30,22 @@ export const FromNotes: React.FC = () => {
             <div>
               <SectionLabel label="— FROM THE BLOG" />
               <h2 className="font-serif text-3xl sm:text-5xl font-normal leading-tight text-charcoal tracking-tight mt-2">
-                Recent{' '}
-                <span className="italic text-burnt-orange font-normal">
-                  write-ups.
-                </span>
+                <SplitLines
+                  lines={[
+                    <span key="notes-row-heading">
+                      Recent{' '}
+                      <m.span
+                        initial={prefersReduced ? false : { opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={DEFAULT_VIEWPORT}
+                        transition={{ duration: 0.5, delay: prefersReduced ? 0 : 0.35, ease: EASING }}
+                        className="italic text-burnt-orange font-normal"
+                      >
+                        write-ups.
+                      </m.span>
+                    </span>,
+                  ]}
+                />
               </h2>
             </div>
             <Link
@@ -57,7 +70,7 @@ export const FromNotes: React.FC = () => {
                 delay: prefersReduced ? 0 : index * 0.1,
                 ease: EASING,
               }}
-              className="group relative bg-card-surface border border-warm-border hover:border-burnt-orange/60 rounded-lg p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-2xs hover:shadow-md"
+              className="group relative bg-card-surface border border-warm-border hover:border-burnt-orange/60 rounded-lg p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-2xs hover:shadow-md hover:-translate-y-1"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-xs font-mono text-muted-grey">

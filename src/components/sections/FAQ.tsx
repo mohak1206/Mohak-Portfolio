@@ -3,11 +3,14 @@ import { m, AnimatePresence } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { faqData, type FAQItem } from '../../data/faq';
 import { SectionLabel } from '../ui/SectionLabel';
+import { SectionNumeral } from '../ui/SectionNumeral';
 import { Reveal } from '../ui/Reveal';
+import { SplitLines } from '../ui/SplitLines';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
 
 export const FAQ: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
   const prefersReduced = useReducedMotion();
   const [openId, setOpenId] = useState<string | null>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -56,10 +59,14 @@ export const FAQ: React.FC = () => {
 
   return (
     <section
+      ref={sectionRef}
       id="faq"
       aria-label="Frequently Asked Questions"
       className="relative py-20 lg:py-28 bg-ivory border-t border-warm-border/60 overflow-hidden"
     >
+      {/* Giant Outlined Section Numeral 08 */}
+      <SectionNumeral numeral="08" sectionRef={sectionRef} />
+
       {/* FAQPage JSON-LD */}
       <script
         type="application/ld+json"
@@ -69,12 +76,10 @@ export const FAQ: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <Reveal>
           <div className="text-center space-y-4 mb-14">
-            <SectionLabel label="— WORKING WITH ME" centered twoSided />
+            <SectionLabel label="WORKING WITH ME" centered twoSided />
             <h2 className="font-serif text-3xl sm:text-5xl font-normal leading-tight text-charcoal tracking-tight">
               Questions,{' '}
-              <span className="italic text-burnt-orange font-normal">
-                answered.
-              </span>
+              <span className="italic text-burnt-orange font-normal">answered.</span>
             </h2>
             <p className="text-muted-grey text-base sm:text-lg max-w-xl mx-auto">
               Clear answers on availability, collaboration process, tech stack, and what it’s like to work with me.
@@ -96,7 +101,7 @@ export const FAQ: React.FC = () => {
                   delay: prefersReduced ? 0 : index * 0.05,
                   ease: EASING,
                 }}
-                className="bg-card-surface border border-warm-border rounded-lg overflow-hidden transition-colors hover:border-burnt-orange/50"
+                className="bg-card-surface border border-warm-border rounded-lg overflow-hidden transition-all duration-300 hover:border-burnt-orange/50 hover:-translate-y-1 hover:shadow-float"
               >
                 <button
                   ref={(el) => {

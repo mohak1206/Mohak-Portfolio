@@ -5,7 +5,7 @@ import { Terminal as TerminalIcon, CornerDownLeft } from 'lucide-react';
 import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
 import { useReducedMotion } from '../hooks/useReducedMotion';
-import { EASING } from '../lib/animation';
+import { EASING, staggerContainerVariants } from '../lib/animation';
 
 export const NotFoundPage: React.FC = () => {
   const location = useLocation();
@@ -235,19 +235,27 @@ export const NotFoundPage: React.FC = () => {
             </form>
 
             {/* Tappable Touch Chips */}
-            <div className="mt-4 pt-3 border-t border-white/10 flex items-center gap-2 flex-wrap text-xs">
+            <m.div
+              variants={prefersReduced ? undefined : staggerContainerVariants(0.06, 0.3)}
+              initial={prefersReduced ? false : "hidden"}
+              animate="visible"
+              className="mt-4 pt-3 border-t border-white/10 flex items-center gap-2 flex-wrap text-xs"
+            >
               <span className="text-white/40 text-[11px] select-none">Quick jump:</span>
               {(['home', 'projects', 'resume', 'contact', 'blogs'] as const).map((cmd) => (
-                <button
+                <m.button
                   key={cmd}
+                  variants={prefersReduced ? undefined : { hidden: { opacity: 0, y: 6 }, visible: { opacity: 1, y: 0 } }}
+                  whileHover={prefersReduced ? undefined : { scale: 1.05 }}
+                  whileTap={prefersReduced ? undefined : { scale: 0.95 }}
                   type="button"
                   onClick={() => runCommand(cmd)}
-                  className="px-2 py-1 rounded bg-white/10 hover:bg-burnt-orange hover:text-white text-white/80 transition-colors font-mono cursor-pointer active:scale-95"
+                  className="px-2 py-1 rounded bg-white/10 hover:bg-burnt-orange hover:text-white text-white/80 transition-colors font-mono cursor-pointer"
                 >
                   {cmd}
-                </button>
+                </m.button>
               ))}
-            </div>
+            </m.div>
           </m.div>
         </div>
       </main>

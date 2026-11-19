@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { m } from 'framer-motion';
 import { Layers, Eye, Smartphone, ArrowUpRight, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { servicesData, type ServiceItem } from '../../data/services';
 import { profileData } from '../../data/profile';
 import { SectionLabel } from '../ui/SectionLabel';
+import { SectionNumeral } from '../ui/SectionNumeral';
 import { Reveal } from '../ui/Reveal';
+import { SplitLines } from '../ui/SplitLines';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
 
@@ -16,6 +18,7 @@ const ICON_MAP = {
 };
 
 export const Services: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
   const prefersReduced = useReducedMotion();
   const { services, processSteps, confirmedProcess, availabilityNote } = servicesData;
 
@@ -42,19 +45,21 @@ export const Services: React.FC = () => {
 
   return (
     <section
+      ref={sectionRef}
       id="services"
       aria-label="Freelance Services"
       className="relative py-20 lg:py-28 bg-ivory border-t border-warm-border/60 overflow-hidden"
     >
+      {/* Giant Outlined Section Numeral 07 */}
+      <SectionNumeral numeral="07" sectionRef={sectionRef} />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <Reveal>
           <div className="text-center space-y-4 mb-16">
-            <SectionLabel label="— SERVICES" centered twoSided />
+            <SectionLabel label="SERVICES" centered twoSided />
             <h2 className="font-serif text-3xl sm:text-5xl font-normal leading-tight text-charcoal tracking-tight">
               What I can{' '}
-              <span className="italic text-burnt-orange font-normal">
-                build
-              </span>{' '}
+              <span className="italic text-burnt-orange font-normal">build</span>{' '}
               for you.
             </h2>
             <p className="text-muted-grey text-base sm:text-lg max-w-2xl mx-auto">
@@ -78,7 +83,7 @@ export const Services: React.FC = () => {
                   delay: prefersReduced ? 0 : index * 0.1,
                   ease: EASING,
                 }}
-                className="group relative bg-card-surface border border-warm-border hover:border-burnt-orange/60 rounded-lg p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-2xs hover:shadow-md"
+                className="group relative bg-card-surface border border-warm-border hover:border-burnt-orange/60 rounded-lg p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-2xs hover:shadow-md hover:-translate-y-1"
               >
                 <div className="space-y-4">
                   {/* Icon square */}
@@ -153,14 +158,47 @@ export const Services: React.FC = () => {
             </div>
 
             <div className="relative">
+              {/* Connecting Process line on desktop */}
+              <div className="hidden md:block absolute top-4 left-[10%] right-[10%] h-[2px] z-0 pointer-events-none">
+                <m.div
+                  initial={prefersReduced ? false : { scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={DEFAULT_VIEWPORT}
+                  transition={{ duration: 0.8, ease: EASING }}
+                  className="w-full h-full bg-burnt-orange/30 origin-left"
+                />
+              </div>
+
               {/* Process steps */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
                 {processSteps.map((step, index) => (
-                  <div key={step.step} className="flex flex-col items-center md:items-start text-center md:text-left space-y-2">
+                  <m.div
+                    key={step.step}
+                    initial={prefersReduced ? false : { opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={DEFAULT_VIEWPORT}
+                    transition={{
+                      duration: 0.45,
+                      delay: prefersReduced ? 0 : index * 0.12,
+                      ease: EASING,
+                    }}
+                    className="flex flex-col items-center md:items-start text-center md:text-left space-y-2"
+                  >
                     <div className="flex items-center gap-3">
-                      <span className="w-8 h-8 rounded-full bg-burnt-orange text-white text-xs font-mono font-bold flex items-center justify-center shrink-0">
+                      <m.span
+                        initial={prefersReduced ? false : { scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        viewport={DEFAULT_VIEWPORT}
+                        transition={{
+                          type: 'spring',
+                          stiffness: 400,
+                          damping: 18,
+                          delay: prefersReduced ? 0 : index * 0.12 + 0.1,
+                        }}
+                        className="w-8 h-8 rounded-full bg-burnt-orange text-white text-xs font-mono font-bold flex items-center justify-center shrink-0 shadow-sm"
+                      >
                         {step.step}
-                      </span>
+                      </m.span>
                       <h4 className="font-serif text-lg font-medium text-charcoal">
                         {step.title}
                       </h4>
@@ -168,7 +206,7 @@ export const Services: React.FC = () => {
                     <p className="text-muted-grey text-xs sm:text-sm leading-relaxed pl-0 md:pl-11">
                       {step.description}
                     </p>
-                  </div>
+                  </m.div>
                 ))}
               </div>
             </div>

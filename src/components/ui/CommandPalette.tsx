@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { m, AnimatePresence } from 'framer-motion';
 import { Search, X, FileText, ArrowUpRight, FolderGit2, Compass, Mail, Check, CornerDownLeft, Play } from 'lucide-react';
 import { projectsData } from '../../data/projects';
 import { profileData } from '../../data/profile';
 import { scrollToTarget } from '../../lib/lenis';
 import { useScrollLock } from '../../hooks/useScrollLock';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { modalVariants, staggerContainerVariants, staggerItemVariants } from '../../lib/animation';
 
 interface CommandItem {
   id: string;
@@ -29,6 +32,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
   const listRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const prefersReduced = useReducedMotion();
 
   const handleCopyEmail = async () => {
     try {
@@ -271,83 +275,99 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
     }
   }, [selectedIndex]);
 
-  if (!isOpen || typeof document === 'undefined') return null;
+  if (typeof document === 'undefined') return null;
 
   return ReactDOM.createPortal(
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Command search palette"
-      className="fixed inset-0 z-[100] flex items-start justify-center pt-16 sm:pt-24 px-4 bg-charcoal/60 backdrop-blur-sm animate-in fade-in duration-200"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div
-        data-lenis-prevent
-        className="relative w-full max-w-2xl bg-ivory border border-warm-border rounded-[8px] shadow-2xl overflow-hidden flex flex-col max-h-[80dvh] animate-in zoom-in-95 duration-150"
-      >
-        {/* Search Input Bar (non-scrolling) */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-warm-border bg-card-surface/60 shrink-0">
-          <Search className="w-5 h-5 text-burnt-orange shrink-0" />
-          <input
-            ref={inputRef}
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search sections, projects, links (or press Esc)..."
-            className="flex-grow bg-transparent text-charcoal placeholder-muted-grey text-sm sm:text-base focus:outline-none"
-          />
-          {query ? (
-            <button
-              type="button"
-              onClick={() => setQuery('')}
-              className="p-1 text-muted-grey hover:text-charcoal rounded"
-              aria-label="Clear query"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          ) : (
-            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono text-muted-grey bg-cream border border-warm-border rounded">
-              ESC to exit
-            </kbd>
-          )}
-        </div>
-
-        {/* Results List: ONLY scroller with overscroll contain */}
-        <div
-          ref={listRef}
-          tabIndex={-1}
-          data-lenis-prevent
-          className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-2 space-y-4 divide-y divide-warm-border/40 focus:outline-none"
+    <AnimatePresence>
+      {isOpen && (
+        <m.div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Command search palette"
+          initial={prefersReduced ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={prefersReduced ? undefined : { opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[100] flex items-start justify-center pt-16 sm:pt-24 px-4 bg-charcoal/60 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) onClose();
+          }}
         >
-          {filteredItems.length === 0 ? (
-            <div className="py-12 text-center text-sm font-mono text-muted-grey">
-              No results found for "{query}".
+          <m.div
+            variants={prefersReduced ? undefined : modalVariants}
+            initial={prefersReduced ? false : "hidden"}
+            animate="visible"
+            exit={prefersReduced ? undefined : "exit"}
+            data-lenis-prevent
+            className="relative w-full max-w-2xl bg-ivory border border-warm-border rounded-[8px] shadow-2xl overflow-hidden flex flex-col max-h-[80dvh]"
+          >
+            {/* Search Input Bar (non-scrolling) */}
+            <div className="flex items-center gap-3 px-4 py-3.5 border-b border-warm-border bg-card-surface/60 shrink-0">
+              <Search className="w-5 h-5 text-burnt-orange shrink-0" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search sections, projects, links (or press Esc)..."
+                className="flex-grow bg-transparent text-charcoal placeholder-muted-grey text-sm sm:text-base focus:outline-none"
+              />
+              {query ? (
+                <button
+                  type="button"
+                  onClick={() => setQuery('')}
+                  className="p-1 text-muted-grey hover:text-charcoal rounded"
+                  aria-label="Clear query"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              ) : (
+                <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono text-muted-grey bg-cream border border-warm-border rounded">
+                  ESC to exit
+                </kbd>
+              )}
             </div>
-          ) : (
-            Object.entries(groupedItems).map(([category, items]) => (
-              <div key={category} className="pt-2 first:pt-0 space-y-1">
-                <div className="px-3 py-1 text-[11px] font-mono uppercase tracking-wider text-muted-grey font-semibold">
-                  {category}
+
+            {/* Results List: ONLY scroller with overscroll contain */}
+            <div
+              ref={listRef}
+              tabIndex={-1}
+              data-lenis-prevent
+              className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-2 space-y-4 divide-y divide-warm-border/40 focus:outline-none"
+            >
+              {filteredItems.length === 0 ? (
+                <div className="py-12 text-center text-sm font-mono text-muted-grey">
+                  No results found for "{query}".
                 </div>
-                <div className="space-y-0.5">
-                  {items.map(({ item, index }) => {
-                    const isSelected = selectedIndex === index;
-                    return (
-                      <div
-                        key={item.id}
-                        id={`cmd-item-${index}`}
-                        role="option"
-                        aria-selected={isSelected}
-                        onClick={item.action}
-                        onMouseEnter={() => setSelectedIndex(index)}
-                        className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-[5px] cursor-pointer transition-colors duration-150 select-none ${
-                          isSelected
-                            ? 'bg-burnt-orange text-[var(--on-accent)]'
-                            : 'hover:bg-cream text-charcoal'
-                        }`}
-                      >
+              ) : (
+                Object.entries(groupedItems).map(([category, items]) => (
+                  <div key={category} className="pt-2 first:pt-0 space-y-1">
+                    <div className="px-3 py-1 text-[11px] font-mono uppercase tracking-wider text-muted-grey font-semibold">
+                      {category}
+                    </div>
+                    <m.div
+                      variants={prefersReduced ? undefined : staggerContainerVariants(0.02, 0.03)}
+                      initial={prefersReduced ? false : "hidden"}
+                      animate="visible"
+                      className="space-y-0.5"
+                    >
+                      {items.map(({ item, index }) => {
+                        const isSelected = selectedIndex === index;
+                        return (
+                          <m.div
+                            key={item.id}
+                            variants={prefersReduced ? undefined : staggerItemVariants}
+                            id={`cmd-item-${index}`}
+                            role="option"
+                            aria-selected={isSelected}
+                            onClick={item.action}
+                            onMouseEnter={() => setSelectedIndex(index)}
+                            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-[5px] cursor-pointer transition-colors duration-150 select-none ${
+                              isSelected
+                                ? 'bg-burnt-orange text-[var(--on-accent)]'
+                                : 'hover:bg-cream text-charcoal'
+                            }`}
+                          >
                         <div className="flex items-center gap-3 min-w-0">
                           <span className={isSelected ? 'text-[var(--on-accent)]' : ''}>{item.icon}</span>
                           <div className="min-w-0">
@@ -367,10 +387,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                         {isSelected && (
                           <CornerDownLeft className="w-4 h-4 text-[var(--on-accent)] opacity-80 shrink-0" />
                         )}
-                      </div>
+                      </m.div>
                     );
                   })}
-                </div>
+                </m.div>
               </div>
             ))
           )}
@@ -385,9 +405,11 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
           </div>
           <span>{filteredItems.length} results</span>
         </div>
-      </div>
-    </div>,
-    document.body
+      </m.div>
+    </m.div>
+    )}
+  </AnimatePresence>,
+  document.body
   );
 };
 

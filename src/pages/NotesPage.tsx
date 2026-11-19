@@ -5,10 +5,12 @@ import { ArrowUpRight, ArrowLeft } from 'lucide-react';
 import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
 import { SectionLabel } from '../components/ui/SectionLabel';
+import { Reveal } from '../components/ui/Reveal';
+import { SplitLines } from '../components/ui/SplitLines';
 import { getAllNotes, type NoteItem } from '../lib/notes';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useReducedMotion } from '../hooks/useReducedMotion';
-import { EASING } from '../lib/animation';
+import { EASING, DEFAULT_VIEWPORT } from '../lib/animation';
 
 export const NotesPage: React.FC = () => {
   usePageMeta({
@@ -45,23 +47,46 @@ export const NotesPage: React.FC = () => {
       <main className="flex-grow pt-28 pb-20 lg:pt-36 lg:pb-28">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="mb-12 space-y-4">
-            <SectionLabel label="— BLOGS" />
-            <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal leading-tight text-charcoal tracking-tight">
-              Things I’ve{' '}
-              <span className="italic text-burnt-orange font-normal">
-                learned
-              </span>{' '}
-              building.
-            </h1>
-            <p className="text-muted-grey text-base sm:text-lg max-w-2xl leading-relaxed">
-              Technical articles and write-ups about the projects I build and what went wrong on the way.
-            </p>
-          </div>
+          <Reveal>
+            <div className="mb-12 space-y-4">
+              <SectionLabel label="— BLOGS" />
+              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal leading-tight text-charcoal tracking-tight">
+                <SplitLines
+                  lines={[
+                    <span key="notes-h1">
+                      Things I’ve{' '}
+                      <m.span
+                        initial={prefersReduced ? false : { opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={DEFAULT_VIEWPORT}
+                        transition={{ duration: 0.5, delay: prefersReduced ? 0 : 0.35, ease: EASING }}
+                        className="italic text-burnt-orange font-normal"
+                      >
+                        learned
+                      </m.span>{' '}
+                      building.
+                    </span>,
+                  ]}
+                />
+              </h1>
+              <m.p
+                initial={prefersReduced ? false : { opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={DEFAULT_VIEWPORT}
+                transition={{ duration: 0.5, delay: prefersReduced ? 0 : 0.15, ease: EASING }}
+                className="text-muted-grey text-base sm:text-lg max-w-2xl leading-relaxed"
+              >
+                Technical articles and write-ups about the projects I build and what went wrong on the way.
+              </m.p>
+            </div>
+          </Reveal>
 
-          {/* Tag Filter Chips */}
+          {/* Tag Filter Chips: slide in */}
           {tags.length > 2 && (
-            <div
+            <m.div
+              initial={prefersReduced ? false : { opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: prefersReduced ? 0 : 0.15, ease: EASING }}
               className="flex items-center gap-2 mb-10 overflow-x-auto pb-2 scrollbar-none select-none"
               role="tablist"
               aria-label="Filter blogs by tag"
@@ -95,7 +120,7 @@ export const NotesPage: React.FC = () => {
                   </button>
                 );
               })}
-            </div>
+            </m.div>
           )}
 
           {/* Notes Grid / List */}
@@ -128,7 +153,7 @@ export const NotesPage: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={prefersReduced ? undefined : { opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.35, ease: EASING }}
-                    className="group relative bg-card-surface border border-warm-border hover:border-burnt-orange/60 rounded-lg p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-2xs hover:shadow-md"
+                    className="group relative bg-card-surface border border-warm-border hover:border-burnt-orange/60 rounded-lg p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-2xs hover:shadow-md hover:-translate-y-1"
                   >
                     <div className="space-y-3">
                       {/* Meta header: Date + Reading Time + Draft Badge */}

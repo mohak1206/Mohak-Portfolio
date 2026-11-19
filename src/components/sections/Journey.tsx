@@ -189,19 +189,22 @@ export const Journey: React.FC = () => {
             className="font-serif italic text-2xl sm:text-3xl md:text-4xl lg:text-[42px] leading-[1.3] text-charcoal max-w-4xl mx-auto px-4 [text-wrap:balance]"
           >
             <span>{journeyData.quote.prefix}</span>
-            <span
+            <m.span
               className="relative inline-block font-serif italic text-charcoal"
+              initial={prefersReducedMotion ? false : { backgroundSize: '0% 40%' }}
+              whileInView={{ backgroundSize: '100% 40%' }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.8, delay: prefersReducedMotion ? 0 : 0.4, ease: EASING }}
               style={{
                 backgroundImage: 'linear-gradient(to right, rgba(201, 79, 23, 0.28), rgba(201, 79, 23, 0.28))',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: '0 88%',
-                backgroundSize: prefersReducedMotion ? '100% 40%' : '100% 40%',
                 paddingLeft: '4px',
                 paddingRight: '4px',
               }}
             >
               {journeyData.quote.highlight}
-            </span>
+            </m.span>
             <span>{journeyData.quote.suffix}</span>
           </m.blockquote>
         </div>

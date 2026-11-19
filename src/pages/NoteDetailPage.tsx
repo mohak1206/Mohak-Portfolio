@@ -17,6 +17,8 @@ import { Footer } from '../components/layout/Footer';
 import { getAllNotes, getNoteBySlug, type NoteItem } from '../lib/notes';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { SplitLines } from '../components/ui/SplitLines';
+import { EASING, DEFAULT_VIEWPORT } from '../lib/animation';
 
 interface TocItem {
   id: string;
@@ -157,7 +159,36 @@ export const NoteDetailPage: React.FC = () => {
       table.parentNode?.insertBefore(wrapper, table);
       wrapper.appendChild(table);
     });
-  }, [htmlContent]);
+
+    // Subtle fade up for headings, paragraphs, and code blocks
+    if (!prefersReduced && contentRef.current) {
+      const blocks = contentRef.current.querySelectorAll('h2, h3, p, pre, blockquote');
+      const blockObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const target = entry.target as HTMLElement;
+              target.style.opacity = '1';
+              target.style.transform = 'translateY(0px)';
+              blockObserver.unobserve(target);
+            }
+          });
+        },
+        { rootMargin: '-40px 0px -40px 0px' }
+      );
+
+      blocks.forEach((el) => {
+        const h = el as HTMLElement;
+        h.style.opacity = '0';
+        h.style.transform = 'translateY(12px)';
+        h.style.transition =
+          'opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)';
+        blockObserver.observe(h);
+      });
+
+      return () => blockObserver.disconnect();
+    }
+  }, [htmlContent, prefersReduced]);
 
   // IntersectionObserver for TOC highlight
   useEffect(() => {
@@ -287,7 +318,7 @@ export const NoteDetailPage: React.FC = () => {
                 </div>
 
                 <h1 className="font-serif text-3xl sm:text-5xl font-normal leading-[1.2] text-charcoal tracking-tight">
-                  {note.title}
+                  <SplitLines lines={[note.title]} />
                 </h1>
 
                 <p className="text-muted-grey text-base sm:text-lg leading-relaxed italic">
@@ -360,11 +391,18 @@ export const NoteDetailPage: React.FC = () => {
               </div>
 
               {/* Prev / Next Note Cards */}
-              <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Previous / Next Note Navigation: slide in */}
+              <m.div
+                initial={prefersReduced ? false : { opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={DEFAULT_VIEWPORT}
+                transition={{ duration: 0.5, ease: EASING }}
+                className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4"
+              >
                 {prevNote ? (
                   <Link
                     to={`/blogs/${prevNote.slug}`}
-                    className="p-4 rounded-lg border border-warm-border hover:border-burnt-orange/60 bg-card-surface transition-all group flex flex-col justify-between"
+                    className="p-4 rounded-lg border border-warm-border hover:border-burnt-orange/60 bg-card-surface transition-all group flex flex-col justify-between hover:-translate-y-1 hover:shadow-sm"
                   >
                     <span className="text-[10px] font-mono text-muted-grey uppercase tracking-wider flex items-center gap-1 mb-1">
                       <ArrowLeft className="w-3 h-3" />
@@ -381,7 +419,7 @@ export const NoteDetailPage: React.FC = () => {
                 {nextNote && (
                   <Link
                     to={`/blogs/${nextNote.slug}`}
-                    className="p-4 rounded-lg border border-warm-border hover:border-burnt-orange/60 bg-card-surface transition-all group flex flex-col justify-between text-right"
+                    className="p-4 rounded-lg border border-warm-border hover:border-burnt-orange/60 bg-card-surface transition-all group flex flex-col justify-between text-right hover:-translate-y-1 hover:shadow-sm"
                   >
                     <span className="text-[10px] font-mono text-muted-grey uppercase tracking-wider flex items-center justify-end gap-1 mb-1">
                       <span>Next</span>
@@ -392,24 +430,24 @@ export const NoteDetailPage: React.FC = () => {
                     </span>
                   </Link>
                 )}
-              </div>
+              </m.div>
             </article>
 
-            {/* Desktop Sticky Table of Contents (>= 1100px) */}
+            {/* Desktop Sticky Table of Contents (>= 1100px) with smooth active marker */}
             {tocItems.length > 0 && (
               <aside className="hidden xl:block xl:col-span-4 sticky top-32 pl-6 border-l border-warm-border/60">
                 <div className="space-y-3">
                   <span className="text-[11px] font-mono uppercase tracking-wider text-muted-grey block">
                     On this page
                   </span>
-                  <nav className="space-y-1.5" aria-label="Table of contents">
+                  <nav className="space-y-1.5 relative" aria-label="Table of contents">
                     {tocItems.map((item) => {
                       const isActive = activeTocId === item.id;
                       return (
                         <a
                           key={item.id}
                           href={`#${item.id}`}
-                          className={`block text-xs font-mono leading-relaxed transition-colors ${
+                          className={`relative block text-xs font-mono leading-relaxed transition-colors ${
                             item.level === 3 ? 'pl-3' : ''
                           } ${
                             isActive
@@ -417,6 +455,17 @@ export const NoteDetailPage: React.FC = () => {
                               : 'text-charcoal/70 hover:text-burnt-orange'
                           }`}
                         >
+                          {isActive && (
+                            <m.span
+                              layoutId="activeTocMarker"
+                              className="absolute -left-[25px] top-1 bottom-1 w-[2px] bg-burnt-orange rounded-full"
+                              transition={
+                                prefersReduced
+                                  ? { duration: 0 }
+                                  : { type: 'spring', stiffness: 350, damping: 30 }
+                              }
+                            />
+                          )}
                           {item.text}
                         </a>
                       );

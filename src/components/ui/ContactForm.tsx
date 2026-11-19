@@ -3,7 +3,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import { Send, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { EASING } from '../../lib/animation';
+import { EASING, DEFAULT_VIEWPORT, staggerContainerVariants, staggerItemVariants } from '../../lib/animation';
 
 interface FormData {
   name: string;
@@ -177,7 +177,26 @@ export const ContactForm: React.FC = () => {
                 className="py-8 text-center space-y-4"
               >
                 <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                  <CheckCircle2 className="w-8 h-8 stroke-[2.2]" />
+                  <svg className="w-8 h-8 stroke-current" viewBox="0 0 24 24" fill="none">
+                    <m.circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      strokeWidth="2"
+                      initial={prefersReduced ? false : { pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 0.45, ease: EASING }}
+                    />
+                    <m.path
+                      d="m9 12 2 2 4-4"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      initial={prefersReduced ? false : { pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 0.35, delay: prefersReduced ? 0 : 0.3, ease: EASING }}
+                    />
+                  </svg>
                 </div>
                 <h4 className="font-serif text-xl sm:text-2xl text-charcoal">
                   Thanks, I'll get back to you!
@@ -196,7 +215,15 @@ export const ContactForm: React.FC = () => {
                 </div>
               </m.div>
             ) : (
-              <form onSubmit={handleSubmit} noValidate className="space-y-4">
+              <m.form
+                onSubmit={handleSubmit}
+                noValidate
+                variants={staggerContainerVariants(0.08, 0.1)}
+                initial="hidden"
+                whileInView="visible"
+                viewport={DEFAULT_VIEWPORT}
+                className="space-y-4"
+              >
                 {/* Honeypot field for bot protection */}
                 <input
                   type="text"
@@ -209,7 +236,7 @@ export const ContactForm: React.FC = () => {
                   aria-hidden="true"
                 />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <m.div variants={staggerItemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Name field */}
                   <div>
                     <label
@@ -267,10 +294,10 @@ export const ContactForm: React.FC = () => {
                       </p>
                     )}
                   </div>
-                </div>
+                </m.div>
 
                 {/* Topic Select */}
-                <div>
+                <m.div variants={staggerItemVariants}>
                   <label
                     htmlFor="form-topic"
                     className="block text-xs font-mono text-charcoal/80 mb-1.5"
@@ -288,10 +315,10 @@ export const ContactForm: React.FC = () => {
                     <option value="Freelance project">Freelance project</option>
                     <option value="Just saying hi">Just saying hi</option>
                   </select>
-                </div>
+                </m.div>
 
                 {/* Message Field */}
-                <div>
+                <m.div variants={staggerItemVariants}>
                   <div className="flex items-center justify-between mb-1.5">
                     <label
                       htmlFor="form-message"
@@ -329,7 +356,7 @@ export const ContactForm: React.FC = () => {
                       {errors.message}
                     </p>
                   )}
-                </div>
+                </m.div>
 
                 {/* Error Banner */}
                 {status === 'error' && (
@@ -348,7 +375,7 @@ export const ContactForm: React.FC = () => {
                 )}
 
                 {/* Submit button */}
-                <div className="pt-2 flex items-center justify-between">
+                <m.div variants={staggerItemVariants} className="pt-2 flex items-center justify-between">
                   <button
                     type="submit"
                     disabled={status === 'submitting' || cooldown > 0}
@@ -372,8 +399,8 @@ export const ContactForm: React.FC = () => {
                   <span className="text-[11px] font-mono text-muted-grey">
                     Encrypted submission
                   </span>
-                </div>
-              </form>
+                </m.div>
+              </m.form>
             )}
           </AnimatePresence>
         </div>

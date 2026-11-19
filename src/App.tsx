@@ -60,259 +60,161 @@ const ScrollToTop: React.FC = () => {
 const AnimatedRoutes: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
 
-  const reducedMotionVariants: Variants = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1, transition: { duration: 0.15 } },
-    exit: { opacity: 0, transition: { duration: 0.15 } },
-  };
+  const activeVariants: Variants = prefersReducedMotion
+    ? {
+        initial: { opacity: 0 },
+        animate: { opacity: 1, transition: { duration: 0.15 } },
+        exit: { opacity: 0, transition: { duration: 0.15 } },
+      }
+    : {
+        initial: { opacity: 0, y: 12 },
+        animate: {
+          opacity: 1,
+          y: 0,
+          transition: {
+            duration: 0.35,
+            ease: EASING,
+          },
+        },
+        exit: {
+          opacity: 0,
+          y: -8,
+          transition: {
+            duration: 0.2,
+            ease: EASING,
+          },
+        },
+      };
 
   return (
     <CurtainTransition>
-      {(renderedLocation) =>
-        prefersReducedMotion ? (
-          <AnimatePresence mode="wait">
-            <m.div
-              key={renderedLocation.pathname}
-              variants={reducedMotionVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-            >
-              <Routes location={renderedLocation} key={renderedLocation.pathname}>
-                <Route path="/" element={<Home />} />
-                <Route
-                  path="/projects"
-                  element={
-                    <Suspense
-                      fallback={
-                        <DelayedFallback delay={150}>
-                          <ProjectsPageSkeleton />
-                        </DelayedFallback>
-                      }
-                    >
-                      <ProjectsPage />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/projects/:slug"
-                  element={
-                    <Suspense
-                      fallback={
-                        <DelayedFallback delay={150}>
-                          <ProjectDetailSkeleton />
-                        </DelayedFallback>
-                      }
-                    >
-                      <ProjectDetail />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/resume"
-                  element={
-                    <Suspense
-                      fallback={
-                        <DelayedFallback delay={150}>
-                          <ProjectsPageSkeleton />
-                        </DelayedFallback>
-                      }
-                    >
-                      <ResumePage />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/blogs"
-                  element={
-                    <Suspense
-                      fallback={
-                        <DelayedFallback delay={150}>
-                          <ProjectsPageSkeleton />
-                        </DelayedFallback>
-                      }
-                    >
-                      <NotesPage />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/blogs/:slug"
-                  element={
-                    <Suspense
-                      fallback={
-                        <DelayedFallback delay={150}>
-                          <ProjectDetailSkeleton />
-                        </DelayedFallback>
-                      }
-                    >
-                      <NoteDetailPage />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/notes"
-                  element={
-                    <Suspense
-                      fallback={
-                        <DelayedFallback delay={150}>
-                          <ProjectsPageSkeleton />
-                        </DelayedFallback>
-                      }
-                    >
-                      <NotesPage />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/notes/:slug"
-                  element={
-                    <Suspense
-                      fallback={
-                        <DelayedFallback delay={150}>
-                          <ProjectDetailSkeleton />
-                        </DelayedFallback>
-                      }
-                    >
-                      <NoteDetailPage />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="*"
-                  element={
-                    <Suspense
-                      fallback={
-                        <DelayedFallback delay={150}>
-                          <ProjectsPageSkeleton />
-                        </DelayedFallback>
-                      }
-                    >
-                      <NotFoundPage />
-                    </Suspense>
-                  }
-                />
-              </Routes>
-            </m.div>
-          </AnimatePresence>
-        ) : (
-          <Routes location={renderedLocation} key={renderedLocation.pathname}>
-            <Route path="/" element={<Home />} />
-            <Route
-              path="/projects"
-              element={
-                <Suspense
-                  fallback={
-                    <DelayedFallback delay={150}>
-                      <ProjectsPageSkeleton />
-                    </DelayedFallback>
-                  }
-                >
-                  <ProjectsPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/projects/:slug"
-              element={
-                <Suspense
-                  fallback={
-                    <DelayedFallback delay={150}>
-                      <ProjectDetailSkeleton />
-                    </DelayedFallback>
-                  }
-                >
-                  <ProjectDetail />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/resume"
-              element={
-                <Suspense
-                  fallback={
-                    <DelayedFallback delay={150}>
-                      <ProjectsPageSkeleton />
-                    </DelayedFallback>
-                  }
-                >
-                  <ResumePage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/blogs"
-              element={
-                <Suspense
-                  fallback={
-                    <DelayedFallback delay={150}>
-                      <ProjectsPageSkeleton />
-                    </DelayedFallback>
-                  }
-                >
-                  <NotesPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/blogs/:slug"
-              element={
-                <Suspense
-                  fallback={
-                    <DelayedFallback delay={150}>
-                      <ProjectDetailSkeleton />
-                    </DelayedFallback>
-                  }
-                >
-                  <NoteDetailPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/notes"
-              element={
-                <Suspense
-                  fallback={
-                    <DelayedFallback delay={150}>
-                      <ProjectsPageSkeleton />
-                    </DelayedFallback>
-                  }
-                >
-                  <NotesPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/notes/:slug"
-              element={
-                <Suspense
-                  fallback={
-                    <DelayedFallback delay={150}>
-                      <ProjectDetailSkeleton />
-                    </DelayedFallback>
-                  }
-                >
-                  <NoteDetailPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="*"
-              element={
-                <Suspense
-                  fallback={
-                    <DelayedFallback delay={150}>
-                      <ProjectsPageSkeleton />
-                    </DelayedFallback>
-                  }
-                >
-                  <NotFoundPage />
-                </Suspense>
-              }
-            />
-          </Routes>
-        )
-      }
+      {(renderedLocation) => (
+        <AnimatePresence mode="wait">
+          <m.div
+            key={renderedLocation.pathname}
+            variants={activeVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <Routes location={renderedLocation} key={renderedLocation.pathname}>
+              <Route path="/" element={<Home />} />
+              <Route
+                path="/projects"
+                element={
+                  <Suspense
+                    fallback={
+                      <DelayedFallback delay={150}>
+                        <ProjectsPageSkeleton />
+                      </DelayedFallback>
+                    }
+                  >
+                    <ProjectsPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/projects/:slug"
+                element={
+                  <Suspense
+                    fallback={
+                      <DelayedFallback delay={150}>
+                        <ProjectDetailSkeleton />
+                      </DelayedFallback>
+                    }
+                  >
+                    <ProjectDetail />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/resume"
+                element={
+                  <Suspense
+                    fallback={
+                      <DelayedFallback delay={150}>
+                        <ProjectsPageSkeleton />
+                      </DelayedFallback>
+                    }
+                  >
+                    <ResumePage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/blogs"
+                element={
+                  <Suspense
+                    fallback={
+                      <DelayedFallback delay={150}>
+                        <ProjectsPageSkeleton />
+                      </DelayedFallback>
+                    }
+                  >
+                    <NotesPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/blogs/:slug"
+                element={
+                  <Suspense
+                    fallback={
+                      <DelayedFallback delay={150}>
+                        <ProjectDetailSkeleton />
+                      </DelayedFallback>
+                    }
+                  >
+                    <NoteDetailPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/notes"
+                element={
+                  <Suspense
+                    fallback={
+                      <DelayedFallback delay={150}>
+                        <ProjectsPageSkeleton />
+                      </DelayedFallback>
+                    }
+                  >
+                    <NotesPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/notes/:slug"
+                element={
+                  <Suspense
+                    fallback={
+                      <DelayedFallback delay={150}>
+                        <ProjectDetailSkeleton />
+                      </DelayedFallback>
+                    }
+                  >
+                    <NoteDetailPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <Suspense
+                    fallback={
+                      <DelayedFallback delay={150}>
+                        <ProjectsPageSkeleton />
+                      </DelayedFallback>
+                    }
+                  >
+                    <NotFoundPage />
+                  </Suspense>
+                }
+              />
+            </Routes>
+          </m.div>
+        </AnimatePresence>
+      )}
     </CurtainTransition>
   );
 };

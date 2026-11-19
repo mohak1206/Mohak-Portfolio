@@ -205,8 +205,8 @@ export const Contact: React.FC = () => {
       aria-label="Contact"
       className="relative py-20 lg:py-28 bg-ivory overflow-hidden"
     >
-      {/* Giant Outlined Section Numeral 07 */}
-      <SectionNumeral numeral="07" sectionRef={sectionRef} />
+      {/* Giant Outlined Section Numeral 09 */}
+      <SectionNumeral numeral="09" sectionRef={sectionRef} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <Reveal>
@@ -242,7 +242,13 @@ export const Contact: React.FC = () => {
             </p>
 
             {/* CTA Buttons with Magnetic effect and Copy-Email micro-interaction */}
-            <div className="pt-2 flex items-center justify-center gap-3 relative flex-wrap sm:flex-nowrap">
+            <m.div
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={DEFAULT_VIEWPORT}
+              transition={{ duration: 0.5, delay: prefersReducedMotion ? 0 : 0.25, ease: EASING }}
+              className="pt-2 flex items-center justify-center gap-3 relative flex-wrap sm:flex-nowrap"
+            >
               {/* Hidden mailto anchor for standard browser handling */}
               <a
                 ref={hiddenMailtoRef}
@@ -383,7 +389,7 @@ export const Contact: React.FC = () => {
                   </m.div>
                 )}
               </AnimatePresence>
-            </div>
+            </m.div>
 
             {/* Booking options (when VITE_CAL_15_URL or VITE_CAL_30_URL is provided) */}
             {(cal15Url || cal30Url) && (

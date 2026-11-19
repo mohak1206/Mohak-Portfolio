@@ -1,12 +1,26 @@
 import React from 'react';
+import { m } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import Logo from '../ui/Logo';
 import { Reveal } from '../ui/Reveal';
 import { profileData } from '../../data/profile';
 import { useMotionPreference } from '../../context/MotionContext';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { EASING, DEFAULT_VIEWPORT, staggerContainerVariants } from '../../lib/animation';
 
 export const Footer: React.FC = () => {
   const { isReducedMotion, toggleReducedMotion } = useMotionPreference();
+  const prefersReduced = useReducedMotion();
+
+  const footerLinks = [
+    { label: 'Home', href: '/#home' },
+    { label: 'About', href: '/#about' },
+    { label: 'Projects', href: '/projects' },
+    { label: 'Blogs', href: '/blogs' },
+    { label: 'Services', href: '/#services' },
+    { label: 'Resume', href: '/resume' },
+    { label: 'Contact', href: '/#contact' },
+  ];
 
   return (
     <footer className="border-t border-warm-border bg-ivory py-12">
@@ -27,30 +41,32 @@ export const Footer: React.FC = () => {
               </span>
             </div>
 
-            {/* Quick links with draw-and-retract underline */}
-            <div className="flex items-center space-x-5 text-xs font-medium text-muted-grey">
-              <a href="/#home" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
-                Home
-              </a>
-              <a href="/#about" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
-                About
-              </a>
-              <a href="/projects" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
-                Projects
-              </a>
-              <a href="/blogs" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
-                Blogs
-              </a>
-              <a href="/#services" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
-                Services
-              </a>
-              <a href="/resume" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
-                Resume
-              </a>
-              <a href="/#contact" className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5">
-                Contact
-              </a>
-            </div>
+            {/* Quick links with staggered fade up and draw-and-retract underline */}
+            <m.div
+              variants={staggerContainerVariants(0.05, 0.1)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={DEFAULT_VIEWPORT}
+              className="flex items-center space-x-5 text-xs font-medium text-muted-grey"
+            >
+              {footerLinks.map((link) => (
+                <m.a
+                  key={link.label}
+                  href={link.href}
+                  variants={
+                    prefersReduced
+                      ? undefined
+                      : {
+                          hidden: { opacity: 0, y: 12 },
+                          visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASING } },
+                        }
+                  }
+                  className="draw-underline-link hover:text-burnt-orange transition-colors py-0.5"
+                >
+                  {link.label}
+                </m.a>
+              ))}
+            </m.div>
 
             {/* Right side: Social links & Reduce Motion switch */}
             <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-medium text-charcoal/80">

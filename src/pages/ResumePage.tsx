@@ -17,8 +17,13 @@ import { credentials, type Credential } from '../data/credentials';
 import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
 import { usePageMeta } from '../hooks/usePageMeta';
+import { m } from 'framer-motion';
+import { useReducedMotion } from '../hooks/useReducedMotion';
+import { EASING, staggerContainerVariants, staggerItemVariants } from '../lib/animation';
 
 export const ResumePage: React.FC = () => {
+  const prefersReduced = useReducedMotion();
+
   usePageMeta({
     title: 'Resume',
     description:
@@ -61,7 +66,12 @@ export const ResumePage: React.FC = () => {
       <main className="flex-grow pt-24 pb-20 lg:pt-32 lg:pb-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Action Bar (hidden in print) */}
-          <div className="print-hide mb-8 flex flex-wrap items-center justify-between gap-4 bg-card-surface border border-warm-border rounded-lg p-4 shadow-2xs">
+          <m.div
+            initial={prefersReduced ? false : { opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: EASING }}
+            className="print-hide mb-8 flex flex-wrap items-center justify-between gap-4 bg-card-surface border border-warm-border rounded-lg p-4 shadow-2xs"
+          >
             <Link
               to="/"
               className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-grey hover:text-burnt-orange transition-colors"
@@ -91,10 +101,15 @@ export const ResumePage: React.FC = () => {
                 <span>Print / Save as PDF</span>
               </button>
             </div>
-          </div>
+          </m.div>
 
           {/* Printable A4 Resume Sheet */}
-          <div className="bg-card-surface border border-warm-border p-8 sm:p-12 shadow-sm rounded-lg print:border-none print:shadow-none print:p-0 print:m-0 print:max-w-none text-charcoal">
+          <m.div
+            initial={prefersReduced ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: EASING }}
+            className="bg-card-surface border border-warm-border p-8 sm:p-12 shadow-sm rounded-lg print:border-none print:shadow-none print:p-0 print:m-0 print:max-w-none text-charcoal print:opacity-100 print:transform-none"
+          >
             {/* Header */}
             <header className="border-b border-warm-border pb-6 mb-6">
               <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
@@ -144,162 +159,188 @@ export const ResumePage: React.FC = () => {
               </div>
             </header>
 
-            {/* Summary */}
-            <section className="mb-6 print-page-break-avoid">
-              <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-2">
-                Summary
-              </h2>
-              <p className="text-sm leading-relaxed text-charcoal/90">
-                {profileData.aboutIntro}
-              </p>
-            </section>
-
-            {/* Education */}
-            <section className="mb-6 print-page-break-avoid">
-              <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-3">
-                Education
-              </h2>
-              <div className="space-y-1.5 text-sm">
-                <div className="flex flex-col sm:flex-row sm:items-baseline justify-between">
-                  <span className="font-semibold text-charcoal">
-                    {profileData.education.degree}
-                  </span>
-                  <span className="font-mono text-xs text-muted-grey">
-                    Expected {profileData.education.expectedGraduation}
-                  </span>
-                </div>
-                <div className="flex flex-col sm:flex-row sm:items-baseline justify-between text-muted-grey text-xs">
-                  <span>{profileData.education.institution}</span>
-                  <span className="font-mono font-medium text-burnt-orange print:text-charcoal">
-                    {profileData.education.cgpa}
-                  </span>
-                </div>
-              </div>
-            </section>
-
-            {/* Experience */}
-            <section className="mb-6 print-page-break-avoid">
-              <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-3">
-                Experience
-              </h2>
-              <div className="space-y-4">
-                {relevantExperience.map((exp) => (
-                  <div key={exp.id} className="text-sm print-page-break-avoid">
-                    <div className="flex flex-col sm:flex-row sm:items-baseline justify-between">
-                      <span className="font-semibold text-charcoal">
-                        {exp.role}
-                      </span>
-                      <span className="font-mono text-xs text-muted-grey">
-                        {exp.period}
-                      </span>
-                    </div>
-                    <div className="text-xs text-muted-grey mb-1">
-                      {exp.organization}
-                      {exp.department ? ` · ${exp.department}` : ''}
-                    </div>
-                    <p className="text-xs sm:text-sm text-charcoal/80 leading-relaxed">
-                      {exp.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Projects */}
-            <section className="mb-6 print-page-break-avoid">
-              <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-3">
-                Featured Projects
-              </h2>
-              <div className="space-y-4">
-                {featuredProjects.map((p) => (
-                  <div key={p.slug} className="text-sm print-page-break-avoid">
-                    <div className="flex flex-col sm:flex-row sm:items-baseline justify-between">
-                      <span className="font-semibold text-charcoal">
-                        {p.title}
-                      </span>
-                      {p.highlight && (
-                        <span className="font-mono text-xs font-medium text-burnt-orange print:text-charcoal">
-                          {p.highlight}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs sm:text-sm text-charcoal/80 my-1 leading-relaxed">
-                      {p.oneLiner}
-                    </p>
-                    <div className="flex flex-wrap gap-1 mt-1 text-[11px] font-mono text-muted-grey">
-                      <span>Stack: {p.stack.join(', ')}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Skills */}
-            <section className="mb-6 print-page-break-avoid">
-              <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-3">
-                Technical Skills
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-                <div>
-                  <span className="font-semibold text-charcoal block mb-0.5">
-                    AI & Computer Vision:
-                  </span>
-                  <span className="text-charcoal/80">
-                    YOLOv8, PyTorch, OpenCV, Object Detection, Dataset Preparation, Roboflow
-                  </span>
-                </div>
-                <div>
-                  <span className="font-semibold text-charcoal block mb-0.5">
-                    Web & Backend:
-                  </span>
-                  <span className="text-charcoal/80">
-                    React 19, TypeScript, Tailwind CSS, Flask, REST APIs, MySQL, Firebase
-                  </span>
-                </div>
-                <div>
-                  <span className="font-semibold text-charcoal block mb-0.5">
-                    Mobile Development:
-                  </span>
-                  <span className="text-charcoal/80">
-                    Flutter, Dart (Android, iOS, Web, Windows)
-                  </span>
-                </div>
-                <div>
-                  <span className="font-semibold text-charcoal block mb-0.5">
-                    Languages & Tools:
-                  </span>
-                  <span className="text-charcoal/80">
-                    Python, JavaScript, TypeScript, Git, GitHub, VS Code, Google Colab
-                  </span>
-                </div>
-              </div>
-            </section>
-
-            {/* Certifications */}
-            <section className="print-page-break-avoid">
-              <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-3">
-                Certifications
-              </h2>
-              <div className="space-y-1.5 text-xs sm:text-sm">
-                {certifications.map((cert) => {
-                  const dateStr = formatCertDate(cert.date);
-                  return (
-                    <div key={cert.id} className="text-charcoal/90 leading-snug">
-                      <span className="font-semibold text-charcoal">{cert.title}</span>,{' '}
-                      <span className="text-charcoal/80">{cert.issuer}</span>
-                      {dateStr && <span className="font-mono text-xs text-muted-grey"> ({dateStr})</span>}
-                    </div>
-                  );
-                })}
-                <p className="text-xs font-mono text-muted-grey pt-1">
-                  More certificates at{' '}
-                  <a href={`${siteUrl}/#credentials`} className="text-burnt-orange hover:underline">
-                    {siteUrl}
-                  </a>
+            {/* Sections container: stagger on screen only */}
+            <m.div
+              variants={staggerContainerVariants(0.06, 0.1)}
+              initial="hidden"
+              animate="visible"
+              className="space-y-6 print:space-y-6"
+            >
+              {/* Summary */}
+              <m.section
+                variants={prefersReduced ? undefined : staggerItemVariants}
+                className="mb-6 print-page-break-avoid print:opacity-100 print:transform-none"
+              >
+                <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-2">
+                  Summary
+                </h2>
+                <p className="text-sm leading-relaxed text-charcoal/90">
+                  {profileData.aboutIntro}
                 </p>
-              </div>
-            </section>
-          </div>
+              </m.section>
+
+              {/* Education */}
+              <m.section
+                variants={prefersReduced ? undefined : staggerItemVariants}
+                className="mb-6 print-page-break-avoid print:opacity-100 print:transform-none"
+              >
+                <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-3">
+                  Education
+                </h2>
+                <div className="space-y-1.5 text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between">
+                    <span className="font-semibold text-charcoal">
+                      {profileData.education.degree}
+                    </span>
+                    <span className="font-mono text-xs text-muted-grey">
+                      Expected {profileData.education.expectedGraduation}
+                    </span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between text-muted-grey text-xs">
+                    <span>{profileData.education.institution}</span>
+                    <span className="font-mono font-medium text-burnt-orange print:text-charcoal">
+                      {profileData.education.cgpa}
+                    </span>
+                  </div>
+                </div>
+              </m.section>
+
+              {/* Experience */}
+              <m.section
+                variants={prefersReduced ? undefined : staggerItemVariants}
+                className="mb-6 print-page-break-avoid print:opacity-100 print:transform-none"
+              >
+                <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-3">
+                  Experience
+                </h2>
+                <div className="space-y-4">
+                  {relevantExperience.map((exp) => (
+                    <div key={exp.id} className="text-sm print-page-break-avoid">
+                      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between">
+                        <span className="font-semibold text-charcoal">
+                          {exp.role}
+                        </span>
+                        <span className="font-mono text-xs text-muted-grey">
+                          {exp.period}
+                        </span>
+                      </div>
+                      <div className="text-xs text-muted-grey mb-1">
+                        {exp.organization}
+                        {exp.department ? ` · ${exp.department}` : ''}
+                      </div>
+                      <p className="text-xs sm:text-sm text-charcoal/80 leading-relaxed">
+                        {exp.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </m.section>
+
+              {/* Projects */}
+              <m.section
+                variants={prefersReduced ? undefined : staggerItemVariants}
+                className="mb-6 print-page-break-avoid print:opacity-100 print:transform-none"
+              >
+                <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-3">
+                  Featured Projects
+                </h2>
+                <div className="space-y-4">
+                  {featuredProjects.map((p) => (
+                    <div key={p.slug} className="text-sm print-page-break-avoid">
+                      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between">
+                        <span className="font-semibold text-charcoal">
+                          {p.title}
+                        </span>
+                        {p.highlight && (
+                          <span className="font-mono text-xs font-medium text-burnt-orange print:text-charcoal">
+                            {p.highlight}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs sm:text-sm text-charcoal/80 my-1 leading-relaxed">
+                        {p.oneLiner}
+                      </p>
+                      <div className="flex flex-wrap gap-1 mt-1 text-[11px] font-mono text-muted-grey">
+                        <span>Stack: {p.stack.join(', ')}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </m.section>
+
+              {/* Skills */}
+              <m.section
+                variants={prefersReduced ? undefined : staggerItemVariants}
+                className="mb-6 print-page-break-avoid print:opacity-100 print:transform-none"
+              >
+                <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-3">
+                  Technical Skills
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                  <div>
+                    <span className="font-semibold text-charcoal block mb-0.5">
+                      AI & Computer Vision:
+                    </span>
+                    <span className="text-charcoal/80">
+                      YOLOv8, PyTorch, OpenCV, Object Detection, Dataset Preparation, Roboflow
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-charcoal block mb-0.5">
+                      Web & Backend:
+                    </span>
+                    <span className="text-charcoal/80">
+                      React 19, TypeScript, Tailwind CSS, Flask, REST APIs, MySQL, Firebase
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-charcoal block mb-0.5">
+                      Mobile Development:
+                    </span>
+                    <span className="text-charcoal/80">
+                      Flutter, Dart (Android, iOS, Web, Windows)
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-charcoal block mb-0.5">
+                      Languages & Tools:
+                    </span>
+                    <span className="text-charcoal/80">
+                      Python, JavaScript, TypeScript, Git, GitHub, VS Code, Google Colab
+                    </span>
+                  </div>
+                </div>
+              </m.section>
+
+              {/* Certifications */}
+              <m.section
+                variants={prefersReduced ? undefined : staggerItemVariants}
+                className="print-page-break-avoid print:opacity-100 print:transform-none"
+              >
+                <h2 className="font-serif text-lg font-bold text-charcoal uppercase tracking-wider border-b border-burnt-orange/40 pb-1 mb-3">
+                  Certifications
+                </h2>
+                <div className="space-y-1.5 text-xs sm:text-sm">
+                  {certifications.map((cert) => {
+                    const dateStr = formatCertDate(cert.date);
+                    return (
+                      <div key={cert.id} className="text-charcoal/90 leading-snug">
+                        <span className="font-semibold text-charcoal">{cert.title}</span>,{' '}
+                        <span className="text-charcoal/80">{cert.issuer}</span>
+                        {dateStr && <span className="font-mono text-xs text-muted-grey"> ({dateStr})</span>}
+                      </div>
+                    );
+                  })}
+                  <p className="text-xs font-mono text-muted-grey pt-1">
+                    More certificates at{' '}
+                    <a href={`${siteUrl}/#credentials`} className="text-burnt-orange hover:underline">
+                      {siteUrl}
+                    </a>
+                  </p>
+                </div>
+              </m.section>
+            </m.div>
+          </m.div>
         </div>
       </main>
 

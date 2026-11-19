@@ -17,9 +17,10 @@ import { Button } from '../ui/Button';
 import { Magnetic } from '../ui/Magnetic';
 import { AvailabilityBadge } from '../ui/AvailabilityBadge';
 import { CountUp } from '../ui/CountUp';
+import { SplitLines } from '../ui/SplitLines';
 import { scrollToTarget } from '../../lib/lenis';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { EASING, DEFAULT_VIEWPORT } from '../../lib/animation';
+import { EASING, DEFAULT_VIEWPORT, staggerContainerVariants } from '../../lib/animation';
 
 export const About: React.FC = () => {
   const { aboutIntro, stats } = profileData;
@@ -155,24 +156,36 @@ export const About: React.FC = () => {
 
   const renderFactChips = () => (
     <m.div
-      initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      variants={staggerContainerVariants(0.08, 0.2)}
+      initial="hidden"
+      whileInView="visible"
       viewport={DEFAULT_VIEWPORT}
-      transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.35, ease: EASING }}
       className="flex flex-wrap gap-2.5 w-full pt-1"
     >
-      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono text-charcoal/90 bg-card-surface hover:bg-cream border border-warm-border rounded-full shadow-2xs transition-colors">
-        <MapPin className="w-3.5 h-3.5 text-burnt-orange shrink-0" />
-        <span>Maharashtra, India</span>
-      </div>
-      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono text-charcoal/90 bg-card-surface hover:bg-cream border border-warm-border rounded-full shadow-2xs transition-colors">
-        <GraduationCap className="w-3.5 h-3.5 text-burnt-orange shrink-0" />
-        <span>B.Tech AIML, 2028</span>
-      </div>
-      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono text-charcoal/90 bg-card-surface hover:bg-cream border border-warm-border rounded-full shadow-2xs transition-colors">
-        <Briefcase className="w-3.5 h-3.5 text-burnt-orange shrink-0" />
-        <span>Software Intern, RigAI</span>
-      </div>
+      {[
+        { icon: MapPin, text: 'Maharashtra, India' },
+        { icon: GraduationCap, text: 'B.Tech AIML, 2028' },
+        { icon: Briefcase, text: 'Software Intern, RigAI' },
+      ].map((chip) => {
+        const IconComponent = chip.icon;
+        return (
+          <m.div
+            key={chip.text}
+            variants={
+              prefersReducedMotion
+                ? undefined
+                : {
+                    hidden: { opacity: 0, y: 12 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASING } },
+                  }
+            }
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono text-charcoal/90 bg-card-surface hover:bg-cream border border-warm-border rounded-full shadow-2xs transition-colors"
+          >
+            <IconComponent className="w-3.5 h-3.5 text-burnt-orange shrink-0" />
+            <span>{chip.text}</span>
+          </m.div>
+        );
+      })}
     </m.div>
   );
 
@@ -208,12 +221,18 @@ export const About: React.FC = () => {
               </span>
             </h2>
 
-            {/* Kept aboutIntro paragraph */}
-            <p className="text-muted-grey text-base sm:text-lg leading-relaxed">
+            {/* Kept aboutIntro paragraph with fade-up */}
+            <m.p
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={DEFAULT_VIEWPORT}
+              transition={{ duration: 0.5, delay: prefersReducedMotion ? 0 : 0.15, ease: EASING }}
+              className="text-muted-grey text-base sm:text-lg leading-relaxed"
+            >
               {aboutIntro}
-            </p>
+            </m.p>
 
-            {/* "Currently exploring" card */}
+            {/* "Currently exploring" card: items slide in from left */}
             <m.div
               initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -230,28 +249,48 @@ export const About: React.FC = () => {
               </div>
 
               <ul className="space-y-2.5 font-medium text-sm text-charcoal/90">
-                <li className="flex items-center gap-2 group cursor-default">
-                  <ArrowRight className="w-4 h-4 text-burnt-orange shrink-0 group-hover:translate-x-1 transition-transform duration-200" />
-                  <span>Agentic AI &amp; LLM Applications</span>
-                </li>
-                <li className="flex items-center gap-2 group cursor-default">
-                  <ArrowRight className="w-4 h-4 text-burnt-orange shrink-0 group-hover:translate-x-1 transition-transform duration-200" />
-                  <span>Scalable Full-Stack Systems</span>
-                </li>
-                <li className="flex items-center gap-2 group cursor-default">
-                  <ArrowRight className="w-4 h-4 text-burnt-orange shrink-0 group-hover:translate-x-1 transition-transform duration-200" />
-                  <span>AI for Real-World Impact</span>
-                </li>
+                {[
+                  'Agentic AI & LLM Applications',
+                  'Scalable Full-Stack Systems',
+                  'AI for Real-World Impact',
+                ].map((item, idx) => (
+                  <m.li
+                    key={item}
+                    initial={prefersReducedMotion ? false : { opacity: 0, x: -16 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={DEFAULT_VIEWPORT}
+                    transition={{
+                      duration: 0.4,
+                      delay: prefersReducedMotion ? 0 : 0.25 + idx * 0.1,
+                      ease: EASING,
+                    }}
+                    className="flex items-center gap-2 group cursor-default"
+                  >
+                    <ArrowRight className="w-4 h-4 text-burnt-orange shrink-0 group-hover:translate-x-1 transition-transform duration-200" />
+                    <span>{item}</span>
+                  </m.li>
+                ))}
               </ul>
             </m.div>
 
             {/* Availability pill */}
-            <div>
+            <m.div
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={DEFAULT_VIEWPORT}
+              transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.25, ease: EASING }}
+            >
               <AvailabilityBadge />
-            </div>
+            </m.div>
 
-            {/* CTAs & 60-Second Tour */}
-            <div className="flex flex-wrap items-center gap-3.5 pt-2">
+            {/* CTAs & 60-Second Tour: buttons fade up */}
+            <m.div
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={DEFAULT_VIEWPORT}
+              transition={{ duration: 0.5, delay: prefersReducedMotion ? 0 : 0.3, ease: EASING }}
+              className="flex flex-wrap items-center gap-3.5 pt-2"
+            >
               <Magnetic>
                 <Button asAnchor href="#projects" onClick={scrollToProjects} variant="primary" size="md">
                   <span>Explore Projects</span>
@@ -286,7 +325,7 @@ export const About: React.FC = () => {
                 </span>
                 <span className="draw-underline-link py-0.5">60-second tour</span>
               </button>
-            </div>
+            </m.div>
           </div>
 
         </div>
@@ -303,9 +342,15 @@ export const About: React.FC = () => {
             </span>
           </h2>
 
-          <p className="text-muted-grey text-base leading-relaxed">
+          <m.p
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={DEFAULT_VIEWPORT}
+            transition={{ duration: 0.5, delay: prefersReducedMotion ? 0 : 0.15, ease: EASING }}
+            className="text-muted-grey text-base leading-relaxed"
+          >
             {aboutIntro}
-          </p>
+          </m.p>
 
           {/* Stats grid (2x2) */}
           <div className="pt-2">
@@ -316,7 +361,13 @@ export const About: React.FC = () => {
           {renderFactChips()}
 
           {/* Currently exploring card */}
-          <div className="p-5 rounded-xl border border-warm-border bg-card-surface shadow-2xs space-y-3.5">
+          <m.div
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={DEFAULT_VIEWPORT}
+            transition={{ duration: 0.45, delay: prefersReducedMotion ? 0 : 0.2, ease: EASING }}
+            className="p-5 rounded-xl border border-warm-border bg-card-surface shadow-2xs space-y-3.5"
+          >
             <div className="flex items-center gap-2.5 text-sm font-semibold text-charcoal">
               <span
                 className="w-2.5 h-2.5 rounded-full bg-burnt-orange dot-pulse-slow inline-block shrink-0"
@@ -326,28 +377,48 @@ export const About: React.FC = () => {
             </div>
 
             <ul className="space-y-2.5 font-medium text-sm text-charcoal/90">
-              <li className="flex items-center gap-2 group cursor-default">
-                <ArrowRight className="w-4 h-4 text-burnt-orange shrink-0 group-hover:translate-x-1 transition-transform duration-200" />
-                <span>Agentic AI &amp; LLM Applications</span>
-              </li>
-              <li className="flex items-center gap-2 group cursor-default">
-                <ArrowRight className="w-4 h-4 text-burnt-orange shrink-0 group-hover:translate-x-1 transition-transform duration-200" />
-                <span>Scalable Full-Stack Systems</span>
-              </li>
-              <li className="flex items-center gap-2 group cursor-default">
-                <ArrowRight className="w-4 h-4 text-burnt-orange shrink-0 group-hover:translate-x-1 transition-transform duration-200" />
-                <span>AI for Real-World Impact</span>
-              </li>
+              {[
+                'Agentic AI & LLM Applications',
+                'Scalable Full-Stack Systems',
+                'AI for Real-World Impact',
+              ].map((item, idx) => (
+                <m.li
+                  key={item}
+                  initial={prefersReducedMotion ? false : { opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={DEFAULT_VIEWPORT}
+                  transition={{
+                    duration: 0.4,
+                    delay: prefersReducedMotion ? 0 : 0.25 + idx * 0.1,
+                    ease: EASING,
+                  }}
+                  className="flex items-center gap-2 group cursor-default"
+                >
+                  <ArrowRight className="w-4 h-4 text-burnt-orange shrink-0 group-hover:translate-x-1 transition-transform duration-200" />
+                  <span>{item}</span>
+                </m.li>
+              ))}
             </ul>
-          </div>
+          </m.div>
 
           {/* Availability pill */}
-          <div>
+          <m.div
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={DEFAULT_VIEWPORT}
+            transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.25, ease: EASING }}
+          >
             <AvailabilityBadge />
-          </div>
+          </m.div>
 
           {/* Buttons and tour */}
-          <div className="flex flex-wrap items-center gap-3.5 pt-2">
+          <m.div
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={DEFAULT_VIEWPORT}
+            transition={{ duration: 0.5, delay: prefersReducedMotion ? 0 : 0.3, ease: EASING }}
+            className="flex flex-wrap items-center gap-3.5 pt-2"
+          >
             <Button asAnchor href="#projects" onClick={scrollToProjects} variant="primary" size="md">
               <span>Explore Projects</span>
               <ArrowRight className="w-4 h-4 stroke-[2.2]" />
@@ -378,8 +449,7 @@ export const About: React.FC = () => {
               </span>
               <span className="draw-underline-link py-0.5">60-second tour</span>
             </button>
-          </div>
-
+          </m.div>
         </div>
 
       </div>

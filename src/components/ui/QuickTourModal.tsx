@@ -20,7 +20,7 @@ import { CountUp } from './CountUp';
 import { Button } from './Button';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useScrollLock } from '../../hooks/useScrollLock';
-import { EASING } from '../../lib/animation';
+import { EASING, modalVariants } from '../../lib/animation';
 
 const SLIDE_DURATION = 7000; // 7 seconds per slide
 
@@ -187,7 +187,7 @@ export const QuickTourModal: React.FC<QuickTourModalProps> = ({ isOpen, onClose 
     }
   };
 
-  if (!isOpen || typeof document === 'undefined') return null;
+  if (typeof document === 'undefined') return null;
 
   // Slide content renderers
   const renderSlideContent = () => {
@@ -445,31 +445,41 @@ export const QuickTourModal: React.FC<QuickTourModalProps> = ({ isOpen, onClose 
   };
 
   return ReactDOM.createPortal(
-    <div
-      className="fixed inset-0 z-[75] flex items-center justify-center sm:p-4 overflow-hidden pointer-events-auto"
-      role="presentation"
-    >
-      {/* Backdrop */}
-      <div
-        onClick={onClose}
-        className="fixed inset-0 bg-charcoal/65 backdrop-blur-sm transition-opacity"
-        aria-hidden="true"
-      />
+    <AnimatePresence>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-[75] flex items-center justify-center sm:p-4 overflow-hidden pointer-events-auto"
+          role="presentation"
+        >
+          {/* Backdrop */}
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-charcoal/65 backdrop-blur-sm"
+            aria-hidden="true"
+          />
 
-      {/* Main Tour Card Container */}
-      <div
-        ref={modalRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="tour-slide-title"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onFocus={() => setIsPaused(true)}
-        onBlur={() => setIsPaused(false)}
-        onPointerDown={() => setIsPaused(true)}
-        onPointerUp={() => setIsPaused(false)}
-        className="relative z-10 w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-[720px] bg-ivory border sm:border-warm-border sm:rounded-[8px] shadow-modal flex flex-col overflow-hidden"
-      >
+          {/* Main Tour Card Container */}
+          <m.div
+            ref={modalRef}
+            variants={prefersReduced ? undefined : modalVariants}
+            initial={prefersReduced ? false : "hidden"}
+            animate="visible"
+            exit={prefersReduced ? undefined : "exit"}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tour-slide-title"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            onFocus={() => setIsPaused(true)}
+            onBlur={() => setIsPaused(false)}
+            onPointerDown={() => setIsPaused(true)}
+            onPointerUp={() => setIsPaused(false)}
+            className="relative z-10 w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-[720px] bg-ivory border sm:border-warm-border sm:rounded-[8px] shadow-modal flex flex-col overflow-hidden"
+          >
         {/* Top Header: 5 Story Progress Segments & Close Button */}
         <div className="p-4 sm:p-5 border-b border-warm-border/80 bg-ivory shrink-0 space-y-3">
           {/* Progress Segments */}
@@ -593,9 +603,11 @@ export const QuickTourModal: React.FC<QuickTourModalProps> = ({ isOpen, onClose 
             </button>
           )}
         </div>
-      </div>
-    </div>,
-    document.body
+      </m.div>
+    </div>
+    )}
+  </AnimatePresence>,
+  document.body
   );
 };
 

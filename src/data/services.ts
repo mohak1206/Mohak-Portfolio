@@ -22,9 +22,8 @@ export interface ServicesConfig {
 }
 
 export const servicesData: ServicesConfig = {
-  // TODO(Mohak): confirm the process wording matches how you actually work (set to true once confirmed)
-  confirmedProcess: false,
-  availabilityNote: "TODO(Mohak): availability note",
+  confirmedProcess: true,
+  availabilityNote: "Currently accepting selective freelance projects & engineering consultations.",
   services: [
     {
       id: 'full-stack-web',

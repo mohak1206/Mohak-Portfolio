@@ -93,7 +93,8 @@ export const Experience: React.FC = () => {
           <div className="space-y-3">
             <SectionLabel label="EXPERIENCE & JOURNEY" />
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal text-charcoal">
-              <SplitLines lines={['Path & Milestones']} />
+              Path &{' '}
+              <span className="italic text-burnt-orange font-normal">Milestones.</span>
             </h2>
             <p className="text-muted-grey text-base max-w-xl">
               A chronological timeline of software engineering internships, technical leadership, and academic education.

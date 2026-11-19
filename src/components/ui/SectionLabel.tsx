@@ -21,19 +21,20 @@ export const SectionLabel: React.FC<SectionLabelProps> = ({
   className,
 }) => {
   const prefersReducedMotion = useReducedMotion();
+  const cleanLabel = label.replace(/^[—\-–]\s*/, '').replace(/\s*[—\-–]$/, '');
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: true, margin: '-50px' });
-  const [displayText, setDisplayText] = useState(label);
+  const isInView = useInView(containerRef, { once: true, margin: '0px 0px -20px 0px' });
+  const [displayText, setDisplayText] = useState(cleanLabel);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isInView || prefersReducedMotion) {
-      setDisplayText(label);
+      setDisplayText(cleanLabel);
       return;
     }
 
     let startTime: number | null = null;
-    const len = label.length;
+    const len = cleanLabel.length;
 
     const animate = (timestamp: number) => {
       if (startTime === null) startTime = timestamp;
@@ -45,10 +46,10 @@ export const SectionLabel: React.FC<SectionLabelProps> = ({
 
       let current = '';
       for (let i = 0; i < len; i++) {
-        if (label[i] === ' ' || label[i] === '—' || label[i] === '-') {
-          current += label[i];
+        if (cleanLabel[i] === ' ' || cleanLabel[i] === '—' || cleanLabel[i] === '-') {
+          current += cleanLabel[i];
         } else if (i < resolvedIndex) {
-          current += label[i];
+          current += cleanLabel[i];
         } else {
           // Pick a pseudo-random character from DECODE_CHARS
           const randChar = DECODE_CHARS[Math.floor(Math.random() * DECODE_CHARS.length)];
@@ -61,7 +62,7 @@ export const SectionLabel: React.FC<SectionLabelProps> = ({
       if (progress < 1) {
         rafRef.current = requestAnimationFrame(animate);
       } else {
-        setDisplayText(label);
+        setDisplayText(cleanLabel);
         rafRef.current = null;
       }
     };
@@ -73,42 +74,26 @@ export const SectionLabel: React.FC<SectionLabelProps> = ({
         cancelAnimationFrame(rafRef.current);
       }
     };
-  }, [isInView, label, prefersReducedMotion]);
+  }, [isInView, cleanLabel, prefersReducedMotion]);
 
   return (
     <div
       ref={containerRef}
-      aria-label={label}
+      aria-label={cleanLabel}
       className={cn(
         'inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.2em] text-charcoal/80 font-medium select-none',
         centered && 'justify-center',
         className
       )}
     >
-      <m.span
-        className="w-5 h-[1.5px] bg-burnt-orange inline-block origin-left"
-        initial={prefersReducedMotion ? false : { scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={DEFAULT_VIEWPORT}
-        transition={{ duration: 0.5, ease: EASING }}
+      <span
+        className="w-5 h-[1.5px] bg-burnt-orange inline-block"
         aria-hidden="true"
       />
-      <m.span
-        aria-hidden="true"
-        initial={prefersReducedMotion ? false : { opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={DEFAULT_VIEWPORT}
-        transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : 0.25, ease: EASING }}
-      >
-        {displayText}
-      </m.span>
+      <span>{displayText}</span>
       {twoSided && (
-        <m.span
-          className="w-5 h-[1.5px] bg-burnt-orange inline-block origin-right"
-          initial={prefersReducedMotion ? false : { scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={DEFAULT_VIEWPORT}
-          transition={{ duration: 0.5, ease: EASING }}
+        <span
+          className="w-5 h-[1.5px] bg-burnt-orange inline-block"
           aria-hidden="true"
         />
       )}
